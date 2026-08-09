@@ -22,6 +22,36 @@ final class DailyProgressLoaderSpy: DailyProgressLoader {
     }
 }
 
+final class ProgressTrackerSpy: ProgressTracker {
+    private(set) var receivedMessages = [Message]()
+    
+    enum Message: Equatable {
+        case increment(Item, Date)
+        case decrement(Item, Date)
+    }
+    
+    private var incrementCompletions = [(ProgressTracker.Result) -> Void]()
+    private var decrementCompletions = [(ProgressTracker.Result) -> Void]()
+    
+    func increment(_ item: Item, on date: Date, completion: @escaping (ProgressTracker.Result) -> Void) {
+        receivedMessages.append(.increment(item, date))
+        incrementCompletions.append(completion)
+    }
+    
+    func decrement(_ item: Item, on date: Date, completion: @escaping (ProgressTracker.Result) -> Void) {
+        receivedMessages.append(.decrement(item, date))
+        decrementCompletions.append(completion)
+    }
+    
+    func completeIncrement(with record: DailyRecord, at index: Int = 0) {
+        incrementCompletions[index](.success(record))
+    }
+    
+    func completeDecrement(with record: DailyRecord, at index: Int = 0) {
+        decrementCompletions[index](.success(record))
+    }
+}
+
 @MainActor
 final class ProgressFeedViewModelTests: XCTestCase {
     
@@ -130,6 +160,70 @@ final class ProgressFeedViewModelTests: XCTestCase {
         XCTAssertFalse(sut.isLoading)
     }
     
+    // MARK: Increment
+    
+    func test_increment_requestsTrackerIncrement() async {
+        let (sut, _, tracker) = makeSUTWithTracker()
+        let progress = makeProgressItems()[0]
+        let date = anyDate
+        
+        sut.increment(progress, on: date)
+        await Task.yield()
+        
+        XCTAssertEqual(tracker.receivedMessages, [.increment(progress.item, date)])
+    }
+    
+    func test_increment_replacesProgressWithUpdatedRecord() async {
+        let (sut, loader, tracker) = makeSUTWithTracker()
+        
+        sut.load(for: anyDate)
+        await Task.yield()
+        loader.complete(with: makeProgressItems())
+        await Task.yield()
+        
+        let progress = sut.progressItems[0]
+        let updatedRecord = DailyRecord.new(for: progress.item.id, on: anyDate).incrementing(targetCount: progress.item.targetCount)
+        
+        sut.increment(progress, on: anyDate)
+        await Task.yield()
+        tracker.completeIncrement(with: updatedRecord)
+        await Task.yield()
+        
+        XCTAssertEqual(sut.progressItems, [ItemProgress(item: progress.item, record: updatedRecord)])
+    }
+    
+    // MARK: Decrement
+    
+    func test_decrement_requestsTrackerDecrement() async {
+        let (sut, _, tracker) = makeSUTWithTracker()
+        let progress = makeProgressItems()[0]
+        let date = anyDate
+        
+        sut.decrement(progress, on: date)
+        await Task.yield()
+        
+        XCTAssertEqual(tracker.receivedMessages, [.decrement(progress.item, date)])
+    }
+    
+    func test_decrement_replacesProgressWithUpdatedRecord() async {
+        let (sut, loader, tracker) = makeSUTWithTracker()
+        
+        sut.load(for: anyDate)
+        await Task.yield()
+        loader.complete(with: makeProgressItems())
+        await Task.yield()
+        
+        let progress = sut.progressItems[0]
+        let updatedRecord = DailyRecord.new(for: progress.item.id, on: anyDate).decrementing(targetCount: progress.item.targetCount)
+        
+        sut.decrement(progress, on: anyDate)
+        await Task.yield()
+        tracker.completeDecrement(with: updatedRecord)
+        await Task.yield()
+        
+        XCTAssertEqual(sut.progressItems, [ItemProgress(item: progress.item, record: updatedRecord)])
+    }
+    
     // MARK: Helpers
     
     private var anyDate: Date { Date(timeIntervalSince1970: 1_700_000_000) }
@@ -141,10 +235,23 @@ final class ProgressFeedViewModelTests: XCTestCase {
         line: UInt = #line
     ) -> (sut: ProgressFeedViewModel, loader: DailyProgressLoaderSpy) {
         let loader = DailyProgressLoaderSpy()
-        let sut = ProgressFeedViewModel(loader: loader)
+        let sut = ProgressFeedViewModel(loader: loader, tracker: nil)
         trackForMemoryLeaks(sut, file: file, line: line)
         trackForMemoryLeaks(loader, file: file, line: line)
         return (sut, loader)
+    }
+    
+    private func makeSUTWithTracker(
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> (sut: ProgressFeedViewModel, loader: DailyProgressLoaderSpy, tracker: ProgressTrackerSpy) {
+        let loader = DailyProgressLoaderSpy()
+        let tracker = ProgressTrackerSpy()
+        let sut = ProgressFeedViewModel(loader: loader, tracker: tracker)
+        trackForMemoryLeaks(sut, file: file, line: line)
+        trackForMemoryLeaks(loader, file: file, line: line)
+        trackForMemoryLeaks(tracker, file: file, line: line)
+        return (sut, loader, tracker)
     }
     
     private func makeProgressItems() -> [ItemProgress] {
