@@ -5,6 +5,9 @@
       location = "group:StreakOSFramework/StreakOSFramework.xcodeproj">
    </FileRef>
    <FileRef
+      location = "group:StreakOSMacApp/StreakOSMacApp.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:StreakOSApp/StreakOSApp.xcodeproj">
    </FileRef>
 </Workspace>
