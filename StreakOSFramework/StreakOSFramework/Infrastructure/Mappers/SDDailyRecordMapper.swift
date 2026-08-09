@@ -14,6 +14,10 @@ enum SDDailyRecordMapper {
         )
     }
 
+    static func toDomainList(_ sdRecords: [SDDailyRecord]) -> [DailyRecord] {
+        sdRecords.map(toDomain)
+    }
+
     static func toSDModel(_ record: DailyRecord) -> SDDailyRecord {
         SDDailyRecord(
             id: record.id,

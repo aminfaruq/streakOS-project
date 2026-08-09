@@ -131,4 +131,51 @@ final class SwiftDataDailyRecordStoreIntegrationTests: XCTestCase {
         }
         wait(for: [retrieveExp], timeout: 1.0)
     }
+
+    func test_retrieveAll_emptyStore_returnsEmptyList() {
+        let sut = makeSUT()
+        let exp = expectation(description: "retrieveAll")
+
+        sut.retrieveAll(for: Date()) { result in
+            switch result {
+            case let .success(records):
+                XCTAssertTrue(records.isEmpty)
+            case .failure:
+                XCTFail("Expected success")
+            }
+            exp.fulfill()
+        }
+
+        wait(for: [exp], timeout: 1.0)
+    }
+
+    func test_retrieveAll_returnsRecordsForDate() {
+        let sut = makeSUT()
+        let today = Date()
+        let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: today)!
+
+        let todayRecord = DailyRecord(id: UUID(), itemId: UUID(), date: today, currentCount: 1, isCompleted: false, createdAt: today, updatedAt: today)
+        let tomorrowRecord = DailyRecord(id: UUID(), itemId: UUID(), date: tomorrow, currentCount: 5, isCompleted: true, createdAt: tomorrow, updatedAt: tomorrow)
+
+        let save1Exp = expectation(description: "save1")
+        sut.save(todayRecord) { _ in save1Exp.fulfill() }
+        wait(for: [save1Exp], timeout: 1.0)
+
+        let save2Exp = expectation(description: "save2")
+        sut.save(tomorrowRecord) { _ in save2Exp.fulfill() }
+        wait(for: [save2Exp], timeout: 1.0)
+
+        let retrieveExp = expectation(description: "retrieve")
+        sut.retrieveAll(for: today) { result in
+            switch result {
+            case let .success(records):
+                XCTAssertEqual(records.count, 1)
+                XCTAssertEqual(records[0].itemId, todayRecord.itemId)
+            case .failure:
+                XCTFail("Expected success")
+            }
+            retrieveExp.fulfill()
+        }
+        wait(for: [retrieveExp], timeout: 1.0)
+    }
 }

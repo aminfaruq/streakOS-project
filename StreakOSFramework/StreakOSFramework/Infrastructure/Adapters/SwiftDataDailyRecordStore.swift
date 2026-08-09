@@ -49,6 +49,23 @@ extension SwiftDataDailyRecordStore: DailyRecordStore {
         }
     }
 
+    public func retrieveAll(
+        for date: Date,
+        completion: @escaping (DailyRecordStore.RetrievalAllResult) -> Void
+    ) {
+        let startOfDay = Calendar.current.startOfDay(for: date)
+        let endOfDay = Calendar.current.date(byAdding: .day, value: 1, to: startOfDay)!
+
+        do {
+            let fetchDescriptor = FetchDescriptor<SDDailyRecord>()
+            let allRecords = try modelContext.fetch(fetchDescriptor)
+            let matches = allRecords.filter { $0.date >= startOfDay && $0.date < endOfDay }
+            completion(.success(SDDailyRecordMapper.toDomainList(matches)))
+        } catch {
+            completion(.failure(Error.retrievalError))
+        }
+    }
+
     public func save(
         _ record: DailyRecord,
         completion: @escaping (DailyRecordStore.SaveResult) -> Void
