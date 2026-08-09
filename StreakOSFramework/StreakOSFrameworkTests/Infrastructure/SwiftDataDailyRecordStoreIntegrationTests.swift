@@ -10,8 +10,7 @@ final class SwiftDataDailyRecordStoreIntegrationTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        let config = ModelConfiguration(isStoredInMemoryOnly: true)
-        container = try! ModelContainer(for: SDItem.self, SDDailyRecord.self, configurations: config)
+        container = try! StreakOSModelContainer.makeInMemory()
     }
 
     override func tearDown() {
