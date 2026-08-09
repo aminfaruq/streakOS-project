@@ -48,6 +48,16 @@
 		8372BDAE3028BD0200663D64 /* StreakOSPresentation.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = StreakOSPresentation.xctestplan; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		8372BDB13028C30000663D64 /* Exceptions for "StreakOSFrameworkTests" folder in "StreakOSPresentationTests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"Helpers/XCTestCase+MemoryLeakTracking.swift",
+			);
+			target = 832B037330237C140029B706 /* StreakOSPresentationTests */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		832B035130237BB10029B706 /* StreakOSFramework */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
@@ -56,6 +66,9 @@
 		};
 		832B035C30237BB10029B706 /* StreakOSFrameworkTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				8372BDB13028C30000663D64 /* Exceptions for "StreakOSFrameworkTests" folder in "StreakOSPresentationTests" target */,
+			);
 			path = StreakOSFrameworkTests;
 			sourceTree = "<group>";
 		};
