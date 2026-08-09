@@ -10,6 +10,9 @@
 		832B035930237BB10029B706 /* StreakOSFramework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 832B034F30237BB10029B706 /* StreakOSFramework.framework */; };
 		832B037530237C140029B706 /* StreakOSPresentation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 832B036C30237C140029B706 /* StreakOSPresentation.framework */; };
 		8372BB093028A77D00663D64 /* StreakOSFramework.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 8372BB083028A77D00663D64 /* StreakOSFramework.xctestplan */; };
+		8372BCE03028B67B00663D64 /* StreakOSFramework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 832B034F30237BB10029B706 /* StreakOSFramework.framework */; };
+		8372BDAF3028BD0200663D64 /* StreakOSPresentation.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 8372BDAE3028BD0200663D64 /* StreakOSPresentation.xctestplan */; };
+		F082B0A130230A77D1029B702 /* StreakOSFramework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 832B034F30237BB10029B706 /* StreakOSFramework.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -27,6 +30,13 @@
 			remoteGlobalIDString = 832B036B30237C140029B706;
 			remoteInfo = StreakOSPresentation;
 		};
+		8372BCE23028B67B00663D64 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 832B034630237BB10029B706 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 832B034E30237BB10029B706;
+			remoteInfo = StreakOSFramework;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -35,6 +45,7 @@
 		832B036C30237C140029B706 /* StreakOSPresentation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = StreakOSPresentation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		832B037430237C140029B706 /* StreakOSPresentationTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StreakOSPresentationTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8372BB083028A77D00663D64 /* StreakOSFramework.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = StreakOSFramework.xctestplan; sourceTree = "<group>"; };
+		8372BDAE3028BD0200663D64 /* StreakOSPresentation.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = StreakOSPresentation.xctestplan; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -80,6 +91,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8372BCE03028B67B00663D64 /* StreakOSFramework.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -88,6 +100,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				832B037530237C140029B706 /* StreakOSPresentation.framework in Frameworks */,
+				F082B0A130230A77D1029B702 /* StreakOSFramework.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -97,11 +110,13 @@
 		832B034530237BB10029B706 = {
 			isa = PBXGroup;
 			children = (
+				8372BDAE3028BD0200663D64 /* StreakOSPresentation.xctestplan */,
 				8372BB083028A77D00663D64 /* StreakOSFramework.xctestplan */,
 				832B035130237BB10029B706 /* StreakOSFramework */,
 				832B035C30237BB10029B706 /* StreakOSFrameworkTests */,
 				832B036D30237C140029B706 /* StreakOSPresentation */,
 				832B037830237C140029B706 /* StreakOSPresentationTests */,
+				8372BCDF3028B67B00663D64 /* Frameworks */,
 				832B035030237BB10029B706 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -115,6 +130,13 @@
 				832B037430237C140029B706 /* StreakOSPresentationTests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		8372BCDF3028B67B00663D64 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -195,6 +217,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				8372BCE33028B67B00663D64 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				832B036D30237C140029B706 /* StreakOSPresentation */,
@@ -281,6 +304,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8372BB093028A77D00663D64 /* StreakOSFramework.xctestplan in Resources */,
+				8372BDAF3028BD0200663D64 /* StreakOSPresentation.xctestplan in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -348,6 +372,11 @@
 			isa = PBXTargetDependency;
 			target = 832B036B30237C140029B706 /* StreakOSPresentation */;
 			targetProxy = 832B037630237C140029B706 /* PBXContainerItemProxy */;
+		};
+		8372BCE33028B67B00663D64 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 832B034E30237BB10029B706 /* StreakOSFramework */;
+			targetProxy = 8372BCE23028B67B00663D64 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
