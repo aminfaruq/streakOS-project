@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		832B035930237BB10029B706 /* StreakOSFramework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 832B034F30237BB10029B706 /* StreakOSFramework.framework */; };
 		832B037530237C140029B706 /* StreakOSPresentation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 832B036C30237C140029B706 /* StreakOSPresentation.framework */; };
+		8372BB093028A77D00663D64 /* StreakOSFramework.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 8372BB083028A77D00663D64 /* StreakOSFramework.xctestplan */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -33,6 +34,7 @@
 		832B035830237BB10029B706 /* StreakOSFrameworkTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StreakOSFrameworkTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		832B036C30237C140029B706 /* StreakOSPresentation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = StreakOSPresentation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		832B037430237C140029B706 /* StreakOSPresentationTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StreakOSPresentationTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		8372BB083028A77D00663D64 /* StreakOSFramework.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = StreakOSFramework.xctestplan; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -95,6 +97,7 @@
 		832B034530237BB10029B706 = {
 			isa = PBXGroup;
 			children = (
+				8372BB083028A77D00663D64 /* StreakOSFramework.xctestplan */,
 				832B035130237BB10029B706 /* StreakOSFramework */,
 				832B035C30237BB10029B706 /* StreakOSFrameworkTests */,
 				832B036D30237C140029B706 /* StreakOSPresentation */,
@@ -277,6 +280,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8372BB093028A77D00663D64 /* StreakOSFramework.xctestplan in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -606,6 +610,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 14.6;
 				MARKETING_VERSION = 1.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
@@ -642,6 +647,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 14.6;
 				MARKETING_VERSION = 1.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
@@ -665,6 +671,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = WZB5R9B92Y;
 				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.6;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.aminfaruq.StreakOSPresentationTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -683,6 +690,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = WZB5R9B92Y;
 				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.6;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.aminfaruq.StreakOSPresentationTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";

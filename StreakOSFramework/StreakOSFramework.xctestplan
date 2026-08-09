@@ -1,0 +1,35 @@
+{
+  "configurations" : [
+    {
+      "id" : "C5638FA0-97DE-4049-A630-BD75D55F2E70",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : {
+      "targets" : [
+        {
+          "containerPath" : "container:StreakOSFramework.xcodeproj",
+          "identifier" : "832B034E30237BB10029B706",
+          "name" : "StreakOSFramework"
+        }
+      ]
+    },
+    "performanceAntipatternCheckerEnabled" : true,
+    "testExecutionOrdering" : "random"
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : false,
+      "target" : {
+        "containerPath" : "container:StreakOSFramework.xcodeproj",
+        "identifier" : "832B035730237BB10029B706",
+        "name" : "StreakOSFrameworkTests"
+      }
+    }
+  ],
+  "version" : 1
+}
