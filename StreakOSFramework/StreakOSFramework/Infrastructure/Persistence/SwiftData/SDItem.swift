@@ -12,10 +12,10 @@ public final class SDItem {
     public var displayOrder: Int
     public var createdAt: Date
     public var updatedAt: Date
-
+    
     @Relationship(deleteRule: .cascade, inverse: \SDDailyRecord.item)
     public var records: [SDDailyRecord]?
-
+    
     public init(
         id: UUID,
         name: String,

@@ -8,7 +8,7 @@ public struct DailyRecord: Hashable {
     public let isCompleted: Bool
     public let createdAt: Date
     public let updatedAt: Date
-
+    
     public init(
         id: UUID,
         itemId: UUID,
@@ -26,7 +26,7 @@ public struct DailyRecord: Hashable {
         self.createdAt = createdAt
         self.updatedAt = updatedAt
     }
-
+    
     public static func new(for itemId: UUID, on date: Date) -> DailyRecord {
         DailyRecord(
             id: UUID(),
@@ -54,7 +54,7 @@ public extension DailyRecord {
             updatedAt: Date()
         )
     }
-
+    
     func decrementing(targetCount: Int) -> DailyRecord {
         if isCompleted {
             let newCount = targetCount - 1

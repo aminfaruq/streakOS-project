@@ -10,7 +10,7 @@ public struct Item: Hashable {
     public let displayOrder: Int
     public let createdAt: Date
     public let updatedAt: Date
-
+    
     public init(
         id: UUID,
         name: String,

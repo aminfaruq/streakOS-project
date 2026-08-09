@@ -36,7 +36,7 @@ extension Date {
     func adding(days: Int) -> Date {
         Calendar.current.date(byAdding: .day, value: days, to: self)!
     }
-
+    
     var startOfDay: Date {
         Calendar.current.startOfDay(for: self)
     }

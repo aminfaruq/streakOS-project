@@ -1,7 +1,7 @@
 import Foundation
 
 enum SDItemMapper {
-
+    
     static func toDomain(_ sdItem: SDItem) -> Item {
         Item(
             id: sdItem.id,
@@ -15,7 +15,7 @@ enum SDItemMapper {
             updatedAt: sdItem.updatedAt
         )
     }
-
+    
     static func toSDModel(_ item: Item) -> SDItem {
         SDItem(
             id: item.id,
@@ -29,7 +29,7 @@ enum SDItemMapper {
             updatedAt: item.updatedAt
         )
     }
-
+    
     static func toDomainList(_ sdItems: [SDItem]) -> [Item] {
         sdItems.map(toDomain)
     }

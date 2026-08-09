@@ -10,9 +10,9 @@ public final class SDDailyRecord {
     public var isCompleted: Bool
     public var createdAt: Date
     public var updatedAt: Date
-
+    
     public var item: SDItem?
-
+    
     public init(
         id: UUID,
         itemId: UUID,

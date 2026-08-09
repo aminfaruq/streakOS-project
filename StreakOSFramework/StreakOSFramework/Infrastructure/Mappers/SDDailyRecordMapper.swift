@@ -1,7 +1,7 @@
 import Foundation
 
 enum SDDailyRecordMapper {
-
+    
     static func toDomain(_ sdRecord: SDDailyRecord) -> DailyRecord {
         DailyRecord(
             id: sdRecord.id,
@@ -13,11 +13,11 @@ enum SDDailyRecordMapper {
             updatedAt: sdRecord.updatedAt
         )
     }
-
+    
     static func toDomainList(_ sdRecords: [SDDailyRecord]) -> [DailyRecord] {
         sdRecords.map(toDomain)
     }
-
+    
     static func toSDModel(_ record: DailyRecord) -> SDDailyRecord {
         SDDailyRecord(
             id: record.id,

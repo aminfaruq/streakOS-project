@@ -5,18 +5,18 @@ import SwiftData
 public final class SwiftDataItemStore {
     private let modelContainer: ModelContainer?
     private let modelContext: ModelContext
-
+    
     public enum Error: Swift.Error {
         case retrievalError
         case saveError
         case notFound
     }
-
+    
     public init(modelContainer: ModelContainer) {
         self.modelContainer = modelContainer
         self.modelContext = modelContainer.mainContext
     }
-
+    
     public init(modelContext: ModelContext) {
         self.modelContainer = nil
         self.modelContext = modelContext
@@ -24,11 +24,11 @@ public final class SwiftDataItemStore {
 }
 
 extension SwiftDataItemStore: ItemStore {
-
+    
     public func retrieveAll(completion: @escaping (ItemStore.RetrievalResult) -> Void) {
         let sortDescriptor = SortDescriptor<SDItem>(\.displayOrder)
         let fetchDescriptor = FetchDescriptor<SDItem>(sortBy: [sortDescriptor])
-
+        
         do {
             let sdItems = try modelContext.fetch(fetchDescriptor)
             let items = SDItemMapper.toDomainList(sdItems)
@@ -37,12 +37,12 @@ extension SwiftDataItemStore: ItemStore {
             completion(.failure(Error.retrievalError))
         }
     }
-
+    
     public func save(_ item: Item, completion: @escaping (ItemStore.SaveResult) -> Void) {
         do {
             let fetchDescriptor = FetchDescriptor<SDItem>()
             let allItems = try modelContext.fetch(fetchDescriptor)
-
+            
             if let existing = allItems.first(where: { $0.id == item.id }) {
                 existing.name = item.name
                 existing.icon = item.icon
@@ -55,19 +55,19 @@ extension SwiftDataItemStore: ItemStore {
                 let sdItem = SDItemMapper.toSDModel(item)
                 modelContext.insert(sdItem)
             }
-
+            
             try modelContext.save()
             completion(.success(()))
         } catch {
             completion(.failure(Error.saveError))
         }
     }
-
+    
     public func delete(_ item: Item, completion: @escaping (ItemStore.SaveResult) -> Void) {
         do {
             let fetchDescriptor = FetchDescriptor<SDItem>()
             let allItems = try modelContext.fetch(fetchDescriptor)
-
+            
             if let existing = allItems.first(where: { $0.id == item.id }) {
                 modelContext.delete(existing)
                 try modelContext.save()

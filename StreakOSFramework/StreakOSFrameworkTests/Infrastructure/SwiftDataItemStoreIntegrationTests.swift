@@ -4,27 +4,27 @@ import SwiftData
 
 @MainActor
 final class SwiftDataItemStoreIntegrationTests: XCTestCase {
-
+    
     private var container: ModelContainer!
-
+    
     override func setUp() {
         super.setUp()
         container = try! StreakOSModelContainer.makeInMemory()
     }
-
+    
     override func tearDown() {
         container = nil
         super.tearDown()
     }
-
+    
     private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> SwiftDataItemStore {
         SwiftDataItemStore(modelContainer: container)
     }
-
+    
     func test_retrieveAll_emptyStore_returnsEmptyList() {
         let sut = makeSUT()
         let exp = expectation(description: "retrieveAll")
-
+        
         sut.retrieveAll { result in
             switch result {
             case let .success(items):
@@ -34,21 +34,21 @@ final class SwiftDataItemStoreIntegrationTests: XCTestCase {
             }
             exp.fulfill()
         }
-
+        
         wait(for: [exp], timeout: 1.0)
     }
-
+    
     func test_saveAndRetrieve_persistsItem() {
         let sut = makeSUT()
         let item = uniqueItem(name: "Push Ups", targetCount: 10)
-
+        
         let saveExp = expectation(description: "save")
         sut.save(item) { result in
             if case .failure = result { XCTFail("Save failed") }
             saveExp.fulfill()
         }
         wait(for: [saveExp], timeout: 1.0)
-
+        
         let retrieveExp = expectation(description: "retrieveAll")
         sut.retrieveAll { result in
             switch result {
@@ -64,15 +64,15 @@ final class SwiftDataItemStoreIntegrationTests: XCTestCase {
         }
         wait(for: [retrieveExp], timeout: 1.0)
     }
-
+    
     func test_save_updatesExistingItem() {
         let sut = makeSUT()
         let item = uniqueItem(name: "Old Name")
-
+        
         let save1Exp = expectation(description: "save1")
         sut.save(item) { _ in save1Exp.fulfill() }
         wait(for: [save1Exp], timeout: 1.0)
-
+        
         let changedItem = Item(
             id: item.id,
             name: "New Name",
@@ -84,11 +84,11 @@ final class SwiftDataItemStoreIntegrationTests: XCTestCase {
             createdAt: item.createdAt,
             updatedAt: Date()
         )
-
+        
         let save2Exp = expectation(description: "save2")
         sut.save(changedItem) { _ in save2Exp.fulfill() }
         wait(for: [save2Exp], timeout: 1.0)
-
+        
         let retrieveExp = expectation(description: "retrieve")
         sut.retrieveAll { result in
             switch result {
@@ -103,19 +103,19 @@ final class SwiftDataItemStoreIntegrationTests: XCTestCase {
         }
         wait(for: [retrieveExp], timeout: 1.0)
     }
-
+    
     func test_delete_removesItem() {
         let sut = makeSUT()
         let item = uniqueItem()
-
+        
         let saveExp = expectation(description: "save")
         sut.save(item) { _ in saveExp.fulfill() }
         wait(for: [saveExp], timeout: 1.0)
-
+        
         let deleteExp = expectation(description: "delete")
         sut.delete(item) { _ in deleteExp.fulfill() }
         wait(for: [deleteExp], timeout: 1.0)
-
+        
         let retrieveExp = expectation(description: "retrieve")
         sut.retrieveAll { result in
             switch result {
@@ -128,20 +128,20 @@ final class SwiftDataItemStoreIntegrationTests: XCTestCase {
         }
         wait(for: [retrieveExp], timeout: 1.0)
     }
-
+    
     func test_retrieveAll_sortsByDisplayOrder() {
         let sut = makeSUT()
         let item1 = Item(id: UUID(), name: "B", icon: "🅱️", targetCount: 1, startDate: Date(), endDate: nil, displayOrder: 2, createdAt: Date(), updatedAt: Date())
         let item2 = Item(id: UUID(), name: "A", icon: "🅰️", targetCount: 1, startDate: Date(), endDate: nil, displayOrder: 0, createdAt: Date(), updatedAt: Date())
-
+        
         let save1Exp = expectation(description: "save1")
         sut.save(item1) { _ in save1Exp.fulfill() }
         wait(for: [save1Exp], timeout: 1.0)
-
+        
         let save2Exp = expectation(description: "save2")
         sut.save(item2) { _ in save2Exp.fulfill() }
         wait(for: [save2Exp], timeout: 1.0)
-
+        
         let retrieveExp = expectation(description: "retrieve")
         sut.retrieveAll { result in
             switch result {

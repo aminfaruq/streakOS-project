@@ -5,17 +5,17 @@ import SwiftData
 public final class SwiftDataDailyRecordStore {
     private let modelContainer: ModelContainer?
     private let modelContext: ModelContext
-
+    
     public enum Error: Swift.Error {
         case retrievalError
         case saveError
     }
-
+    
     public init(modelContainer: ModelContainer) {
         self.modelContainer = modelContainer
         self.modelContext = modelContainer.mainContext
     }
-
+    
     public init(modelContext: ModelContext) {
         self.modelContainer = nil
         self.modelContext = modelContext
@@ -23,7 +23,7 @@ public final class SwiftDataDailyRecordStore {
 }
 
 extension SwiftDataDailyRecordStore: DailyRecordStore {
-
+    
     public func retrieve(
         for itemId: UUID,
         on date: Date,
@@ -31,14 +31,14 @@ extension SwiftDataDailyRecordStore: DailyRecordStore {
     ) {
         let startOfDay = Calendar.current.startOfDay(for: date)
         let endOfDay = Calendar.current.date(byAdding: .day, value: 1, to: startOfDay)!
-
+        
         do {
             let fetchDescriptor = FetchDescriptor<SDDailyRecord>()
             let allRecords = try modelContext.fetch(fetchDescriptor)
             let match = allRecords.first {
                 $0.itemId == itemId && $0.date >= startOfDay && $0.date < endOfDay
             }
-
+            
             if let match {
                 completion(.success(SDDailyRecordMapper.toDomain(match)))
             } else {
@@ -48,14 +48,14 @@ extension SwiftDataDailyRecordStore: DailyRecordStore {
             completion(.failure(Error.retrievalError))
         }
     }
-
+    
     public func retrieveAll(
         for date: Date,
         completion: @escaping (DailyRecordStore.RetrievalAllResult) -> Void
     ) {
         let startOfDay = Calendar.current.startOfDay(for: date)
         let endOfDay = Calendar.current.date(byAdding: .day, value: 1, to: startOfDay)!
-
+        
         do {
             let fetchDescriptor = FetchDescriptor<SDDailyRecord>()
             let allRecords = try modelContext.fetch(fetchDescriptor)
@@ -65,18 +65,18 @@ extension SwiftDataDailyRecordStore: DailyRecordStore {
             completion(.failure(Error.retrievalError))
         }
     }
-
+    
     public func save(
         _ record: DailyRecord,
         completion: @escaping (DailyRecordStore.SaveResult) -> Void
     ) {
         let startOfDay = Calendar.current.startOfDay(for: record.date)
         let endOfDay = Calendar.current.date(byAdding: .day, value: 1, to: startOfDay)!
-
+        
         do {
             let fetchDescriptor = FetchDescriptor<SDDailyRecord>()
             let allRecords = try modelContext.fetch(fetchDescriptor)
-
+            
             if let existing = allRecords.first(where: {
                 $0.itemId == record.itemId && $0.date >= startOfDay && $0.date < endOfDay
             }) {
@@ -87,7 +87,7 @@ extension SwiftDataDailyRecordStore: DailyRecordStore {
                 let sdRecord = SDDailyRecordMapper.toSDModel(record)
                 modelContext.insert(sdRecord)
             }
-
+            
             try modelContext.save()
             completion(.success(()))
         } catch {

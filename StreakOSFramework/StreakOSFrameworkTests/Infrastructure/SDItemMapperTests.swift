@@ -2,7 +2,7 @@ import XCTest
 @testable import StreakOSFramework
 
 final class SDItemMapperTests: XCTestCase {
-
+    
     func test_toDomain_mapsAllFields() {
         let id = UUID()
         let now = Date()
@@ -18,9 +18,9 @@ final class SDItemMapperTests: XCTestCase {
             createdAt: now,
             updatedAt: now
         )
-
+        
         let item = SDItemMapper.toDomain(sdItem)
-
+        
         XCTAssertEqual(item.id, id)
         XCTAssertEqual(item.name, "Read")
         XCTAssertEqual(item.icon, "📖")
@@ -31,7 +31,7 @@ final class SDItemMapperTests: XCTestCase {
         XCTAssertEqual(item.createdAt, now)
         XCTAssertEqual(item.updatedAt, now)
     }
-
+    
     func test_toSDModel_mapsAllFields() {
         let id = UUID()
         let now = Date()
@@ -46,9 +46,9 @@ final class SDItemMapperTests: XCTestCase {
             createdAt: now,
             updatedAt: now
         )
-
+        
         let sdItem = SDItemMapper.toSDModel(item)
-
+        
         XCTAssertEqual(sdItem.id, id)
         XCTAssertEqual(sdItem.name, "Walk")
         XCTAssertEqual(sdItem.icon, "🚶")
@@ -59,14 +59,14 @@ final class SDItemMapperTests: XCTestCase {
         XCTAssertEqual(sdItem.createdAt, now)
         XCTAssertEqual(sdItem.updatedAt, now)
     }
-
+    
     func test_toDomainList_mapsMultipleItems() {
         let now = Date()
         let sd1 = SDItem(id: UUID(), name: "A", icon: "🅰️", targetCount: 1, startDate: now, endDate: nil, displayOrder: 0, createdAt: now, updatedAt: now)
         let sd2 = SDItem(id: UUID(), name: "B", icon: "🅱️", targetCount: 2, startDate: now, endDate: nil, displayOrder: 1, createdAt: now, updatedAt: now)
-
+        
         let items = SDItemMapper.toDomainList([sd1, sd2])
-
+        
         XCTAssertEqual(items.count, 2)
         XCTAssertEqual(items[0].name, "A")
         XCTAssertEqual(items[1].name, "B")

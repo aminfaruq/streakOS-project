@@ -2,7 +2,7 @@ import XCTest
 @testable import StreakOSFramework
 
 final class SDDailyRecordMapperTests: XCTestCase {
-
+    
     func test_toDomain_mapsAllFields() {
         let id = UUID()
         let itemId = UUID()
@@ -16,9 +16,9 @@ final class SDDailyRecordMapperTests: XCTestCase {
             createdAt: now,
             updatedAt: now
         )
-
+        
         let record = SDDailyRecordMapper.toDomain(sdRecord)
-
+        
         XCTAssertEqual(record.id, id)
         XCTAssertEqual(record.itemId, itemId)
         XCTAssertEqual(record.currentCount, 4)
@@ -26,7 +26,7 @@ final class SDDailyRecordMapperTests: XCTestCase {
         XCTAssertEqual(record.createdAt, now)
         XCTAssertEqual(record.updatedAt, now)
     }
-
+    
     func test_toSDModel_mapsAllFields() {
         let id = UUID()
         let itemId = UUID()
@@ -40,9 +40,9 @@ final class SDDailyRecordMapperTests: XCTestCase {
             createdAt: now,
             updatedAt: now
         )
-
+        
         let sdRecord = SDDailyRecordMapper.toSDModel(record)
-
+        
         XCTAssertEqual(sdRecord.id, id)
         XCTAssertEqual(sdRecord.itemId, itemId)
         XCTAssertEqual(sdRecord.currentCount, 10)
