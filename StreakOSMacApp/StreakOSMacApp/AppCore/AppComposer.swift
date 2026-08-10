@@ -23,7 +23,7 @@ enum AppComposer {
         let creator = LocalItemCreator(itemStore: itemStore)
 
         return Dependencies(
-            viewModel: ProgressFeedViewModel(loader: loader, tracker: tracker),
+            viewModel: ProgressFeedViewModel(loader: loader, tracker: tracker, itemStore: itemStore),
             itemCreator: creator
         )
     }
