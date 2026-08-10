@@ -224,18 +224,76 @@ final class ProgressFeedViewModelTests: XCTestCase {
         XCTAssertEqual(sut.progressItems, [ItemProgress(item: progress.item, record: updatedRecord)])
     }
     
+    // MARK: Delete
+    
+    func test_delete_requestsStoreDeletion() async {
+        let (sut, _, itemStore) = makeSUTWithStore()
+        let progress = makeProgressItems()[0]
+        
+        sut.delete(progress)
+        await Task.yield()
+        
+        XCTAssertEqual(itemStore.receivedMessages, [.delete(progress.item)])
+    }
+    
+    func test_delete_removesItemFromListOnSuccess() async {
+        let (sut, loader, itemStore) = makeSUTWithStore()
+        let loaded = makeProgressItems()
+        
+        sut.load(for: anyDate)
+        await Task.yield()
+        loader.complete(with: loaded)
+        await waitUntilLoaded(sut, equals: loaded)
+        
+        let progress = loaded[0]
+        sut.delete(progress)
+        await Task.yield()
+        itemStore.completeDeleteSuccessfully()
+        await Task.yield()
+        
+        XCTAssertTrue(sut.progressItems.isEmpty)
+    }
+    
+    func test_delete_deliversErrorMessageOnFailure() async {
+        let (sut, loader, itemStore) = makeSUTWithStore()
+        let loaded = makeProgressItems()
+        
+        sut.load(for: anyDate)
+        await Task.yield()
+        loader.complete(with: loaded)
+        await waitUntilLoaded(sut, equals: loaded)
+        
+        let progress = loaded[0]
+        sut.delete(progress)
+        await Task.yield()
+        itemStore.completeDelete(with: anyNSError())
+        await Task.yield()
+        
+        XCTAssertEqual(sut.errorMessage, "Failed to delete item")
+        XCTAssertEqual(sut.progressItems.count, 1)
+    }
+    
     // MARK: Helpers
     
     private var anyDate: Date { Date(timeIntervalSince1970: 1_700_000_000) }
     
     private func anyNSError() -> NSError { NSError(domain: "any error", code: 0) }
     
+    private func waitUntilLoaded(_ sut: ProgressFeedViewModel, equals expected: [ItemProgress]? = nil) async {
+        for _ in 0..<100 {
+            if expected == nil ? !sut.isLoading && !sut.progressItems.isEmpty : sut.progressItems == expected {
+                return
+            }
+            await Task.yield()
+        }
+    }
+    
     private func makeSUT(
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> (sut: ProgressFeedViewModel, loader: DailyProgressLoaderSpy) {
         let loader = DailyProgressLoaderSpy()
-        let sut = ProgressFeedViewModel(loader: loader, tracker: nil)
+        let sut = ProgressFeedViewModel(loader: loader, tracker: nil, itemStore: nil)
         trackForMemoryLeaks(sut, file: file, line: line)
         trackForMemoryLeaks(loader, file: file, line: line)
         return (sut, loader)
@@ -247,11 +305,24 @@ final class ProgressFeedViewModelTests: XCTestCase {
     ) -> (sut: ProgressFeedViewModel, loader: DailyProgressLoaderSpy, tracker: ProgressTrackerSpy) {
         let loader = DailyProgressLoaderSpy()
         let tracker = ProgressTrackerSpy()
-        let sut = ProgressFeedViewModel(loader: loader, tracker: tracker)
+        let sut = ProgressFeedViewModel(loader: loader, tracker: tracker, itemStore: nil)
         trackForMemoryLeaks(sut, file: file, line: line)
         trackForMemoryLeaks(loader, file: file, line: line)
         trackForMemoryLeaks(tracker, file: file, line: line)
         return (sut, loader, tracker)
+    }
+    
+    private func makeSUTWithStore(
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> (sut: ProgressFeedViewModel, loader: DailyProgressLoaderSpy, itemStore: ItemStoreSpy) {
+        let loader = DailyProgressLoaderSpy()
+        let itemStore = ItemStoreSpy()
+        let sut = ProgressFeedViewModel(loader: loader, tracker: nil, itemStore: itemStore)
+        trackForMemoryLeaks(sut, file: file, line: line)
+        trackForMemoryLeaks(loader, file: file, line: line)
+        trackForMemoryLeaks(itemStore, file: file, line: line)
+        return (sut, loader, itemStore)
     }
     
     private func makeProgressItems() -> [ItemProgress] {
