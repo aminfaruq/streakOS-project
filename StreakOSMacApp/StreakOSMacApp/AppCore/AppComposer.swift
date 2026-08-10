@@ -7,7 +7,12 @@ import StreakOSPresentation
 @MainActor
 enum AppComposer {
 
-    static func makeViewModel() throws -> ProgressFeedViewModel {
+    struct Dependencies {
+        let viewModel: ProgressFeedViewModel
+        let itemCreator: any ItemCreator
+    }
+
+    static func makeDependencies() throws -> Dependencies {
         let container = try StreakOSModelContainer.makeCloudKitEnabled()
 
         let itemStore = SwiftDataItemStore(modelContainer: container)
@@ -15,7 +20,11 @@ enum AppComposer {
 
         let loader = LocalDailyProgressLoader(itemStore: itemStore, dailyRecordStore: recordStore)
         let tracker = LocalProgressTracker(store: recordStore)
+        let creator = LocalItemCreator(itemStore: itemStore)
 
-        return ProgressFeedViewModel(loader: loader, tracker: tracker)
+        return Dependencies(
+            viewModel: ProgressFeedViewModel(loader: loader, tracker: tracker),
+            itemCreator: creator
+        )
     }
 }

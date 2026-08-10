@@ -5,11 +5,13 @@ import StreakOSPresentation
 @main
 struct StreakOSMacAppApp: App {
     @StateObject private var viewModel: ProgressFeedViewModel
+    private let itemCreator: any ItemCreator
 
     init() {
         do {
-            let viewModel = try AppComposer.makeViewModel()
-            _viewModel = StateObject(wrappedValue: viewModel)
+            let deps = try AppComposer.makeDependencies()
+            _viewModel = StateObject(wrappedValue: deps.viewModel)
+            self.itemCreator = deps.itemCreator
         } catch {
             fatalError("Failed to bootstrap StreakOS: \(error)")
         }
@@ -17,7 +19,7 @@ struct StreakOSMacAppApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ProgressListView(viewModel: viewModel)
+            ProgressListView(viewModel: viewModel, itemCreator: itemCreator)
                 .frame(minWidth: 400, minHeight: 700)
         }
     }

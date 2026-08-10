@@ -5,7 +5,10 @@ import StreakOSPresentation
 /// PRD §9.1/§9.5 main progress screen.
 struct ProgressListView: View {
     @ObservedObject var viewModel: ProgressFeedViewModel
+    let itemCreator: any ItemCreator
+
     @State private var selectedDate = Date()
+    @State private var isAddingItem = false
 
     private var navigationWindow: DateNavigationWindow {
         DateNavigationWindow(today: Date())
@@ -27,23 +30,27 @@ struct ProgressListView: View {
                 Spacer()
                 ProgressView()
                 Spacer()
-            } else if viewModel.progressItems.isEmpty {
-                emptyState
-                Spacer()
             } else {
                 ScrollView {
                     LazyVStack(spacing: 12) {
-                        ForEach(viewModel.progressItems, id: \.item.id) { progress in
-                            ItemCardView(
-                                progress: progress,
-                                onIncrement: { viewModel.increment(progress, on: selectedDate) },
-                                onDecrement: { viewModel.decrement(progress, on: selectedDate) }
-                            )
+                        if viewModel.progressItems.isEmpty {
+                            emptyState
+                        } else {
+                            ForEach(viewModel.progressItems, id: \.item.id) { progress in
+                                ItemCardView(
+                                    progress: progress,
+                                    onIncrement: { viewModel.increment(progress, on: selectedDate) },
+                                    onDecrement: { viewModel.decrement(progress, on: selectedDate) }
+                                )
+                            }
                         }
                     }
                     .padding(4)
+                    .frame(maxWidth: .infinity)
                 }
             }
+
+            addButton
 
             Spacer(minLength: 0)
         }
@@ -54,6 +61,15 @@ struct ProgressListView: View {
         }
         .onChange(of: selectedDate) { _, newDate in
             viewModel.load(for: newDate)
+        }
+        .sheet(isPresented: $isAddingItem) {
+            AddItemView(
+                viewModel: ItemFormViewModel(creator: itemCreator) { _ in
+                    isAddingItem = false
+                    viewModel.load(for: selectedDate)
+                },
+                onCancel: { isAddingItem = false }
+            )
         }
     }
 
@@ -66,7 +82,21 @@ struct ProgressListView: View {
             Text("Add your first habit to get started")
                 .foregroundStyle(.secondary)
         }
-        .padding(.top, 60)
+        .padding(.vertical, 60)
+    }
+
+    private var addButton: some View {
+        Button {
+            isAddingItem = true
+        } label: {
+            Label("Add Item", systemImage: "plus")
+                .font(.body.weight(.semibold))
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 10)
+                .background(DesignTokens.accent, in: RoundedRectangle(cornerRadius: DesignTokens.cardRadius))
+                .foregroundStyle(.white)
+        }
+        .buttonStyle(.plain)
     }
 
     private var titleText: String {
@@ -76,8 +106,7 @@ struct ProgressListView: View {
     }
 
     private func shiftDay(by offset: Int) {
-        let calendar = Calendar.current
-        if let newDate = calendar.date(byAdding: .day, value: offset, to: selectedDate) {
+        if let newDate = Calendar.current.date(byAdding: .day, value: offset, to: selectedDate) {
             selectedDate = newDate
         }
     }
