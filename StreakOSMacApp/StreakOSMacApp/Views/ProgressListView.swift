@@ -9,6 +9,7 @@ struct ProgressListView: View {
 
     @State private var selectedDate = Date()
     @State private var isAddingItem = false
+    @State private var pendingDelete: ItemProgress?
 
     private var navigationWindow: DateNavigationWindow {
         DateNavigationWindow(today: Date())
@@ -40,7 +41,7 @@ struct ProgressListView: View {
                                 ItemCardView(
                                     progress: progress,
                                     onIncrement: { viewModel.increment(progress, on: selectedDate) },
-                                    onDecrement: { viewModel.decrement(progress, on: selectedDate) }
+                                    onTap: { pendingDelete = progress }
                                 )
                             }
                         }
@@ -70,6 +71,26 @@ struct ProgressListView: View {
                 },
                 onCancel: { isAddingItem = false }
             )
+        }
+        .confirmationDialog(
+            "Delete \(pendingDelete?.item.name ?? "item")?",
+            isPresented: Binding(
+                get: { pendingDelete != nil },
+                set: { if !$0 { pendingDelete = nil } }
+            ),
+            presenting: pendingDelete
+        ) { _ in
+            Button("Delete", role: .destructive) {
+                if let progress = pendingDelete {
+                    viewModel.delete(progress)
+                }
+                pendingDelete = nil
+            }
+            Button("Cancel", role: .cancel) {
+                pendingDelete = nil
+            }
+        } message: { progress in
+            Text("This will also delete all history for this item.")
         }
     }
 
