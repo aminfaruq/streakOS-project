@@ -49,6 +49,7 @@ final class SwiftDataDailyRecordStoreIntegrationTests: XCTestCase {
             date: today,
             currentCount: 3,
             isCompleted: false,
+            timerStartDate: Date(),
             createdAt: today,
             updatedAt: today
         )
@@ -80,13 +81,13 @@ final class SwiftDataDailyRecordStoreIntegrationTests: XCTestCase {
         let sut = makeSUT()
         let itemId = UUID()
         let today = Date()
-        let record = DailyRecord(id: UUID(), itemId: itemId, date: today, currentCount: 1, isCompleted: false, createdAt: today, updatedAt: today)
+        let record = DailyRecord(id: UUID(), itemId: itemId, date: today, currentCount: 1, isCompleted: false, timerStartDate: nil, createdAt: today, updatedAt: today)
         
         let save1Exp = expectation(description: "save1")
         sut.save(record) { _ in save1Exp.fulfill() }
         wait(for: [save1Exp], timeout: 1.0)
         
-        let updated = DailyRecord(id: record.id, itemId: itemId, date: today, currentCount: 5, isCompleted: true, createdAt: today, updatedAt: Date())
+        let updated = DailyRecord(id: record.id, itemId: itemId, date: today, currentCount: 5, isCompleted: true, timerStartDate: today, createdAt: today, updatedAt: Date())
         
         let save2Exp = expectation(description: "save2")
         sut.save(updated) { _ in save2Exp.fulfill() }
@@ -99,6 +100,7 @@ final class SwiftDataDailyRecordStoreIntegrationTests: XCTestCase {
                 XCTAssertNotNil(fetched)
                 XCTAssertEqual(fetched?.currentCount, 5)
                 XCTAssertTrue(fetched?.isCompleted ?? false)
+                XCTAssertEqual(fetched?.timerStartDate, today)
             case .failure:
                 XCTFail("Expected success")
             }
@@ -113,7 +115,7 @@ final class SwiftDataDailyRecordStoreIntegrationTests: XCTestCase {
         let today = Date()
         let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: today)!
         
-        let record = DailyRecord(id: UUID(), itemId: itemId, date: today, currentCount: 2, isCompleted: false, createdAt: today, updatedAt: today)
+        let record = DailyRecord(id: UUID(), itemId: itemId, date: today, currentCount: 2, isCompleted: false, timerStartDate: nil, createdAt: today, updatedAt: today)
         let saveExp = expectation(description: "save")
         sut.save(record) { _ in saveExp.fulfill() }
         wait(for: [saveExp], timeout: 1.0)
@@ -153,8 +155,8 @@ final class SwiftDataDailyRecordStoreIntegrationTests: XCTestCase {
         let today = Date()
         let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: today)!
         
-        let todayRecord = DailyRecord(id: UUID(), itemId: UUID(), date: today, currentCount: 1, isCompleted: false, createdAt: today, updatedAt: today)
-        let tomorrowRecord = DailyRecord(id: UUID(), itemId: UUID(), date: tomorrow, currentCount: 5, isCompleted: true, createdAt: tomorrow, updatedAt: tomorrow)
+        let todayRecord = DailyRecord(id: UUID(), itemId: UUID(), date: today, currentCount: 1, isCompleted: false, timerStartDate: nil, createdAt: today, updatedAt: today)
+        let tomorrowRecord = DailyRecord(id: UUID(), itemId: UUID(), date: tomorrow, currentCount: 5, isCompleted: true, timerStartDate: nil, createdAt: tomorrow, updatedAt: tomorrow)
         
         let save1Exp = expectation(description: "save1")
         sut.save(todayRecord) { _ in save1Exp.fulfill() }

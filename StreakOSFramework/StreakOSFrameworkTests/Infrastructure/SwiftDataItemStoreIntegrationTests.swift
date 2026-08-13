@@ -77,6 +77,7 @@ final class SwiftDataItemStoreIntegrationTests: XCTestCase {
             id: item.id,
             name: "New Name",
             icon: item.icon,
+            type: ItemType.count,
             targetCount: 7,
             startDate: item.startDate,
             endDate: item.endDate,
@@ -131,8 +132,8 @@ final class SwiftDataItemStoreIntegrationTests: XCTestCase {
     
     func test_retrieveAll_sortsByDisplayOrder() {
         let sut = makeSUT()
-        let item1 = Item(id: UUID(), name: "B", icon: "🅱️", targetCount: 1, startDate: Date(), endDate: nil, displayOrder: 2, createdAt: Date(), updatedAt: Date())
-        let item2 = Item(id: UUID(), name: "A", icon: "🅰️", targetCount: 1, startDate: Date(), endDate: nil, displayOrder: 0, createdAt: Date(), updatedAt: Date())
+        let item1 = Item(id: UUID(), name: "B", icon: "🅱️", type: .count, targetCount: 1, startDate: Date(), endDate: nil, displayOrder: 2, createdAt: Date(), updatedAt: Date())
+        let item2 = Item(id: UUID(), name: "A", icon: "🅰️", type: .count, targetCount: 1, startDate: Date(), endDate: nil, displayOrder: 0, createdAt: Date(), updatedAt: Date())
         
         let save1Exp = expectation(description: "save1")
         sut.save(item1) { _ in save1Exp.fulfill() }

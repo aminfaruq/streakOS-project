@@ -11,6 +11,7 @@ final class SDItemMapperTests: XCTestCase {
             id: id,
             name: "Read",
             icon: "📖",
+            itemTypeRawValue: ItemType.count.rawValue,
             targetCount: 3,
             startDate: now,
             endDate: end,
@@ -32,6 +33,24 @@ final class SDItemMapperTests: XCTestCase {
         XCTAssertEqual(item.updatedAt, now)
     }
     
+    func test_toDomain_mapsMinutesTypeCorrectly() {
+        let sdItem = SDItem(
+            id: UUID(),
+            name: "Read",
+            icon: "📖",
+            itemTypeRawValue: ItemType.minutes.rawValue,
+            targetCount: 15,
+            startDate: Date(),
+            endDate: nil,
+            displayOrder: 2,
+            createdAt: Date(),
+            updatedAt: Date()
+        )
+        
+        let item = SDItemMapper.toDomain(sdItem)
+        XCTAssertEqual(item.type, .minutes)
+    }
+    
     func test_toSDModel_mapsAllFields() {
         let id = UUID()
         let now = Date()
@@ -39,6 +58,7 @@ final class SDItemMapperTests: XCTestCase {
             id: id,
             name: "Walk",
             icon: "🚶",
+            type: ItemType.count,
             targetCount: 1,
             startDate: now,
             endDate: nil,
@@ -60,10 +80,29 @@ final class SDItemMapperTests: XCTestCase {
         XCTAssertEqual(sdItem.updatedAt, now)
     }
     
+    func test_toSDModel_mapsMinutesTypeCorrectly() {
+        let item = Item(
+            id: UUID(),
+            name: "Walk",
+            icon: "🚶",
+            type: .minutes,
+            targetCount: 15,
+            startDate: Date(),
+            endDate: nil,
+            displayOrder: 0,
+            createdAt: Date(),
+            updatedAt: Date()
+        )
+        
+        let sdItem = SDItemMapper.toSDModel(item)
+        XCTAssertEqual(sdItem.itemTypeRawValue, "minutes")
+    }
+    
     func test_toDomainList_mapsMultipleItems() {
         let now = Date()
-        let sd1 = SDItem(id: UUID(), name: "A", icon: "🅰️", targetCount: 1, startDate: now, endDate: nil, displayOrder: 0, createdAt: now, updatedAt: now)
-        let sd2 = SDItem(id: UUID(), name: "B", icon: "🅱️", targetCount: 2, startDate: now, endDate: nil, displayOrder: 1, createdAt: now, updatedAt: now)
+        let sd1 = SDItem(id:  UUID(), name: "A", icon: "🅰️", itemTypeRawValue: ItemType.count.rawValue, targetCount: 1, startDate: now, endDate: nil, displayOrder: 0, createdAt: now, updatedAt: now)
+        
+        let sd2 = SDItem(id:  UUID(), name: "B", icon: "🅱️", itemTypeRawValue: ItemType.count.rawValue, targetCount: 2, startDate: now, endDate: nil, displayOrder: 1, createdAt: now, updatedAt: now)
         
         let items = SDItemMapper.toDomainList([sd1, sd2])
         
