@@ -78,6 +78,14 @@ struct AddItemView: View {
                             .stroke(Color.gray.opacity(0.1), lineWidth: 1)
                     )
                     
+                    // Habit Type
+                    Picker("Habit Type", selection: $viewModel.type) {
+                        Text("Count").tag(ItemType.count)
+                        Text("Timer (Minutes)").tag(ItemType.minutes)
+                    }
+                    .pickerStyle(.segmented)
+                    .padding(.horizontal, 4)
+                    
                     // Dates
                     HStack(spacing: 16) {
                         VStack(alignment: .leading, spacing: 8) {
@@ -157,7 +165,7 @@ struct AddItemView: View {
                                     .textFieldStyle(.plain)
                                     .frame(width: 60)
                                 
-                                Text("Times")
+                                Text(viewModel.type == .minutes ? "Minutes" : "Times")
                                     .font(.headline.weight(.bold))
                                     .foregroundStyle(.secondary)
                             }
