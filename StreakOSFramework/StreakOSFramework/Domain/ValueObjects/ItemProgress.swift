@@ -1,8 +1,10 @@
 import Foundation
 
-public struct ItemProgress: Equatable {
+public struct ItemProgress: Identifiable, Equatable {
     public let item: Item
     public let record: DailyRecord?
+
+    public var id: UUID { item.id }
     
     public var progressFraction: Double {
         guard let record else { return 0 }
