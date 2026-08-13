@@ -11,16 +11,22 @@ public final class ProgressFeedViewModel: ObservableObject {
     private let loader: any DailyProgressLoader
     private let tracker: (any ProgressTracker)?
     private let itemStore: (any ItemStore)?
+    private let updater: (any ItemUpdater)?
+    private let duplicator: (any ItemDuplicator)?
     private var loadTask: Task<Void, Never>?
 
     public init(
         loader: any DailyProgressLoader,
         tracker: (any ProgressTracker)?,
-        itemStore: (any ItemStore)?
+        itemStore: (any ItemStore)?,
+        updater: (any ItemUpdater)? = nil,
+        duplicator: (any ItemDuplicator)? = nil
     ) {
         self.loader = loader
         self.tracker = tracker
         self.itemStore = itemStore
+        self.updater = updater
+        self.duplicator = duplicator
     }
 
     public func load(for date: Date = Date()) {
@@ -78,6 +84,32 @@ public final class ProgressFeedViewModel: ObservableObject {
                 errorMessage = "Failed to delete item"
             }
             completion?(result)
+        }
+    }
+
+    public func duplicate(_ progress: ItemProgress, on date: Date = Date()) {
+        guard let duplicator else { return }
+        duplicator.duplicate(progress.item) { [weak self] result in
+            guard let self else { return }
+            switch result {
+            case .success:
+                load(for: date)
+            case .failure:
+                errorMessage = "Failed to duplicate item"
+            }
+        }
+    }
+
+    public func update(_ progress: ItemProgress, with item: Item, on date: Date = Date()) {
+        guard let updater else { return }
+        updater.update(item) { [weak self] result in
+            guard let self else { return }
+            switch result {
+            case .success:
+                load(for: date)
+            case .failure:
+                errorMessage = "Failed to update item"
+            }
         }
     }
 

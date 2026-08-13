@@ -12,19 +12,41 @@ public final class ItemFormViewModel: ObservableObject {
     @Published public private(set) var errorMessage: String?
     @Published public private(set) var isSaving = false
 
+    public var isEditing: Bool { existingItem != nil }
+
     public var canSave: Bool {
         isNameValid && isIconValid && isTargetValid && dateRangeValid
     }
 
-    private let creator: any ItemCreator
-    private let onCreated: (Item) -> Void
+    private let creator: (any ItemCreator)?
+    private let updater: (any ItemUpdater)?
+    private let existingItem: Item?
+    private let onSaved: (Item) -> Void
 
     public init(
         creator: any ItemCreator,
         onCreated: @escaping (Item) -> Void
     ) {
         self.creator = creator
-        self.onCreated = onCreated
+        self.updater = nil
+        self.existingItem = nil
+        self.onSaved = onCreated
+    }
+
+    public init(
+        updater: any ItemUpdater,
+        item: Item,
+        onUpdated: @escaping (Item) -> Void
+    ) {
+        self.creator = nil
+        self.updater = updater
+        self.existingItem = item
+        self.onSaved = onUpdated
+        self.name = item.name
+        self.icon = item.icon
+        self.targetCount = item.targetCount
+        self.startDate = item.startDate
+        self.endDate = item.endDate
     }
 
     public func save() {
@@ -35,6 +57,15 @@ public final class ItemFormViewModel: ObservableObject {
         }
 
         isSaving = true
+        if isEditing {
+            saveUpdated()
+        } else {
+            saveNew()
+        }
+    }
+
+    private func saveNew() {
+        guard let creator else { return }
         creator.create(
             name: name,
             icon: icon,
@@ -42,16 +73,38 @@ public final class ItemFormViewModel: ObservableObject {
             startDate: startDate,
             endDate: endDate
         ) { [weak self] result in
-            guard let self else { return }
-
-            switch result {
-            case let .success(item):
-                onCreated(item)
-            case .failure:
-                errorMessage = nameDuplicateMessage
-            }
-            isSaving = false
+            self?.handle(result)
         }
+    }
+
+    private func saveUpdated() {
+        guard let updater, let existingItem else { return }
+        updater.update(
+            Item(
+                id: existingItem.id,
+                name: name,
+                icon: icon,
+                targetCount: targetCount,
+                startDate: startDate,
+                endDate: endDate,
+                displayOrder: existingItem.displayOrder,
+                createdAt: existingItem.createdAt,
+                updatedAt: existingItem.updatedAt
+            )
+        ) { [weak self] result in
+            self?.handle(result)
+        }
+    }
+
+    private func handle(_ result: Swift.Result<Item, any Error>) {
+        switch result {
+        case let .success(item):
+            onSaved(item)
+            errorMessage = nil
+        case .failure:
+            errorMessage = nameDuplicateMessage
+        }
+        isSaving = false
     }
 
     private var isNameValid: Bool {
