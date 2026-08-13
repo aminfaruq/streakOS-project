@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		837A143C302D90BF0065B6D1 /* StreakOSFramework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 837A143B302D90BF0065B6D1 /* StreakOSFramework.framework */; };
+		837A143D302D90BF0065B6D1 /* StreakOSFramework.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 837A143B302D90BF0065B6D1 /* StreakOSFramework.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		837A1440302D90C30065B6D1 /* StreakOSPresentation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 837A143F302D90C30065B6D1 /* StreakOSPresentation.framework */; };
+		837A1441302D90C30065B6D1 /* StreakOSPresentation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 837A143F302D90C30065B6D1 /* StreakOSPresentation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		839024573028E1C20007C05E /* StreakOSFramework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 839024563028E1C20007C05E /* StreakOSFramework.framework */; };
 		839024583028E1C20007C05E /* StreakOSFramework.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 839024563028E1C20007C05E /* StreakOSFramework.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		8390245B3028E1C60007C05E /* StreakOSPresentation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8390245A3028E1C60007C05E /* StreakOSPresentation.framework */; };
@@ -31,6 +35,18 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		837A143E302D90BF0065B6D1 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				837A1441302D90C30065B6D1 /* StreakOSPresentation.framework in Embed Frameworks */,
+				837A143D302D90BF0065B6D1 /* StreakOSFramework.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		839024593028E1C20007C05E /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -46,6 +62,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		837A143B302D90BF0065B6D1 /* StreakOSFramework.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = StreakOSFramework.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		837A143F302D90C30065B6D1 /* StreakOSPresentation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = StreakOSPresentation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		839021FD3028E0C20007C05E /* StreakOSMacApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StreakOSMacApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8390220A3028E0C30007C05E /* StreakOSMacAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StreakOSMacAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		839022143028E0C30007C05E /* StreakOSMacAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StreakOSMacAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -76,6 +94,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				837A1440302D90C30065B6D1 /* StreakOSPresentation.framework in Frameworks */,
+				837A143C302D90BF0065B6D1 /* StreakOSFramework.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -122,6 +142,8 @@
 		839024553028E1C20007C05E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				837A143F302D90C30065B6D1 /* StreakOSPresentation.framework */,
+				837A143B302D90BF0065B6D1 /* StreakOSFramework.framework */,
 				8390245A3028E1C60007C05E /* StreakOSPresentation.framework */,
 				839024563028E1C20007C05E /* StreakOSFramework.framework */,
 			);
@@ -138,6 +160,7 @@
 				839021F93028E0C20007C05E /* Sources */,
 				839021FA3028E0C20007C05E /* Frameworks */,
 				839021FB3028E0C20007C05E /* Resources */,
+				837A143E302D90BF0065B6D1 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
