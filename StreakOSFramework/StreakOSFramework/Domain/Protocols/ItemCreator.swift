@@ -6,6 +6,7 @@ public protocol ItemCreator {
     func create(
         name: String,
         icon: String,
+        type: ItemType,
         targetCount: Int,
         startDate: Date,
         endDate: Date?,

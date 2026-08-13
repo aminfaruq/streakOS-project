@@ -6,6 +6,7 @@ public final class SDItem {
     @Attribute(.unique) public var id: UUID
     public var name: String
     public var icon: String
+    public var itemTypeRawValue: String
     public var targetCount: Int
     public var startDate: Date
     public var endDate: Date?
@@ -20,6 +21,7 @@ public final class SDItem {
         id: UUID,
         name: String,
         icon: String,
+        itemTypeRawValue: String = "count",
         targetCount: Int,
         startDate: Date,
         endDate: Date?,
@@ -30,6 +32,7 @@ public final class SDItem {
         self.id = id
         self.name = name
         self.icon = icon
+        self.itemTypeRawValue = itemTypeRawValue
         self.targetCount = targetCount
         self.startDate = startDate
         self.endDate = endDate

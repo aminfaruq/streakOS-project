@@ -6,6 +6,7 @@ import StreakOSFramework
 public final class ItemFormViewModel: ObservableObject {
     @Published public var name = ""
     @Published public var icon = "📋"
+    @Published public var type: ItemType = .count
     @Published public var targetCount = 1
     @Published public var startDate = Date()
     @Published public var endDate: Date?
@@ -44,6 +45,7 @@ public final class ItemFormViewModel: ObservableObject {
         self.onSaved = onUpdated
         self.name = item.name
         self.icon = item.icon
+        self.type = item.type
         self.targetCount = item.targetCount
         self.startDate = item.startDate
         self.endDate = item.endDate
@@ -69,6 +71,7 @@ public final class ItemFormViewModel: ObservableObject {
         creator.create(
             name: name,
             icon: icon,
+            type: type,
             targetCount: targetCount,
             startDate: startDate,
             endDate: endDate
@@ -84,6 +87,7 @@ public final class ItemFormViewModel: ObservableObject {
                 id: existingItem.id,
                 name: name,
                 icon: icon,
+                type: type,
                 targetCount: targetCount,
                 startDate: startDate,
                 endDate: endDate,

@@ -23,7 +23,7 @@ extension LocalItemCreator: ItemCreator {
     
     public func create(
         name: String,
-        icon: String,
+        icon: String, type: ItemType,
         targetCount: Int,
         startDate: Date,
         endDate: Date?,
@@ -42,6 +42,7 @@ extension LocalItemCreator: ItemCreator {
                 let item = self.makeItem(
                     name: name,
                     icon: icon,
+                    type: type,
                     targetCount: targetCount,
                     startDate: startDate,
                     endDate: endDate,
@@ -71,6 +72,7 @@ extension LocalItemCreator: ItemCreator {
     private func makeItem(
         name: String,
         icon: String,
+        type: ItemType,
         targetCount: Int,
         startDate: Date,
         endDate: Date?,
@@ -82,6 +84,7 @@ extension LocalItemCreator: ItemCreator {
             id: UUID(),
             name: name,
             icon: icon,
+            type: type,
             targetCount: targetCount,
             startDate: startDate,
             endDate: endDate,

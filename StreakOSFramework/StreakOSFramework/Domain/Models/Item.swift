@@ -4,6 +4,7 @@ public struct Item: Hashable {
     public let id: UUID
     public let name: String
     public let icon: String
+    public let type: ItemType
     public let targetCount: Int
     public let startDate: Date
     public let endDate: Date?
@@ -15,6 +16,7 @@ public struct Item: Hashable {
         id: UUID,
         name: String,
         icon: String,
+        type: ItemType,
         targetCount: Int,
         startDate: Date,
         endDate: Date?,
@@ -25,6 +27,7 @@ public struct Item: Hashable {
         self.id = id
         self.name = name
         self.icon = icon
+        self.type = type
         self.targetCount = targetCount
         self.startDate = startDate
         self.endDate = endDate

@@ -55,6 +55,7 @@ extension LocalItemDuplicator: ItemDuplicator {
             id: UUID(),
             name: ItemNameGenerator.duplicateName(for: item.name, among: existingItems),
             icon: item.icon,
+            type: item.type,
             targetCount: item.targetCount,
             startDate: now,
             endDate: item.endDate,

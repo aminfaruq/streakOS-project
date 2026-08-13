@@ -50,6 +50,7 @@ extension LocalItemUpdater: ItemUpdater {
             id: item.id,
             name: item.name,
             icon: item.icon,
+            type: item.type,
             targetCount: item.targetCount,
             startDate: item.startDate,
             endDate: item.endDate,
