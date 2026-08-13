@@ -131,6 +131,38 @@ public final class ProgressFeedViewModel: ObservableObject {
         }
     }
 
+    public func reorder(from sourceIndex: Int, to destinationIndex: Int, on date: Date = Date()) {
+        guard progressItems.indices.contains(sourceIndex), progressItems.indices.contains(destinationIndex) else { return }
+        
+        let items = progressItems.map { $0.item }
+        let reorderedItems = ItemReorder.reorder(items: items, fromIndex: sourceIndex, toIndex: destinationIndex)
+        
+        var newProgressItems: [ItemProgress] = []
+        for item in reorderedItems {
+            if let existing = progressItems.first(where: { $0.item.id == item.id }) {
+                newProgressItems.append(ItemProgress(item: item, record: existing.record))
+            }
+        }
+        self.progressItems = newProgressItems
+        
+        guard let updater = self.updater else { return }
+        
+        Task { [weak self] in
+            for item in reorderedItems {
+                await withCheckedContinuation { continuation in
+                    updater.update(item) { _ in continuation.resume() }
+                }
+            }
+            await MainActor.run {
+                self?.load(for: date)
+            }
+        }
+    }
+    
+    public func updateItemsLocally(_ items: [ItemProgress]) {
+        self.progressItems = items
+    }
+
     private func replace(_ progress: ItemProgress, with record: DailyRecord) {
         guard let index = progressItems.firstIndex(where: { $0.item.id == progress.item.id }) else {
             return
