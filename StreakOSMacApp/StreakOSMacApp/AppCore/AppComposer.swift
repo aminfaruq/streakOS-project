@@ -10,6 +10,8 @@ enum AppComposer {
     struct Dependencies {
         let viewModel: ProgressFeedViewModel
         let itemCreator: any ItemCreator
+        let itemUpdater: any ItemUpdater
+        let itemDuplicator: any ItemDuplicator
     }
 
     static func makeDependencies() throws -> Dependencies {
@@ -21,10 +23,14 @@ enum AppComposer {
         let loader = LocalDailyProgressLoader(itemStore: itemStore, dailyRecordStore: recordStore)
         let tracker = LocalProgressTracker(store: recordStore)
         let creator = LocalItemCreator(itemStore: itemStore)
+        let updater = LocalItemUpdater(itemStore: itemStore)
+        let duplicator = LocalItemDuplicator(itemStore: itemStore)
 
         return Dependencies(
-            viewModel: ProgressFeedViewModel(loader: loader, tracker: tracker, itemStore: itemStore),
-            itemCreator: creator
+            viewModel: ProgressFeedViewModel(loader: loader, tracker: tracker, itemStore: itemStore, updater: updater, duplicator: duplicator),
+            itemCreator: creator,
+            itemUpdater: updater,
+            itemDuplicator: duplicator
         )
     }
 }

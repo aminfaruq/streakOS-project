@@ -6,9 +6,13 @@ import StreakOSPresentation
 struct ProgressListView: View {
     @ObservedObject var viewModel: ProgressFeedViewModel
     let itemCreator: any ItemCreator
+    let itemUpdater: any ItemUpdater
+    let itemDuplicator: any ItemDuplicator
 
     @State private var selectedDate = Date()
     @State private var isAddingItem = false
+    @State private var actionedProgress: ItemProgress?
+    @State private var editingProgress: ItemProgress?
     @State private var pendingDelete: ItemProgress?
 
     private var navigationWindow: DateNavigationWindow {
@@ -41,7 +45,7 @@ struct ProgressListView: View {
                                 ItemCardView(
                                     progress: progress,
                                     onIncrement: { viewModel.increment(progress, on: selectedDate) },
-                                    onTap: { pendingDelete = progress }
+                                    onTap: { actionedProgress = progress }
                                 )
                             }
                         }
@@ -70,6 +74,33 @@ struct ProgressListView: View {
                     viewModel.load(for: selectedDate)
                 },
                 onCancel: { isAddingItem = false }
+            )
+        }
+        .sheet(item: $editingProgress) { progress in
+            AddItemView(
+                viewModel: ItemFormViewModel(updater: itemUpdater, item: progress.item) { updated in
+                    editingProgress = nil
+                    viewModel.update(progress, with: updated, on: selectedDate)
+                },
+                onCancel: { editingProgress = nil }
+            )
+        }
+        .popover(item: $actionedProgress) { progress in
+            ItemActionsView(
+                progress: progress,
+                onEdit: {
+                    actionedProgress = nil
+                    editingProgress = progress
+                },
+                onDuplicate: {
+                    actionedProgress = nil
+                    viewModel.duplicate(progress, on: selectedDate)
+                },
+                onDelete: {
+                    actionedProgress = nil
+                    pendingDelete = progress
+                },
+                onCancel: { actionedProgress = nil }
             )
         }
         .confirmationDialog(
