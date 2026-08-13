@@ -231,6 +231,7 @@ struct ProgressListView: View {
                     onIncrement: { viewModel.increment(currentProgress, on: selectedDate) },
                     onDecrement: { viewModel.decrement(currentProgress, on: selectedDate) },
                     onToggleTimer: { viewModel.toggleTimer(for: currentProgress, on: selectedDate) },
+                    onRestart: { viewModel.restart(for: currentProgress, on: selectedDate) },
                     onEdit: {
                         actionedProgress = nil
                         editingProgress = currentProgress

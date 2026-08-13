@@ -29,11 +29,13 @@ final class ProgressTrackerSpy: ProgressTracker {
         case increment(Item, Date)
         case decrement(Item, Date)
         case toggleTimer(Item, Date)
+        case restart(Item, Date)
     }
     
     private var incrementCompletions = [(ProgressTracker.Result) -> Void]()
     private var decrementCompletions = [(ProgressTracker.Result) -> Void]()
     private var toggleTimerCompletions = [(ProgressTracker.Result) -> Void]()
+    private var restartCompletions = [(ProgressTracker.Result) -> Void]()
     
     func increment(_ item: Item, on date: Date, completion: @escaping (ProgressTracker.Result) -> Void) {
         receivedMessages.append(.increment(item, date))
@@ -60,6 +62,15 @@ final class ProgressTrackerSpy: ProgressTracker {
     
     func completeToggleTimer(with record: DailyRecord, at index: Int = 0) {
         toggleTimerCompletions[index](.success(record))
+    }
+    
+    func restart(_ item: Item, on date: Date, completion: @escaping (ProgressTracker.Result) -> Void) {
+        receivedMessages.append(.restart(item, date))
+        restartCompletions.append(completion)
+    }
+    
+    func completeRestart(with record: DailyRecord, at index: Int = 0) {
+        restartCompletions[index](.success(record))
     }
 }
 
@@ -262,6 +273,38 @@ final class ProgressFeedViewModelTests: XCTestCase {
         sut.toggleTimer(for: progress, on: anyDate)
         await Task.yield()
         tracker.completeToggleTimer(with: updatedRecord)
+        await Task.yield()
+        
+        XCTAssertEqual(sut.progressItems, [ItemProgress(item: progress.item, record: updatedRecord)])
+    }
+    
+    // MARK: Restart
+    
+    func test_restart_requestsTrackerRestart() async {
+        let (sut, _, tracker) = makeSUTWithTracker()
+        let progress = makeProgressItems()[0]
+        let date = anyDate
+        
+        sut.restart(for: progress, on: date)
+        await Task.yield()
+        
+        XCTAssertEqual(tracker.receivedMessages, [.restart(progress.item, date)])
+    }
+    
+    func test_restart_replacesProgressWithUpdatedRecord() async {
+        let (sut, loader, tracker) = makeSUTWithTracker()
+        
+        sut.load(for: anyDate)
+        await Task.yield()
+        loader.complete(with: makeProgressItems())
+        await Task.yield()
+        
+        let progress = sut.progressItems[0]
+        let updatedRecord = DailyRecord.new(for: progress.item.id, on: anyDate).restarting()
+        
+        sut.restart(for: progress, on: anyDate)
+        await Task.yield()
+        tracker.completeRestart(with: updatedRecord)
         await Task.yield()
         
         XCTAssertEqual(sut.progressItems, [ItemProgress(item: progress.item, record: updatedRecord)])

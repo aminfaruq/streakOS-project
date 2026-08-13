@@ -45,6 +45,15 @@ extension LocalProgressTracker: ProgressTracker {
         apply(item, on: date, transform: { $0.togglingTimer(targetCount: item.targetCount) }, completion: completion)
     }
     
+    public func restart(_ item: Item, on date: Date, completion: @escaping (ProgressTracker.Result) -> Void) {
+        guard isEditable(date) else {
+            completion(.failure(Error.dateNotEditable))
+            return
+        }
+        
+        apply(item, on: date, transform: { $0.restarting() }, completion: completion)
+    }
+    
     private func isEditable(_ date: Date) -> Bool {
         DateNavigationWindow(today: currentDate()).accessibility(of: date) == .editable
     }

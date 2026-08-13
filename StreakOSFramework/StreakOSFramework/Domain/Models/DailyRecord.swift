@@ -117,4 +117,17 @@ public extension DailyRecord {
             )
         }
     }
+    
+    func restarting() -> DailyRecord {
+        DailyRecord(
+            id: id,
+            itemId: itemId,
+            date: date,
+            currentCount: 0,
+            isCompleted: false,
+            timerStartDate: nil,
+            createdAt: createdAt,
+            updatedAt: Date()
+        )
+    }
 }

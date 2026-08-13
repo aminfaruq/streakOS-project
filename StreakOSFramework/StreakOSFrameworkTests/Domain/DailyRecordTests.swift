@@ -163,4 +163,33 @@ final class DailyRecordTests: XCTestCase {
         XCTAssertEqual(result.currentCount, 900)
         XCTAssertTrue(result.isCompleted) // 900 >= 15 * 60
     }
+    
+    // MARK: restarting
+    
+    func test_restarting_resetsCountAndCompletionAndTimer() {
+        let itemId = UUID()
+        var sut = DailyRecord.new(for: itemId, on: Date())
+        sut = sut.incrementing(targetCount: 5)
+        sut = sut.incrementing(targetCount: 5)
+        XCTAssertEqual(sut.currentCount, 2)
+        
+        let result = sut.restarting()
+        
+        XCTAssertEqual(result.currentCount, 0)
+        XCTAssertFalse(result.isCompleted)
+        XCTAssertNil(result.timerStartDate)
+    }
+    
+    func test_restarting_runningTimer_stopsTimerAndResets() {
+        let itemId = UUID()
+        var sut = DailyRecord.new(for: itemId, on: Date())
+        sut = sut.togglingTimer(targetCount: 15)
+        XCTAssertNotNil(sut.timerStartDate)
+        
+        let result = sut.restarting()
+        
+        XCTAssertEqual(result.currentCount, 0)
+        XCTAssertFalse(result.isCompleted)
+        XCTAssertNil(result.timerStartDate)
+    }
 }

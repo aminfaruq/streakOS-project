@@ -72,9 +72,18 @@ public final class ProgressFeedViewModel: ObservableObject {
         }
     }
     
-    public func toggleTimer(for progress: ItemProgress, on date: Date = Date()) {
+    public func toggleTimer(for progress: ItemProgress, on date: Date) {
         guard let tracker else { return }
         tracker.toggleTimer(progress.item, on: date) { [weak self] result in
+            self?.apply(result) { updatedRecord in
+                self?.replace(progress, with: updatedRecord)
+            }
+        }
+    }
+    
+    public func restart(for progress: ItemProgress, on date: Date) {
+        guard let tracker else { return }
+        tracker.restart(progress.item, on: date) { [weak self] result in
             self?.apply(result) { updatedRecord in
                 self?.replace(progress, with: updatedRecord)
             }

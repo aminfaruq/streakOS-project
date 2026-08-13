@@ -234,6 +234,58 @@ final class LocalProgressTrackerTests: XCTestCase {
         XCTAssertTrue(store.receivedMessages.isEmpty)
     }
     
+    // MARK: restart
+    
+    func test_restart_retrievesRecordThenSaves() {
+        let (sut, store) = makeSUT()
+        let item = uniqueItem(date: today)
+        let date = today
+        let existing = DailyRecord(
+            id: UUID(),
+            itemId: item.id,
+            date: date,
+            currentCount: 5,
+            isCompleted: true,
+            timerStartDate: Date(),
+            createdAt: date,
+            updatedAt: date
+        )
+        
+        expect(sut, item: item, on: date, actionType: .restart) {
+            store.completeRetrieval(with: existing)
+            store.completeSaveSuccessfully()
+        }
+        
+        XCTAssertEqual(store.receivedMessages.count, 2)
+        if case let .save(saved)? = store.receivedMessages.last {
+            XCTAssertEqual(saved.itemId, item.id)
+            XCTAssertEqual(saved.currentCount, 0)
+            XCTAssertFalse(saved.isCompleted)
+            XCTAssertNil(saved.timerStartDate)
+        } else {
+            XCTFail("Expected a save message")
+        }
+    }
+    
+    func test_restart_deliversErrorOnRetrievalFailure() {
+        let (sut, store) = makeSUT()
+        let item = uniqueItem(date: today)
+        
+        expect(sut, item: item, on: today, actionType: .restart, toDeliver: .failure(LocalProgressTracker.Error.retrievalFailed)) {
+            store.completeRetrieval(with: anyNSError())
+        }
+    }
+    
+    func test_restart_readOnlyDate_doesNotRetrieveOrSave() {
+        let (sut, store) = makeSUT()
+        let item = uniqueItem(date: today)
+        let tomorrow = today.adding(days: 1)
+        
+        expect(sut, item: item, on: tomorrow, actionType: .restart, toDeliver: .failure(LocalProgressTracker.Error.dateNotEditable)) {}
+        
+        XCTAssertTrue(store.receivedMessages.isEmpty)
+    }
+    
     // MARK: Helpers
     
     private func makeSUT(
@@ -264,7 +316,7 @@ final class LocalProgressTrackerTests: XCTestCase {
     
     private func anyNSError() -> NSError { NSError(domain: "any error", code: 0) }
     
-    enum ActionType { case increment, decrement, toggleTimer }
+    enum ActionType { case increment, decrement, toggleTimer, restart }
     
     private func expect(
         _ sut: LocalProgressTracker,
@@ -299,6 +351,8 @@ final class LocalProgressTrackerTests: XCTestCase {
             sut.decrement(item, on: date, completion: completion)
         case .toggleTimer:
             sut.toggleTimer(item, on: date, completion: completion)
+        case .restart:
+            sut.restart(item, on: date, completion: completion)
         }
         
         action()
