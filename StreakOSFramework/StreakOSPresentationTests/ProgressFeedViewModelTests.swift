@@ -273,6 +273,87 @@ final class ProgressFeedViewModelTests: XCTestCase {
         XCTAssertEqual(sut.progressItems.count, 1)
     }
     
+    // MARK: Duplicate
+    
+    func test_duplicate_requestsDuplicator() async {
+        let (sut, _, duplicator) = makeSUTWithDuplicator()
+        let progress = makeProgressItems()[0]
+        
+        sut.duplicate(progress, on: anyDate)
+        await Task.yield()
+        
+        XCTAssertEqual(duplicator.receivedMessages, [.duplicate(progress.item)])
+    }
+    
+    func test_duplicate_deliversErrorMessageOnFailure() async {
+        let (sut, _, duplicator) = makeSUTWithDuplicator()
+        let progress = makeProgressItems()[0]
+        
+        sut.duplicate(progress, on: anyDate)
+        await Task.yield()
+        duplicator.completeDuplicate(with: anyNSError())
+        await Task.yield()
+        
+        XCTAssertEqual(sut.errorMessage, "Failed to duplicate item")
+    }
+    
+    func test_duplicate_reloadsDataOnSuccess() async {
+        let (sut, loader, duplicator) = makeSUTWithDuplicator()
+        let progress = makeProgressItems()[0]
+        
+        sut.duplicate(progress, on: anyDate)
+        await Task.yield()
+        duplicator.completeDuplicateSuccessfully(with: progress.item)
+        await Task.yield()
+        
+        await waitUntilLoaderCount(loader, equals: 1)
+        XCTAssertEqual(loader.requestedDates, [anyDate])
+        
+        loader.complete(with: makeProgressItems())
+        await Task.yield()
+    }
+    
+    // MARK: Update
+    
+    func test_update_requestsUpdater() async {
+        let (sut, _, updater) = makeSUTWithUpdater()
+        let progress = makeProgressItems()[0]
+        let updatedItem = progress.item
+        
+        sut.update(progress, with: updatedItem, on: anyDate)
+        await Task.yield()
+        
+        XCTAssertEqual(updater.receivedMessages.map { $0.item }, [updatedItem])
+    }
+    
+    func test_update_deliversErrorMessageOnFailure() async {
+        let (sut, _, updater) = makeSUTWithUpdater()
+        let progress = makeProgressItems()[0]
+        
+        sut.update(progress, with: progress.item, on: anyDate)
+        await Task.yield()
+        updater.completeUpdate(with: anyNSError())
+        await Task.yield()
+        
+        XCTAssertEqual(sut.errorMessage, "Failed to update item")
+    }
+    
+    func test_update_reloadsDataOnSuccess() async {
+        let (sut, loader, updater) = makeSUTWithUpdater()
+        let progress = makeProgressItems()[0]
+        
+        sut.update(progress, with: progress.item, on: anyDate)
+        await Task.yield()
+        updater.completeUpdateSuccessfully(with: progress.item)
+        await Task.yield()
+        
+        await waitUntilLoaderCount(loader, equals: 1)
+        XCTAssertEqual(loader.requestedDates, [anyDate])
+        
+        loader.complete(with: makeProgressItems())
+        await Task.yield()
+    }
+    
     // MARK: Reorder
     
     func test_reorder_doesNotMutateOnInvalidIndices() async {
@@ -447,6 +528,19 @@ final class ProgressFeedViewModelTests: XCTestCase {
         trackForMemoryLeaks(loader, file: file, line: line)
         trackForMemoryLeaks(updater, file: file, line: line)
         return (sut, loader, updater)
+    }
+    
+    private func makeSUTWithDuplicator(
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> (sut: ProgressFeedViewModel, loader: DailyProgressLoaderSpy, duplicator: ItemDuplicatorSpy) {
+        let loader = DailyProgressLoaderSpy()
+        let duplicator = ItemDuplicatorSpy()
+        let sut = ProgressFeedViewModel(loader: loader, tracker: nil, itemStore: nil, updater: nil, duplicator: duplicator)
+        trackForMemoryLeaks(sut, file: file, line: line)
+        trackForMemoryLeaks(loader, file: file, line: line)
+        trackForMemoryLeaks(duplicator, file: file, line: line)
+        return (sut, loader, duplicator)
     }
     
     private func makeProgressItems() -> [ItemProgress] {
