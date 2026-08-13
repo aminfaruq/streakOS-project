@@ -214,6 +214,7 @@ struct ProgressListView: View {
             isEditMode: isEditMode,
             onIncrement: { viewModel.increment(progress, on: selectedDate) },
             onDecrement: { viewModel.decrement(progress, on: selectedDate) },
+            onToggleTimer: { viewModel.toggleTimer(for: progress, on: selectedDate) },
             onTap: { if !isEditMode { actionedProgress = progress } }
         )
         .popover(
@@ -229,6 +230,7 @@ struct ProgressListView: View {
                     progress: currentProgress,
                     onIncrement: { viewModel.increment(currentProgress, on: selectedDate) },
                     onDecrement: { viewModel.decrement(currentProgress, on: selectedDate) },
+                    onToggleTimer: { viewModel.toggleTimer(for: currentProgress, on: selectedDate) },
                     onEdit: {
                         actionedProgress = nil
                         editingProgress = currentProgress
@@ -279,9 +281,7 @@ struct ProgressListView: View {
         }
         .padding(.vertical, 60)
     }
-    
-
-    
+        
     private var titleText: String {
         let formatter = DateFormatter()
         formatter.dateFormat = "EEEE, MMM d"
