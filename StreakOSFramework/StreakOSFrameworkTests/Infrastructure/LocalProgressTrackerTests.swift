@@ -27,6 +27,29 @@ final class LocalProgressTrackerTests: XCTestCase {
         }
     }
     
+    func test_increment_minutesType_addsSixtySecondsAndUsesCorrectThreshold() {
+        let (sut, store) = makeSUT()
+        let item = Item(
+            id: UUID(), name: "Read", icon: "📚", type: .minutes, targetCount: 15,
+            startDate: today, endDate: nil, displayOrder: 0,
+            createdAt: today, updatedAt: today
+        )
+        
+        expect(sut, item: item, on: today, actionType: .increment) {
+            store.completeRetrieval(with: .none)
+            store.completeSaveSuccessfully()
+        }
+        
+        XCTAssertEqual(store.receivedMessages.count, 2)
+        if case let .save(saved)? = store.receivedMessages.last {
+            XCTAssertEqual(saved.itemId, item.id)
+            XCTAssertEqual(saved.currentCount, 60) // +1 minute
+            XCTAssertFalse(saved.isCompleted) // 60 < 15 * 60
+        } else {
+            XCTFail("Expected a save message")
+        }
+    }
+    
     func test_increment_usesExistingRecordOnRetrieval() {
         let (sut, store) = makeSUT()
         let item = uniqueItem(date: today)

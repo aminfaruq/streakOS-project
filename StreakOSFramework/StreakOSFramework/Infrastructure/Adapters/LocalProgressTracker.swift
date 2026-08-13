@@ -24,7 +24,10 @@ extension LocalProgressTracker: ProgressTracker {
             return
         }
         
-        apply(item, on: date, transform: { $0.incrementing(targetCount: item.targetCount) }, completion: completion)
+        let amount = item.type == .minutes ? 60 : 1
+        let threshold = item.type == .minutes ? item.targetCount * 60 : item.targetCount
+        
+        apply(item, on: date, transform: { $0.incrementing(by: amount, targetCount: threshold) }, completion: completion)
     }
     
     public func decrement(_ item: Item, on date: Date, completion: @escaping (ProgressTracker.Result) -> Void) {
@@ -33,7 +36,10 @@ extension LocalProgressTracker: ProgressTracker {
             return
         }
         
-        apply(item, on: date, transform: { $0.decrementing(targetCount: item.targetCount) }, completion: completion)
+        let amount = item.type == .minutes ? 60 : 1
+        let threshold = item.type == .minutes ? item.targetCount * 60 : item.targetCount
+        
+        apply(item, on: date, transform: { $0.decrementing(by: amount, targetCount: threshold) }, completion: completion)
     }
     
     public func toggleTimer(_ item: Item, on date: Date, completion: @escaping (ProgressTracker.Result) -> Void) {

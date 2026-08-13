@@ -44,6 +44,23 @@ final class ItemProgressTests: XCTestCase {
         XCTAssertEqual(sut.progressFraction, 1.0)
     }
     
+    func test_progressFraction_minutesType_returnsCorrectFraction() {
+        let item = Item(
+            id: UUID(), name: "Read", icon: "📚", type: .minutes, targetCount: 15,
+            startDate: Date(), endDate: nil, displayOrder: 0,
+            createdAt: Date(), updatedAt: Date()
+        )
+        let record = DailyRecord(
+            id: UUID(), itemId: item.id, date: Date(),
+            currentCount: 450, // 450 seconds = 7.5 minutes
+            isCompleted: false, timerStartDate: nil,
+            createdAt: Date(), updatedAt: Date()
+        )
+        let sut = ItemProgress(item: item, record: record)
+        
+        XCTAssertEqual(sut.progressFraction, 0.5) // 450 / 900
+    }
+    
     func test_displayText_noRecord_showsZero() {
         let item = uniqueItem(targetCount: 5)
         let sut = ItemProgress(item: item, record: nil)
@@ -83,5 +100,22 @@ final class ItemProgressTests: XCTestCase {
         let sut = ItemProgress(item: item, record: record)
         
         XCTAssertEqual(sut.displayText, "✓")
+    }
+    
+    func test_displayText_minutesType_showsMinutesCorrectly() {
+        let item = Item(
+            id: UUID(), name: "Read", icon: "📚", type: .minutes, targetCount: 15,
+            startDate: Date(), endDate: nil, displayOrder: 0,
+            createdAt: Date(), updatedAt: Date()
+        )
+        let record = DailyRecord(
+            id: UUID(), itemId: item.id, date: Date(),
+            currentCount: 120, // 2 minutes
+            isCompleted: false, timerStartDate: nil,
+            createdAt: Date(), updatedAt: Date()
+        )
+        let sut = ItemProgress(item: item, record: record)
+        
+        XCTAssertEqual(sut.displayText, "2/15")
     }
 }

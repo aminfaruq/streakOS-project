@@ -54,38 +54,36 @@ struct ItemActionsView: View {
                 .tracking(1.5)
                 .frame(maxWidth: .infinity, alignment: .leading)
             
-            if progress.item.type == .count {
-                HStack {
-                    Button(action: onDecrement) {
-                        Image(systemName: "minus")
-                            .font(.title3.weight(.bold))
-                            .frame(width: 44, height: 44)
-                            .background(Color.gray.opacity(0.1), in: RoundedRectangle(cornerRadius: 12))
-                            .foregroundStyle(.primary)
-                    }
-                    .buttonStyle(.plain)
-                    
-                    Spacer()
-                    
-                    Text(progress.displayText)
-                        .font(.system(size: 20, weight: .bold))
-                        .frame(minWidth: 80, alignment: .center)
-                    
-                    Spacer()
-                    
-                    Button(action: onIncrement) {
-                        Image(systemName: "plus")
-                            .font(.title3.weight(.bold))
-                            .foregroundStyle(DesignTokens.accent)
-                            .frame(width: 44, height: 44)
-                            .background(DesignTokens.accent.opacity(0.15), in: RoundedRectangle(cornerRadius: 12))
-                    }
-                    .buttonStyle(.plain)
+            HStack {
+                Button(action: onDecrement) {
+                    Image(systemName: "minus")
+                        .font(.title3.weight(.bold))
+                        .frame(width: 44, height: 44)
+                        .background(Color.gray.opacity(0.1), in: RoundedRectangle(cornerRadius: 12))
+                        .foregroundStyle(.primary)
                 }
-                .padding(12)
-                .background(DesignTokens.card, in: RoundedRectangle(cornerRadius: 16))
-                .overlay(RoundedRectangle(cornerRadius: 16).stroke(Color.gray.opacity(0.1), lineWidth: 1))
+                .buttonStyle(.plain)
+                
+                Spacer()
+                
+                Text(progress.displayText)
+                    .font(.system(size: 20, weight: .bold))
+                    .frame(minWidth: 80, alignment: .center)
+                
+                Spacer()
+                
+                Button(action: onIncrement) {
+                    Image(systemName: "plus")
+                        .font(.title3.weight(.bold))
+                        .foregroundStyle(DesignTokens.accent)
+                        .frame(width: 44, height: 44)
+                        .background(DesignTokens.accent.opacity(0.15), in: RoundedRectangle(cornerRadius: 12))
+                }
+                .buttonStyle(.plain)
             }
+            .padding(12)
+            .background(DesignTokens.card, in: RoundedRectangle(cornerRadius: 16))
+            .overlay(RoundedRectangle(cornerRadius: 16).stroke(Color.gray.opacity(0.1), lineWidth: 1))
             
             let isRestartDisabled = (progress.record?.currentCount ?? 0) == 0 && progress.record?.timerStartDate == nil
             

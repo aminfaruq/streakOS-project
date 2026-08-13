@@ -45,9 +45,9 @@ public struct DailyRecord: Hashable {
 }
 
 public extension DailyRecord {
-    func incrementing(targetCount: Int) -> DailyRecord {
+    func incrementing(by amount: Int = 1, targetCount: Int) -> DailyRecord {
         guard !isCompleted else { return self }
-        let newCount = currentCount + 1
+        let newCount = currentCount + amount
         return DailyRecord(
             id: id,
             itemId: itemId,
@@ -60,21 +60,21 @@ public extension DailyRecord {
         )
     }
     
-    func decrementing(targetCount: Int) -> DailyRecord {
+    func decrementing(by amount: Int = 1, targetCount: Int) -> DailyRecord {
         if isCompleted {
-            let newCount = targetCount - 1
+            let newCount = targetCount - amount
             return DailyRecord(
                 id: id,
                 itemId: itemId,
                 date: date,
-                currentCount: newCount,
+                currentCount: max(0, newCount),
                 isCompleted: false,
                 timerStartDate: timerStartDate,
                 createdAt: createdAt,
                 updatedAt: Date()
             )
         } else {
-            let newCount = max(0, currentCount - 1)
+            let newCount = max(0, currentCount - amount)
             return DailyRecord(
                 id: id,
                 itemId: itemId,

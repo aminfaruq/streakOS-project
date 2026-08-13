@@ -60,6 +60,16 @@ final class DailyRecordTests: XCTestCase {
         XCTAssertEqual(record.currentCount, 3)
     }
     
+    func test_incrementing_byAmount_increasesCountProperly() {
+        let itemId = UUID()
+        let sut = DailyRecord.new(for: itemId, on: Date())
+        
+        let result = sut.incrementing(by: 60, targetCount: 900)
+        
+        XCTAssertEqual(result.currentCount, 60)
+        XCTAssertFalse(result.isCompleted)
+    }
+    
     func test_decrementing_whenCompleted_uncompletes() {
         let itemId = UUID()
         var sut = DailyRecord.new(for: itemId, on: Date())
@@ -95,6 +105,17 @@ final class DailyRecordTests: XCTestCase {
         let result = sut.decrementing(targetCount: 5)
         
         XCTAssertEqual(result.currentCount, 0)
+        XCTAssertFalse(result.isCompleted)
+    }
+    
+    func test_decrementing_byAmount_decreasesCountProperly() {
+        let itemId = UUID()
+        var sut = DailyRecord.new(for: itemId, on: Date())
+        sut = sut.incrementing(by: 120, targetCount: 900)
+        
+        let result = sut.decrementing(by: 60, targetCount: 900)
+        
+        XCTAssertEqual(result.currentCount, 60)
         XCTAssertFalse(result.isCompleted)
     }
     
