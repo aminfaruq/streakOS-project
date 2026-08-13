@@ -31,5 +31,6 @@ struct StreakOSMacAppApp: App {
             )
             .frame(minWidth: 400, minHeight: 700)
         }
+        .windowStyle(.hiddenTitleBar)
     }
 }
