@@ -273,6 +273,103 @@ final class ProgressFeedViewModelTests: XCTestCase {
         XCTAssertEqual(sut.progressItems.count, 1)
     }
     
+    // MARK: Reorder
+    
+    func test_reorder_doesNotMutateOnInvalidIndices() async {
+        let (sut, loader, updater) = makeSUTWithUpdater()
+        let loaded = makeProgressItems()
+        
+        sut.load(for: anyDate)
+        await Task.yield()
+        loader.complete(with: loaded)
+        await waitUntilLoaded(sut, equals: loaded)
+        
+        sut.reorder(from: -1, to: 0)
+        sut.reorder(from: 0, to: 5)
+        await Task.yield()
+        
+        XCTAssertEqual(sut.progressItems, loaded)
+        XCTAssertTrue(updater.receivedMessages.isEmpty)
+    }
+    
+    func test_reorder_updatesProgressItemsOrderLocally() async {
+        let (sut, loader, updater) = makeSUTWithUpdater()
+        let items = [
+            makeProgressItem(name: "Item 1", displayOrder: 0),
+            makeProgressItem(name: "Item 2", displayOrder: 1),
+            makeProgressItem(name: "Item 3", displayOrder: 2)
+        ]
+        
+        sut.load(for: anyDate)
+        await Task.yield()
+        loader.complete(with: items)
+        await waitUntilLoaded(sut, equals: items)
+        
+        sut.reorder(from: 0, to: 2)
+        await Task.yield()
+        
+        XCTAssertEqual(sut.progressItems.map { $0.item.name }, ["Item 2", "Item 3", "Item 1"])
+        XCTAssertEqual(sut.progressItems.map { $0.item.displayOrder }, [0, 1, 2])
+        
+        // Complete hanging updates sequentially to prevent memory leaks in test
+        await waitUntilUpdaterCount(updater, equals: 1)
+        updater.completeUpdateSuccessfully(with: items[0].item, at: 0)
+        
+        await waitUntilUpdaterCount(updater, equals: 2)
+        updater.completeUpdateSuccessfully(with: items[1].item, at: 1)
+        
+        await waitUntilUpdaterCount(updater, equals: 3)
+        updater.completeUpdateSuccessfully(with: items[2].item, at: 2)
+        
+        await waitUntilLoaderCount(loader, equals: 2)
+        loader.complete(with: items, at: 1)
+        await Task.yield()
+    }
+    
+    func test_reorder_requestsUpdaterForReorderedItemsSequentially() async {
+        let (sut, loader, updater) = makeSUTWithUpdater()
+        let items = [
+            makeProgressItem(name: "Item 1", displayOrder: 0),
+            makeProgressItem(name: "Item 2", displayOrder: 1)
+        ]
+        
+        sut.load(for: anyDate)
+        await Task.yield()
+        loader.complete(with: items, at: 0)
+        await waitUntilLoaded(sut, equals: items)
+        
+        sut.reorder(from: 0, to: 1)
+        await Task.yield()
+        
+        // Optimistic UI update
+        XCTAssertEqual(sut.progressItems.map { $0.item.name }, ["Item 2", "Item 1"])
+        
+        // 1st update
+        await waitUntilUpdaterCount(updater, equals: 1)
+        XCTAssertEqual(updater.receivedMessages.count, 1)
+        updater.completeUpdateSuccessfully(with: updater.receivedMessages.last!.item, at: 0)
+        
+        // 2nd update
+        await waitUntilUpdaterCount(updater, equals: 2)
+        XCTAssertEqual(updater.receivedMessages.count, 2)
+        updater.completeUpdateSuccessfully(with: updater.receivedMessages.last!.item, at: 1)
+        
+        // Reload triggered after updates complete
+        await waitUntilLoaderCount(loader, equals: 2)
+        XCTAssertEqual(loader.requestedDates.count, 2)
+        loader.complete(with: items, at: 1)
+        await Task.yield()
+    }
+    
+    func test_updateItemsLocally_replacesProgressItems() async {
+        let (sut, _, _) = makeSUTWithUpdater()
+        let items = [makeProgressItem(name: "Local", displayOrder: 0)]
+        
+        sut.updateItemsLocally(items)
+        
+        XCTAssertEqual(sut.progressItems, items)
+    }
+    
     // MARK: Helpers
     
     private var anyDate: Date { Date(timeIntervalSince1970: 1_700_000_000) }
@@ -284,6 +381,20 @@ final class ProgressFeedViewModelTests: XCTestCase {
             if expected == nil ? !sut.isLoading && !sut.progressItems.isEmpty : sut.progressItems == expected {
                 return
             }
+            await Task.yield()
+        }
+    }
+    
+    private func waitUntilUpdaterCount(_ updater: ItemUpdaterSpy, equals count: Int) async {
+        for _ in 0..<100 {
+            if updater.receivedMessages.count == count { return }
+            await Task.yield()
+        }
+    }
+    
+    private func waitUntilLoaderCount(_ loader: DailyProgressLoaderSpy, equals count: Int) async {
+        for _ in 0..<100 {
+            if loader.requestedDates.count == count { return }
             await Task.yield()
         }
     }
@@ -325,18 +436,35 @@ final class ProgressFeedViewModelTests: XCTestCase {
         return (sut, loader, itemStore)
     }
     
+    private func makeSUTWithUpdater(
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> (sut: ProgressFeedViewModel, loader: DailyProgressLoaderSpy, updater: ItemUpdaterSpy) {
+        let loader = DailyProgressLoaderSpy()
+        let updater = ItemUpdaterSpy()
+        let sut = ProgressFeedViewModel(loader: loader, tracker: nil, itemStore: nil, updater: updater)
+        trackForMemoryLeaks(sut, file: file, line: line)
+        trackForMemoryLeaks(loader, file: file, line: line)
+        trackForMemoryLeaks(updater, file: file, line: line)
+        return (sut, loader, updater)
+    }
+    
     private func makeProgressItems() -> [ItemProgress] {
+        return [makeProgressItem(name: "Push Ups", displayOrder: 0)]
+    }
+    
+    private func makeProgressItem(name: String, displayOrder: Int) -> ItemProgress {
         let item = Item(
             id: UUID(),
-            name: "Push Ups",
+            name: name,
             icon: "💪",
             targetCount: 10,
             startDate: anyDate,
             endDate: nil,
-            displayOrder: 0,
+            displayOrder: displayOrder,
             createdAt: anyDate,
             updatedAt: anyDate
         )
-        return [ItemProgress(item: item, record: nil)]
+        return ItemProgress(item: item, record: nil)
     }
 }
