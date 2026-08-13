@@ -71,6 +71,8 @@
 		837A1520302DEB990065B6D1 /* StreakOSWatchApp Watch AppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "StreakOSWatchApp Watch AppUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		837A1558302DEDA20065B6D1 /* StreakOSFramework.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = StreakOSFramework.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		837A155C302DEDA70065B6D1 /* StreakOSPresentation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = StreakOSPresentation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		837A1566302DF08B0065B6D1 /* StreakOSWatchApp Watch App.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "StreakOSWatchApp Watch App.entitlements"; sourceTree = "<group>"; };
+		837A1567302DF0D90065B6D1 /* StreakOSWatchApp-Watch-App-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "StreakOSWatchApp-Watch-App-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -121,6 +123,8 @@
 		837A14FA302DEB970065B6D1 = {
 			isa = PBXGroup;
 			children = (
+				837A1567302DF0D90065B6D1 /* StreakOSWatchApp-Watch-App-Info.plist */,
+				837A1566302DF08B0065B6D1 /* StreakOSWatchApp Watch App.entitlements */,
 				837A150B302DEB970065B6D1 /* StreakOSWatchApp */,
 				837A1519302DEB990065B6D1 /* StreakOSWatchAppTests */,
 				837A1523302DEB990065B6D1 /* StreakOSWatchAppUITests */,
@@ -483,11 +487,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "StreakOSWatchApp Watch App.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = WZB5R9B92Y;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "StreakOSWatchApp-Watch-App-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = StreakOSWatchApp;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_WKWatchOnly = YES;
@@ -516,11 +522,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "StreakOSWatchApp Watch App.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = WZB5R9B92Y;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "StreakOSWatchApp-Watch-App-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = StreakOSWatchApp;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_WKWatchOnly = YES;
