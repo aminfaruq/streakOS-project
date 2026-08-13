@@ -23,18 +23,99 @@ struct ProgressListView: View {
     }
     
     var body: some View {
-        VStack(spacing: 16) {
-            editHeaderButton
+        VStack(spacing: 0) {
+            // Header
+            HStack(alignment: .bottom) {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("StreakOS")
+                        .font(.system(size: 34, weight: .bold, design: .default))
+                        .tracking(-0.5)
+                    
+                    Text(titleText)
+                        .font(.system(size: 15, weight: .medium))
+                        .foregroundStyle(.secondary)
+                }
+                
+                Spacer()
+                
+                // Activity Ring
+                ZStack {
+                    Circle()
+                        .stroke(Color.gray.opacity(0.2), lineWidth: 4)
+                    
+                    Circle()
+                        .trim(from: 0, to: progressFraction)
+                        .stroke(DesignTokens.accent, style: StrokeStyle(lineWidth: 4, lineCap: .round))
+                        .rotationEffect(.degrees(-90))
+                        .animation(.spring(response: 0.8, dampingFraction: 0.6), value: progressFraction)
+                    
+                    Text("\(completedCount)/\(viewModel.progressItems.count)")
+                        .font(.system(size: 11, weight: .bold))
+                }
+                .frame(width: 44, height: 44)
+                .opacity(isEditMode ? 0.3 : 1.0)
+            }
+            .padding(.horizontal, 16)
+            .padding(.top, 24)
+            .padding(.bottom, 20)
             
-            DateHeaderView(
-                title: titleText,
-                isToday: navigationWindow.isToday(selectedDate),
-                canGoBackward: navigationWindow.canNavigateBackward(from: selectedDate),
-                canGoForward: navigationWindow.canNavigateForward(from: selectedDate),
-                onBackward: { shiftDay(by: -1) },
-                onForward: { shiftDay(by: 1) },
-                onToday: { selectedDate = Date() }
-            )
+            // Actions Row (Edit, Date Nav, Add)
+            HStack {
+                Button(action: { withAnimation { isEditMode.toggle() } }) {
+                    Text(isEditMode ? "Done" : "Edit")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundStyle(.blue)
+                }
+                .buttonStyle(.plain)
+                
+                Spacer()
+                
+                // Mini Date Navigation
+                HStack(spacing: 12) {
+                    Button(action: { shiftDay(by: -1) }) {
+                        Image(systemName: "chevron.left")
+                            .font(.system(size: 14, weight: .bold))
+                            .foregroundStyle(navigationWindow.canNavigateBackward(from: selectedDate) ? .primary : .tertiary)
+                    }
+                    .buttonStyle(.plain)
+                    .disabled(!navigationWindow.canNavigateBackward(from: selectedDate))
+                    
+                    if !navigationWindow.isToday(selectedDate) {
+                        Button("Today") { selectedDate = Date() }
+                            .font(.system(size: 12, weight: .bold))
+                            .buttonStyle(.plain)
+                            .foregroundStyle(DesignTokens.accent)
+                    } else {
+                        Text("Today")
+                            .font(.system(size: 12, weight: .bold))
+                            .foregroundStyle(.secondary)
+                    }
+                    
+                    Button(action: { shiftDay(by: 1) }) {
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 14, weight: .bold))
+                            .foregroundStyle(navigationWindow.canNavigateForward(from: selectedDate) ? .primary : .tertiary)
+                    }
+                    .buttonStyle(.plain)
+                    .disabled(!navigationWindow.canNavigateForward(from: selectedDate))
+                }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(Color.gray.opacity(0.1), in: Capsule())
+                
+                Spacer()
+                
+                Button(action: { isAddingItem = true }) {
+                    Image(systemName: "plus")
+                        .font(.system(size: 16, weight: .bold))
+                        .foregroundStyle(.blue)
+                        .frame(width: 32, height: 32)
+                        .background(Color.blue.opacity(0.1), in: Circle())
+                }
+                .buttonStyle(.plain)
+            }
+            .padding(.horizontal, 16)
+            .padding(.bottom, 20)
             
             if viewModel.isLoading && viewModel.progressItems.isEmpty {
                 Spacer()
@@ -43,12 +124,7 @@ struct ProgressListView: View {
             } else {
                 mainContentView
             }
-            
-            addButton
-            
-            Spacer(minLength: 0)
         }
-        .padding(16)
         .background(DesignTokens.background)
         .onAppear {
             viewModel.load(for: selectedDate)
@@ -74,31 +150,7 @@ struct ProgressListView: View {
                 onCancel: { editingProgress = nil }
             )
         }
-        .popover(item: $actionedProgress) { progress in
-            let currentProgress = viewModel.progressItems.first(where: { $0.item.id == progress.item.id }) ?? progress
-            ItemActionsView(
-                progress: currentProgress,
-                onIncrement: {
-                    viewModel.increment(currentProgress, on: selectedDate)
-                },
-                onDecrement: {
-                    viewModel.decrement(currentProgress, on: selectedDate)
-                },
-                onEdit: {
-                    actionedProgress = nil
-                    editingProgress = currentProgress
-                },
-                onDuplicate: {
-                    actionedProgress = nil
-                    viewModel.duplicate(currentProgress, on: selectedDate)
-                },
-                onDelete: {
-                    actionedProgress = nil
-                    pendingDelete = currentProgress
-                },
-                onCancel: { actionedProgress = nil }
-            )
-        }
+
         .confirmationDialog(
             "Delete \(pendingDelete?.item.name ?? "item")?",
             isPresented: Binding(
@@ -121,17 +173,18 @@ struct ProgressListView: View {
         }
     }
     
-    private var editHeaderButton: some View {
-        HStack {
-            Spacer()
-            Button(isEditMode ? "Done" : "Edit") {
-                withAnimation { isEditMode.toggle() }
-            }
-            .buttonStyle(.plain)
-            .foregroundStyle(DesignTokens.accent)
-            .font(.body.weight(.medium))
-        }
-        .padding(.bottom, -8)
+    private var completedCount: Int {
+        viewModel.progressItems.filter { $0.record?.isCompleted == true }.count
+    }
+    
+    private var progressFraction: Double {
+        let total = viewModel.progressItems.count
+        guard total > 0 else { return 0 }
+        return Double(completedCount) / Double(total)
+    }
+    
+    private var isFutureDate: Bool {
+        Calendar.current.startOfDay(for: selectedDate) > Calendar.current.startOfDay(for: Date())
     }
     
     private var mainContentView: some View {
@@ -146,7 +199,11 @@ struct ProgressListView: View {
                 }
             }
             .padding(4)
+            .padding(.horizontal)
             .frame(maxWidth: .infinity)
+            .opacity(isFutureDate ? 0.5 : 1.0)
+            .grayscale(isFutureDate ? 0.8 : 0)
+            .disabled(isFutureDate)
         }
     }
     
@@ -156,8 +213,38 @@ struct ProgressListView: View {
             progress: progress,
             isEditMode: isEditMode,
             onIncrement: { viewModel.increment(progress, on: selectedDate) },
+            onDecrement: { viewModel.decrement(progress, on: selectedDate) },
             onTap: { if !isEditMode { actionedProgress = progress } }
         )
+        .popover(
+            isPresented: Binding(
+                get: { actionedProgress?.item.id == progress.item.id },
+                set: { if !$0 && actionedProgress?.item.id == progress.item.id { actionedProgress = nil } }
+            ),
+            attachmentAnchor: .rect(.bounds),
+            arrowEdge: .trailing
+        ) {
+            if let currentProgress = viewModel.progressItems.first(where: { $0.item.id == progress.item.id }) ?? (actionedProgress?.item.id == progress.item.id ? progress : nil) {
+                ItemActionsView(
+                    progress: currentProgress,
+                    onIncrement: { viewModel.increment(currentProgress, on: selectedDate) },
+                    onDecrement: { viewModel.decrement(currentProgress, on: selectedDate) },
+                    onEdit: {
+                        actionedProgress = nil
+                        editingProgress = currentProgress
+                    },
+                    onDuplicate: {
+                        actionedProgress = nil
+                        viewModel.duplicate(currentProgress, on: selectedDate)
+                    },
+                    onDelete: {
+                        actionedProgress = nil
+                        pendingDelete = currentProgress
+                    },
+                    onCancel: { actionedProgress = nil }
+                )
+            }
+        }
         .onDrag {
             if isEditMode {
                 draggedProgress = progress
@@ -193,19 +280,7 @@ struct ProgressListView: View {
         .padding(.vertical, 60)
     }
     
-    private var addButton: some View {
-        Button {
-            isAddingItem = true
-        } label: {
-            Label("Add Item", systemImage: "plus")
-                .font(.body.weight(.semibold))
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 10)
-                .background(DesignTokens.accent, in: RoundedRectangle(cornerRadius: DesignTokens.cardRadius))
-                .foregroundStyle(.white)
-        }
-        .buttonStyle(.plain)
-    }
+
     
     private var titleText: String {
         let formatter = DateFormatter()
