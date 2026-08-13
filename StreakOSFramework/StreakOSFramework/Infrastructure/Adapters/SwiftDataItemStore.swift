@@ -46,6 +46,7 @@ extension SwiftDataItemStore: ItemStore {
             if let existing = allItems.first(where: { $0.id == item.id }) {
                 existing.name = item.name
                 existing.icon = item.icon
+                existing.itemTypeRawValue = item.type.rawValue
                 existing.targetCount = item.targetCount
                 existing.startDate = item.startDate
                 existing.endDate = item.endDate

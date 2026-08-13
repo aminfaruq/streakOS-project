@@ -77,7 +77,7 @@ final class SwiftDataItemStoreIntegrationTests: XCTestCase {
             id: item.id,
             name: "New Name",
             icon: item.icon,
-            type: ItemType.count,
+            type: ItemType.minutes,
             targetCount: 7,
             startDate: item.startDate,
             endDate: item.endDate,
@@ -96,6 +96,7 @@ final class SwiftDataItemStoreIntegrationTests: XCTestCase {
             case let .success(items):
                 XCTAssertEqual(items.count, 1)
                 XCTAssertEqual(items[0].name, "New Name")
+                XCTAssertEqual(items[0].type, .minutes)
                 XCTAssertEqual(items[0].targetCount, 7)
             case .failure:
                 XCTFail("Expected success")
