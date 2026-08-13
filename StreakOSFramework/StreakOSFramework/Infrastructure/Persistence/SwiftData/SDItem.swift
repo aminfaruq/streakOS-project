@@ -3,16 +3,16 @@ import SwiftData
 
 @Model
 public final class SDItem {
-    @Attribute(.unique) public var id: UUID
-    public var name: String
-    public var icon: String
-    public var itemTypeRawValue: String
-    public var targetCount: Int
-    public var startDate: Date
+    public var id: UUID = UUID()
+    public var name: String = ""
+    public var icon: String = ""
+    public var itemTypeRawValue: String = "count"
+    public var targetCount: Int = 1
+    public var startDate: Date = Date()
     public var endDate: Date?
-    public var displayOrder: Int
-    public var createdAt: Date
-    public var updatedAt: Date
+    public var displayOrder: Int = 0
+    public var createdAt: Date = Date()
+    public var updatedAt: Date = Date()
     
     @Relationship(deleteRule: .cascade, inverse: \SDDailyRecord.item)
     public var records: [SDDailyRecord]?

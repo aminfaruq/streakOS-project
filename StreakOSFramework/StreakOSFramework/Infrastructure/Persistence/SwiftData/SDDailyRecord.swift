@@ -3,14 +3,14 @@ import SwiftData
 
 @Model
 public final class SDDailyRecord {
-    @Attribute(.unique) public var id: UUID
-    public var itemId: UUID
-    public var date: Date
-    public var currentCount: Int
-    public var isCompleted: Bool
+    public var id: UUID = UUID()
+    public var itemId: UUID = UUID()
+    public var date: Date = Date()
+    public var currentCount: Int = 0
+    public var isCompleted: Bool = false
     public var timerStartDate: Date?
-    public var createdAt: Date
-    public var updatedAt: Date
+    public var createdAt: Date = Date()
+    public var updatedAt: Date = Date()
     
     public var item: SDItem?
     
