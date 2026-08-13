@@ -1,4 +1,5 @@
 import SwiftUI
+import UniformTypeIdentifiers
 import StreakOSFramework
 import StreakOSPresentation
 
@@ -10,10 +11,12 @@ struct ProgressListView: View {
     let itemDuplicator: any ItemDuplicator
     
     @State private var selectedDate = Date()
+    @State private var isEditMode = false
     @State private var isAddingItem = false
     @State private var actionedProgress: ItemProgress?
     @State private var editingProgress: ItemProgress?
     @State private var pendingDelete: ItemProgress?
+    @State private var draggedProgress: ItemProgress?
     
     private var navigationWindow: DateNavigationWindow {
         DateNavigationWindow(today: Date())
@@ -21,6 +24,8 @@ struct ProgressListView: View {
     
     var body: some View {
         VStack(spacing: 16) {
+            editHeaderButton
+
             DateHeaderView(
                 title: titleText,
                 isToday: navigationWindow.isToday(selectedDate),
@@ -36,23 +41,7 @@ struct ProgressListView: View {
                 ProgressView()
                 Spacer()
             } else {
-                ScrollView {
-                    LazyVStack(spacing: 12) {
-                        if viewModel.progressItems.isEmpty {
-                            emptyState
-                        } else {
-                            ForEach(viewModel.progressItems, id: \.item.id) { progress in
-                                ItemCardView(
-                                    progress: progress,
-                                    onIncrement: { viewModel.increment(progress, on: selectedDate) },
-                                    onTap: { actionedProgress = progress }
-                                )
-                            }
-                        }
-                    }
-                    .padding(4)
-                    .frame(maxWidth: .infinity)
-                }
+                mainContentView
             }
             
             addButton
@@ -132,6 +121,66 @@ struct ProgressListView: View {
         }
     }
     
+    private var editHeaderButton: some View {
+        HStack {
+            Spacer()
+            Button(isEditMode ? "Done" : "Edit") {
+                withAnimation { isEditMode.toggle() }
+            }
+            .buttonStyle(.plain)
+            .foregroundStyle(DesignTokens.accent)
+            .font(.body.weight(.medium))
+        }
+        .padding(.bottom, -8)
+    }
+
+    private var mainContentView: some View {
+        ScrollView {
+            LazyVStack(spacing: 12) {
+                if viewModel.progressItems.isEmpty {
+                    emptyState
+                } else {
+                    ForEach(viewModel.progressItems, id: \.item.id) { progress in
+                        draggableItemCard(for: progress)
+                    }
+                }
+            }
+            .padding(4)
+            .frame(maxWidth: .infinity)
+        }
+    }
+
+    @ViewBuilder
+    private func draggableItemCard(for progress: ItemProgress) -> some View {
+        ItemCardView(
+            progress: progress,
+            isEditMode: isEditMode,
+            onIncrement: { viewModel.increment(progress, on: selectedDate) },
+            onTap: { if !isEditMode { actionedProgress = progress } }
+        )
+        .onDrag {
+            if isEditMode {
+                draggedProgress = progress
+                return NSItemProvider(object: progress.item.id.uuidString as NSString)
+            }
+            return NSItemProvider()
+        }
+        .onDrop(
+            of: isEditMode ? [.text] : [],
+            delegate: ItemDropDelegate(
+                item: progress,
+                items: Binding(
+                    get: { viewModel.progressItems },
+                    set: { viewModel.updateItemsLocally($0) }
+                ),
+                draggedItem: $draggedProgress,
+                onMove: { from, to in
+                    viewModel.reorder(from: from, to: to, on: selectedDate)
+                }
+            )
+        )
+    }
+    
     private var emptyState: some View {
         VStack(spacing: 12) {
             Text("📋")
@@ -168,5 +217,32 @@ struct ProgressListView: View {
         if let newDate = Calendar.current.date(byAdding: .day, value: offset, to: selectedDate) {
             selectedDate = newDate
         }
+    }
+}
+
+struct ItemDropDelegate: DropDelegate {
+    let item: ItemProgress
+    @Binding var items: [ItemProgress]
+    @Binding var draggedItem: ItemProgress?
+    let onMove: (Int, Int) -> Void
+
+    func dropEntered(info: DropInfo) {
+        guard let draggedItem = draggedItem,
+              draggedItem.item.id != item.item.id,
+              let from = items.firstIndex(where: { $0.item.id == draggedItem.item.id }),
+              let to = items.firstIndex(where: { $0.item.id == item.item.id }) else {
+            return
+        }
+
+        if items[to].item.id != draggedItem.item.id {
+            withAnimation {
+                onMove(from, to)
+            }
+        }
+    }
+    
+    func performDrop(info: DropInfo) -> Bool {
+        draggedItem = nil
+        return true
     }
 }

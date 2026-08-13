@@ -4,6 +4,7 @@ import StreakOSFramework
 /// PRD §9.3 item card.
 struct ItemCardView: View {
     let progress: ItemProgress
+    var isEditMode: Bool = false
     let onIncrement: () -> Void
     let onTap: () -> Void
 
@@ -15,7 +16,12 @@ struct ItemCardView: View {
 
             Spacer(minLength: 0)
 
-            if progress.record?.isCompleted == true {
+            if isEditMode {
+                Image(systemName: "line.3.horizontal")
+                    .font(.title2)
+                    .foregroundStyle(.tertiary)
+                    .frame(width: DesignTokens.buttonSize, height: DesignTokens.buttonSize)
+            } else if progress.record?.isCompleted == true {
                 idempotentCircle
             } else {
                 plusButton
@@ -23,6 +29,7 @@ struct ItemCardView: View {
         }
         .padding(12)
         .background(DesignTokens.card, in: RoundedRectangle(cornerRadius: DesignTokens.cardRadius))
+        .scaleEffect(isEditMode ? 0.98 : 1.0)
     }
 
     private var tapContent: some View {
