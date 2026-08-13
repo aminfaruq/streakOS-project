@@ -82,6 +82,7 @@ extension SwiftDataDailyRecordStore: DailyRecordStore {
             }) {
                 existing.currentCount = record.currentCount
                 existing.isCompleted = record.isCompleted
+                existing.timerStartDate = record.timerStartDate
                 existing.updatedAt = record.updatedAt
             } else {
                 let sdRecord = SDDailyRecordMapper.toSDModel(record)

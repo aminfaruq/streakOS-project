@@ -6,6 +6,7 @@ public struct DailyRecord: Hashable {
     public let date: Date
     public let currentCount: Int
     public let isCompleted: Bool
+    public let timerStartDate: Date?
     public let createdAt: Date
     public let updatedAt: Date
     
@@ -15,6 +16,7 @@ public struct DailyRecord: Hashable {
         date: Date,
         currentCount: Int,
         isCompleted: Bool,
+        timerStartDate: Date?,
         createdAt: Date,
         updatedAt: Date
     ) {
@@ -23,6 +25,7 @@ public struct DailyRecord: Hashable {
         self.date = date
         self.currentCount = currentCount
         self.isCompleted = isCompleted
+        self.timerStartDate = timerStartDate
         self.createdAt = createdAt
         self.updatedAt = updatedAt
     }
@@ -34,6 +37,7 @@ public struct DailyRecord: Hashable {
             date: date,
             currentCount: 0,
             isCompleted: false,
+            timerStartDate: nil,
             createdAt: Date(),
             updatedAt: Date()
         )
@@ -50,6 +54,7 @@ public extension DailyRecord {
             date: date,
             currentCount: newCount,
             isCompleted: newCount >= targetCount,
+            timerStartDate: timerStartDate,
             createdAt: createdAt,
             updatedAt: Date()
         )
@@ -64,6 +69,7 @@ public extension DailyRecord {
                 date: date,
                 currentCount: newCount,
                 isCompleted: false,
+                timerStartDate: timerStartDate,
                 createdAt: createdAt,
                 updatedAt: Date()
             )
@@ -75,6 +81,37 @@ public extension DailyRecord {
                 date: date,
                 currentCount: newCount,
                 isCompleted: false,
+                timerStartDate: timerStartDate,
+                createdAt: createdAt,
+                updatedAt: Date()
+            )
+        }
+    }
+    
+    func togglingTimer(targetCount: Int) -> DailyRecord {
+        if let startDate = timerStartDate {
+            // Stop timer
+            let elapsed = Int(Date().timeIntervalSince(startDate))
+            let newCount = currentCount + elapsed
+            return DailyRecord(
+                id: id,
+                itemId: itemId,
+                date: date,
+                currentCount: newCount,
+                isCompleted: newCount >= (targetCount * 60),
+                timerStartDate: nil,
+                createdAt: createdAt,
+                updatedAt: Date()
+            )
+        } else {
+            // Start timer
+            return DailyRecord(
+                id: id,
+                itemId: itemId,
+                date: date,
+                currentCount: currentCount,
+                isCompleted: false,
+                timerStartDate: Date(),
                 createdAt: createdAt,
                 updatedAt: Date()
             )

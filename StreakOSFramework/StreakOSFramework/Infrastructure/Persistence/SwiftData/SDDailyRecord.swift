@@ -8,6 +8,7 @@ public final class SDDailyRecord {
     public var date: Date
     public var currentCount: Int
     public var isCompleted: Bool
+    public var timerStartDate: Date?
     public var createdAt: Date
     public var updatedAt: Date
     
@@ -19,6 +20,7 @@ public final class SDDailyRecord {
         date: Date,
         currentCount: Int,
         isCompleted: Bool,
+        timerStartDate: Date? = nil,
         createdAt: Date,
         updatedAt: Date
     ) {
@@ -27,6 +29,7 @@ public final class SDDailyRecord {
         self.date = date
         self.currentCount = currentCount
         self.isCompleted = isCompleted
+        self.timerStartDate = timerStartDate
         self.createdAt = createdAt
         self.updatedAt = updatedAt
     }

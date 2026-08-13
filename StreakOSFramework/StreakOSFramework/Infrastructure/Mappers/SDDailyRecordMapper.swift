@@ -9,6 +9,7 @@ enum SDDailyRecordMapper {
             date: sdRecord.date,
             currentCount: sdRecord.currentCount,
             isCompleted: sdRecord.isCompleted,
+            timerStartDate: sdRecord.timerStartDate,
             createdAt: sdRecord.createdAt,
             updatedAt: sdRecord.updatedAt
         )
@@ -25,6 +26,7 @@ enum SDDailyRecordMapper {
             date: record.date,
             currentCount: record.currentCount,
             isCompleted: record.isCompleted,
+            timerStartDate: record.timerStartDate,
             createdAt: record.createdAt,
             updatedAt: record.updatedAt
         )
