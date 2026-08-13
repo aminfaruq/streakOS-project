@@ -76,6 +76,7 @@ final class ItemReorderTests: XCTestCase {
                 id: UUID(),
                 name: name,
                 icon: "📋",
+                type: ItemType.count,
                 targetCount: 1,
                 startDate: Date(),
                 endDate: nil,

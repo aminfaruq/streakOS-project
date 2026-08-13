@@ -10,6 +10,7 @@ final class ItemTests: XCTestCase {
             id: id,
             name: "Push Ups",
             icon: "💪",
+            type: ItemType.count,
             targetCount: 10,
             startDate: now,
             endDate: nil,

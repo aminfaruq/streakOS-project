@@ -67,6 +67,7 @@ final class LocalDailyProgressLoaderTests: XCTestCase {
             date: date,
             currentCount: 3,
             isCompleted: false,
+            timerStartDate: Date(),
             createdAt: date,
             updatedAt: date
         )

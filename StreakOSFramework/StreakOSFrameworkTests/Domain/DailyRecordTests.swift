@@ -108,4 +108,59 @@ final class DailyRecordTests: XCTestCase {
         XCTAssertEqual(sut.currentCount, 0)
         XCTAssertFalse(sut.isCompleted)
     }
+    
+    // MARK: togglingTimer
+    
+    func test_togglingTimer_whenNotRunning_startsTimer() {
+        let itemId = UUID()
+        let sut = DailyRecord.new(for: itemId, on: Date())
+        
+        let result = sut.togglingTimer(targetCount: 15)
+        
+        XCTAssertNotNil(result.timerStartDate)
+        XCTAssertEqual(result.currentCount, 0)
+        XCTAssertFalse(result.isCompleted)
+    }
+    
+    func test_togglingTimer_whenRunning_stopsTimerAndCalculatesElapsed() {
+        let itemId = UUID()
+        let startDate = Date().addingTimeInterval(-60) // started 60 seconds ago
+        let sut = DailyRecord(
+            id: UUID(),
+            itemId: itemId,
+            date: Date(),
+            currentCount: 10,
+            isCompleted: false,
+            timerStartDate: startDate,
+            createdAt: Date(),
+            updatedAt: Date()
+        )
+        
+        let result = sut.togglingTimer(targetCount: 15)
+        
+        XCTAssertNil(result.timerStartDate)
+        XCTAssertEqual(result.currentCount, 70) // 10 + 60
+        XCTAssertFalse(result.isCompleted) // 70 < 15 * 60 (900)
+    }
+    
+    func test_togglingTimer_whenRunning_reachesTarget_completes() {
+        let itemId = UUID()
+        let startDate = Date().addingTimeInterval(-900) // started 15 minutes ago
+        let sut = DailyRecord(
+            id: UUID(),
+            itemId: itemId,
+            date: Date(),
+            currentCount: 0,
+            isCompleted: false,
+            timerStartDate: startDate,
+            createdAt: Date(),
+            updatedAt: Date()
+        )
+        
+        let result = sut.togglingTimer(targetCount: 15)
+        
+        XCTAssertNil(result.timerStartDate)
+        XCTAssertEqual(result.currentCount, 900)
+        XCTAssertTrue(result.isCompleted) // 900 >= 15 * 60
+    }
 }

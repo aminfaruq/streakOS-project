@@ -9,7 +9,7 @@ final class LocalItemCreatorTests: XCTestCase {
         let (sut, itemStore) = makeSUT()
         let date = today
         
-        sut.create(name: "Push Ups", icon: "💪", targetCount: 10, startDate: date, endDate: nil) { _ in }
+        sut.create(name: "Push Ups", icon: "💪", type: .count, targetCount: 10, startDate: date, endDate: nil) { _ in }
         
         XCTAssertEqual(itemStore.receivedMessages, [.retrieveAll])
     }
@@ -48,7 +48,7 @@ final class LocalItemCreatorTests: XCTestCase {
         
         let exp = expectation(description: "create")
         
-        sut.create(name: "Push Ups", icon: "💪", targetCount: 10, startDate: date, endDate: nil) { result in
+        sut.create(name: "Push Ups", icon: "💪", type: .count, targetCount: 10, startDate: date, endDate: nil) { result in
             switch result {
             case let .success(item):
                 XCTAssertEqual(item.name, "Push Ups")
@@ -74,7 +74,7 @@ final class LocalItemCreatorTests: XCTestCase {
         
         let exp = expectation(description: "create")
         
-        sut.create(name: "New", icon: "📋", targetCount: 1, startDate: date, endDate: nil) { result in
+        sut.create(name: "New", icon: "📋", type: .count, targetCount: 1, startDate: date, endDate: nil) { result in
             if case let .success(item) = result {
                 XCTAssertEqual(item.displayOrder, existing.displayOrder - 1)
             } else {
@@ -95,7 +95,7 @@ final class LocalItemCreatorTests: XCTestCase {
         
         let exp = expectation(description: "create")
         
-        sut.create(name: "Push Ups", icon: "💪", targetCount: 5, startDate: date, endDate: end) { result in
+        sut.create(name: "Push Ups", icon: "💪", type: .count, targetCount: 5, startDate: date, endDate: end) { result in
             if case let .success(item) = result {
                 XCTAssertEqual(item.endDate, end)
             } else {
@@ -143,7 +143,7 @@ final class LocalItemCreatorTests: XCTestCase {
     ) {
         let exp = expectation(description: "Wait for create completion")
         
-        sut.create(name: name, icon: icon, targetCount: 1, startDate: today, endDate: nil) { received in
+        sut.create(name: name, icon: icon, type: .count, targetCount: 1, startDate: today, endDate: nil) { received in
             switch (received, expectedResult) {
             case let (.success(received), .success(expected)):
                 XCTAssertEqual(received, expected, file: file, line: line)

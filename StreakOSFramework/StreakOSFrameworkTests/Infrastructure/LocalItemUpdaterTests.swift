@@ -63,6 +63,7 @@ final class LocalItemUpdaterTests: XCTestCase {
             id: existing.id,
             name: "New Name",
             icon: existing.icon,
+            type: ItemType.count,
             targetCount: 7,
             startDate: existing.startDate,
             endDate: nil,

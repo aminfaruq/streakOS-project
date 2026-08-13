@@ -15,6 +15,7 @@ func uniqueItem(
         id: UUID(),
         name: name,
         icon: "📋",
+        type: ItemType.count,
         targetCount: targetCount,
         startDate: startDate,
         endDate: endDate,

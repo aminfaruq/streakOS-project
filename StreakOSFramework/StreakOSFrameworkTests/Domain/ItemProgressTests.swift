@@ -18,6 +18,7 @@ final class ItemProgressTests: XCTestCase {
             date: Date(),
             currentCount: 2,
             isCompleted: false,
+            timerStartDate: Date(),
             createdAt: Date(),
             updatedAt: Date()
         )
@@ -34,6 +35,7 @@ final class ItemProgressTests: XCTestCase {
             date: Date(),
             currentCount: 10,
             isCompleted: true,
+            timerStartDate: Date(),
             createdAt: Date(),
             updatedAt: Date()
         )
@@ -57,6 +59,7 @@ final class ItemProgressTests: XCTestCase {
             date: Date(),
             currentCount: 3,
             isCompleted: false,
+            timerStartDate: Date(),
             createdAt: Date(),
             updatedAt: Date()
         )
@@ -73,6 +76,7 @@ final class ItemProgressTests: XCTestCase {
             date: Date(),
             currentCount: 5,
             isCompleted: true,
+            timerStartDate: Date(),
             createdAt: Date(),
             updatedAt: Date()
         )

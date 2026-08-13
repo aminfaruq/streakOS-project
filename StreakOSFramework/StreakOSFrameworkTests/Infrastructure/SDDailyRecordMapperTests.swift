@@ -13,6 +13,7 @@ final class SDDailyRecordMapperTests: XCTestCase {
             date: now,
             currentCount: 4,
             isCompleted: false,
+            timerStartDate: now,
             createdAt: now,
             updatedAt: now
         )
@@ -23,6 +24,7 @@ final class SDDailyRecordMapperTests: XCTestCase {
         XCTAssertEqual(record.itemId, itemId)
         XCTAssertEqual(record.currentCount, 4)
         XCTAssertFalse(record.isCompleted)
+        XCTAssertEqual(record.timerStartDate, now)
         XCTAssertEqual(record.createdAt, now)
         XCTAssertEqual(record.updatedAt, now)
     }
@@ -37,6 +39,7 @@ final class SDDailyRecordMapperTests: XCTestCase {
             date: now,
             currentCount: 10,
             isCompleted: true,
+            timerStartDate: now,
             createdAt: now,
             updatedAt: now
         )
@@ -47,6 +50,7 @@ final class SDDailyRecordMapperTests: XCTestCase {
         XCTAssertEqual(sdRecord.itemId, itemId)
         XCTAssertEqual(sdRecord.currentCount, 10)
         XCTAssertTrue(sdRecord.isCompleted)
+        XCTAssertEqual(sdRecord.timerStartDate, now)
         XCTAssertEqual(sdRecord.createdAt, now)
         XCTAssertEqual(sdRecord.updatedAt, now)
     }

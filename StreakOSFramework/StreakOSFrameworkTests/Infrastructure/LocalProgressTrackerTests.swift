@@ -12,7 +12,7 @@ final class LocalProgressTrackerTests: XCTestCase {
         let item = uniqueItem(date: today)
         let date = today
         
-        expect(sut, item: item, on: date, whenIncrementing: true) {
+        expect(sut, item: item, on: date, actionType: .increment) {
             store.completeRetrieval(with: nil)
             store.completeSaveSuccessfully()
         }
@@ -37,11 +37,12 @@ final class LocalProgressTrackerTests: XCTestCase {
             date: date,
             currentCount: 1,
             isCompleted: false,
+            timerStartDate: Date(),
             createdAt: date,
             updatedAt: date
         )
         
-        expect(sut, item: item, on: date, whenIncrementing: true) {
+        expect(sut, item: item, on: date, actionType: .increment) {
             store.completeRetrieval(with: existing)
             store.completeSaveSuccessfully()
         }
@@ -86,7 +87,7 @@ final class LocalProgressTrackerTests: XCTestCase {
         let (sut, store) = makeSUT()
         let item = uniqueItem(date: today)
         
-        expect(sut, item: item, on: today, whenIncrementing: true, toDeliver: .failure(LocalProgressTracker.Error.retrievalFailed)) {
+        expect(sut, item: item, on: today, actionType: .increment, toDeliver: .failure(LocalProgressTracker.Error.retrievalFailed)) {
             store.completeRetrieval(with: anyNSError())
         }
     }
@@ -95,7 +96,7 @@ final class LocalProgressTrackerTests: XCTestCase {
         let (sut, store) = makeSUT()
         let item = uniqueItem(date: today)
         
-        expect(sut, item: item, on: today, whenIncrementing: true, toDeliver: .failure(LocalProgressTracker.Error.saveFailed)) {
+        expect(sut, item: item, on: today, actionType: .increment, toDeliver: .failure(LocalProgressTracker.Error.saveFailed)) {
             store.completeRetrieval(with: nil)
             store.completeSave(with: anyNSError())
         }
@@ -106,7 +107,7 @@ final class LocalProgressTrackerTests: XCTestCase {
         let item = uniqueItem(date: today)
         let tomorrow = today.adding(days: 1)
         
-        expect(sut, item: item, on: tomorrow, whenIncrementing: true, toDeliver: .failure(LocalProgressTracker.Error.dateNotEditable)) {}
+        expect(sut, item: item, on: tomorrow, actionType: .increment, toDeliver: .failure(LocalProgressTracker.Error.dateNotEditable)) {}
         
         XCTAssertTrue(store.receivedMessages.isEmpty)
     }
@@ -116,7 +117,7 @@ final class LocalProgressTrackerTests: XCTestCase {
         let item = uniqueItem(date: today)
         let farFuture = today.adding(days: 10)
         
-        expect(sut, item: item, on: farFuture, whenIncrementing: true, toDeliver: .failure(LocalProgressTracker.Error.dateNotEditable)) {}
+        expect(sut, item: item, on: farFuture, actionType: .increment, toDeliver: .failure(LocalProgressTracker.Error.dateNotEditable)) {}
         
         XCTAssertTrue(store.receivedMessages.isEmpty)
     }
@@ -128,7 +129,7 @@ final class LocalProgressTrackerTests: XCTestCase {
         let item = uniqueItem(date: today)
         let date = today
         
-        expect(sut, item: item, on: date, whenIncrementing: false) {
+        expect(sut, item: item, on: date, actionType: .decrement) {
             store.completeRetrieval(with: nil)
             store.completeSaveSuccessfully()
         }
@@ -153,11 +154,12 @@ final class LocalProgressTrackerTests: XCTestCase {
             date: date,
             currentCount: 5,
             isCompleted: true,
+            timerStartDate: Date(),
             createdAt: date,
             updatedAt: date
         )
         
-        expect(sut, item: item, on: date, whenIncrementing: false) {
+        expect(sut, item: item, on: date, actionType: .decrement) {
             store.completeRetrieval(with: completed)
             store.completeSaveSuccessfully()
         }
@@ -176,7 +178,7 @@ final class LocalProgressTrackerTests: XCTestCase {
         let (sut, store) = makeSUT()
         let item = uniqueItem(date: today)
         
-        expect(sut, item: item, on: today, whenIncrementing: false, toDeliver: .failure(LocalProgressTracker.Error.retrievalFailed)) {
+        expect(sut, item: item, on: today, actionType: .decrement, toDeliver: .failure(LocalProgressTracker.Error.retrievalFailed)) {
             store.completeRetrieval(with: anyNSError())
         }
     }
@@ -186,7 +188,48 @@ final class LocalProgressTrackerTests: XCTestCase {
         let item = uniqueItem(date: today)
         let tomorrow = today.adding(days: 1)
         
-        expect(sut, item: item, on: tomorrow, whenIncrementing: false, toDeliver: .failure(LocalProgressTracker.Error.dateNotEditable)) {}
+        expect(sut, item: item, on: tomorrow, actionType: .decrement, toDeliver: .failure(LocalProgressTracker.Error.dateNotEditable)) {}
+        
+        XCTAssertTrue(store.receivedMessages.isEmpty)
+    }
+    
+    // MARK: toggleTimer
+    
+    func test_toggleTimer_retrievesRecordThenSaves() {
+        let (sut, store) = makeSUT()
+        let item = uniqueItem(date: today)
+        let date = today
+        
+        expect(sut, item: item, on: date, actionType: .toggleTimer) {
+            store.completeRetrieval(with: nil)
+            store.completeSaveSuccessfully()
+        }
+        
+        XCTAssertEqual(store.receivedMessages.count, 2)
+        if case let .save(saved)? = store.receivedMessages.last {
+            XCTAssertEqual(saved.itemId, item.id)
+            XCTAssertNotNil(saved.timerStartDate)
+            XCTAssertFalse(saved.isCompleted)
+        } else {
+            XCTFail("Expected a save message")
+        }
+    }
+    
+    func test_toggleTimer_deliversErrorOnRetrievalFailure() {
+        let (sut, store) = makeSUT()
+        let item = uniqueItem(date: today)
+        
+        expect(sut, item: item, on: today, actionType: .toggleTimer, toDeliver: .failure(LocalProgressTracker.Error.retrievalFailed)) {
+            store.completeRetrieval(with: anyNSError())
+        }
+    }
+    
+    func test_toggleTimer_readOnlyDate_doesNotRetrieveOrSave() {
+        let (sut, store) = makeSUT()
+        let item = uniqueItem(date: today)
+        let tomorrow = today.adding(days: 1)
+        
+        expect(sut, item: item, on: tomorrow, actionType: .toggleTimer, toDeliver: .failure(LocalProgressTracker.Error.dateNotEditable)) {}
         
         XCTAssertTrue(store.receivedMessages.isEmpty)
     }
@@ -209,6 +252,7 @@ final class LocalProgressTrackerTests: XCTestCase {
             id: UUID(),
             name: "any name",
             icon: "📋",
+            type: ItemType.count,
             targetCount: targetCount,
             startDate: date,
             endDate: nil,
@@ -220,11 +264,13 @@ final class LocalProgressTrackerTests: XCTestCase {
     
     private func anyNSError() -> NSError { NSError(domain: "any error", code: 0) }
     
+    enum ActionType { case increment, decrement, toggleTimer }
+    
     private func expect(
         _ sut: LocalProgressTracker,
         item: Item,
         on date: Date,
-        whenIncrementing: Bool,
+        actionType: ActionType,
         toDeliver expectedResult: ProgressTracker.Result? = nil,
         when action: () -> Void,
         file: StaticString = #filePath,
@@ -246,10 +292,13 @@ final class LocalProgressTrackerTests: XCTestCase {
             exp.fulfill()
         }
         
-        if whenIncrementing {
+        switch actionType {
+        case .increment:
             sut.increment(item, on: date, completion: completion)
-        } else {
+        case .decrement:
             sut.decrement(item, on: date, completion: completion)
+        case .toggleTimer:
+            sut.toggleTimer(item, on: date, completion: completion)
         }
         
         action()
