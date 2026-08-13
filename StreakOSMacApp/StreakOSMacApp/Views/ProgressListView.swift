@@ -8,17 +8,17 @@ struct ProgressListView: View {
     let itemCreator: any ItemCreator
     let itemUpdater: any ItemUpdater
     let itemDuplicator: any ItemDuplicator
-
+    
     @State private var selectedDate = Date()
     @State private var isAddingItem = false
     @State private var actionedProgress: ItemProgress?
     @State private var editingProgress: ItemProgress?
     @State private var pendingDelete: ItemProgress?
-
+    
     private var navigationWindow: DateNavigationWindow {
         DateNavigationWindow(today: Date())
     }
-
+    
     var body: some View {
         VStack(spacing: 16) {
             DateHeaderView(
@@ -30,7 +30,7 @@ struct ProgressListView: View {
                 onForward: { shiftDay(by: 1) },
                 onToday: { selectedDate = Date() }
             )
-
+            
             if viewModel.isLoading && viewModel.progressItems.isEmpty {
                 Spacer()
                 ProgressView()
@@ -54,9 +54,9 @@ struct ProgressListView: View {
                     .frame(maxWidth: .infinity)
                 }
             }
-
+            
             addButton
-
+            
             Spacer(minLength: 0)
         }
         .padding(16)
@@ -86,19 +86,26 @@ struct ProgressListView: View {
             )
         }
         .popover(item: $actionedProgress) { progress in
+            let currentProgress = viewModel.progressItems.first(where: { $0.item.id == progress.item.id }) ?? progress
             ItemActionsView(
-                progress: progress,
+                progress: currentProgress,
+                onIncrement: {
+                    viewModel.increment(currentProgress, on: selectedDate)
+                },
+                onDecrement: {
+                    viewModel.decrement(currentProgress, on: selectedDate)
+                },
                 onEdit: {
                     actionedProgress = nil
-                    editingProgress = progress
+                    editingProgress = currentProgress
                 },
                 onDuplicate: {
                     actionedProgress = nil
-                    viewModel.duplicate(progress, on: selectedDate)
+                    viewModel.duplicate(currentProgress, on: selectedDate)
                 },
                 onDelete: {
                     actionedProgress = nil
-                    pendingDelete = progress
+                    pendingDelete = currentProgress
                 },
                 onCancel: { actionedProgress = nil }
             )
@@ -124,7 +131,7 @@ struct ProgressListView: View {
             Text("This will also delete all history for this item.")
         }
     }
-
+    
     private var emptyState: some View {
         VStack(spacing: 12) {
             Text("📋")
@@ -136,7 +143,7 @@ struct ProgressListView: View {
         }
         .padding(.vertical, 60)
     }
-
+    
     private var addButton: some View {
         Button {
             isAddingItem = true
@@ -150,13 +157,13 @@ struct ProgressListView: View {
         }
         .buttonStyle(.plain)
     }
-
+    
     private var titleText: String {
         let formatter = DateFormatter()
         formatter.dateFormat = "EEEE, MMM d"
         return navigationWindow.isToday(selectedDate) ? "Today · \(formatter.string(from: selectedDate))" : formatter.string(from: selectedDate)
     }
-
+    
     private func shiftDay(by offset: Int) {
         if let newDate = Calendar.current.date(byAdding: .day, value: offset, to: selectedDate) {
             selectedDate = newDate
