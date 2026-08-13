@@ -7,15 +7,15 @@ struct ItemCardView: View {
     var isEditMode: Bool = false
     let onIncrement: () -> Void
     let onTap: () -> Void
-
+    
     var body: some View {
         HStack(spacing: 12) {
             tapContent
                 .contentShape(Rectangle())
                 .onTapGesture(perform: onTap)
-
+            
             Spacer(minLength: 0)
-
+            
             if isEditMode {
                 Image(systemName: "line.3.horizontal")
                     .font(.title2)
@@ -31,15 +31,15 @@ struct ItemCardView: View {
         .background(DesignTokens.card, in: RoundedRectangle(cornerRadius: DesignTokens.cardRadius))
         .scaleEffect(isEditMode ? 0.98 : 1.0)
     }
-
+    
     private var tapContent: some View {
         HStack(spacing: 12) {
             iconContainer
-
+            
             Text(progress.item.name)
                 .font(.system(.body, design: .default).weight(.medium))
                 .lineLimit(1)
-
+            
             if let record = progress.record, record.isCompleted {
                 Image(systemName: "checkmark")
                     .font(.title3.weight(.semibold))
@@ -51,14 +51,14 @@ struct ItemCardView: View {
             }
         }
     }
-
+    
     private var iconContainer: some View {
         Text(progress.item.icon)
             .font(.system(size: 26))
             .frame(width: DesignTokens.iconContainerSize, height: DesignTokens.iconContainerSize)
             .background(DesignTokens.accent.opacity(0.12), in: Circle())
     }
-
+    
     private var plusButton: some View {
         Button(action: onIncrement) {
             Image(systemName: "plus")
@@ -72,7 +72,7 @@ struct ItemCardView: View {
         }
         .buttonStyle(.plain)
     }
-
+    
     private var idempotentCircle: some View {
         Circle()
             .fill(DesignTokens.accent)

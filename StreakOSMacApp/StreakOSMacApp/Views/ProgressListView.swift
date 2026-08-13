@@ -25,7 +25,7 @@ struct ProgressListView: View {
     var body: some View {
         VStack(spacing: 16) {
             editHeaderButton
-
+            
             DateHeaderView(
                 title: titleText,
                 isToday: navigationWindow.isToday(selectedDate),
@@ -133,7 +133,7 @@ struct ProgressListView: View {
         }
         .padding(.bottom, -8)
     }
-
+    
     private var mainContentView: some View {
         ScrollView {
             LazyVStack(spacing: 12) {
@@ -149,7 +149,7 @@ struct ProgressListView: View {
             .frame(maxWidth: .infinity)
         }
     }
-
+    
     @ViewBuilder
     private func draggableItemCard(for progress: ItemProgress) -> some View {
         ItemCardView(
@@ -225,7 +225,7 @@ struct ItemDropDelegate: DropDelegate {
     @Binding var items: [ItemProgress]
     @Binding var draggedItem: ItemProgress?
     let onMove: (Int, Int) -> Void
-
+    
     func dropEntered(info: DropInfo) {
         guard let draggedItem = draggedItem,
               draggedItem.item.id != item.item.id,
@@ -233,7 +233,7 @@ struct ItemDropDelegate: DropDelegate {
               let to = items.firstIndex(where: { $0.item.id == item.item.id }) else {
             return
         }
-
+        
         if items[to].item.id != draggedItem.item.id {
             withAnimation {
                 onMove(from, to)

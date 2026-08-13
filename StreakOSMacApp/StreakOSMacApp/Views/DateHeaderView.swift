@@ -9,7 +9,7 @@ struct DateHeaderView: View {
     let onBackward: () -> Void
     let onForward: () -> Void
     let onToday: () -> Void
-
+    
     var body: some View {
         VStack(spacing: 8) {
             HStack {
@@ -17,20 +17,20 @@ struct DateHeaderView: View {
                     Image(systemName: "chevron.left")
                 }
                 .disabled(!canGoBackward)
-
+                
                 Spacer()
-
+                
                 Text(title)
                     .font(.system(.title3, design: .default).weight(.semibold))
-
+                
                 Spacer()
-
+                
                 Button(action: onForward) {
                     Image(systemName: "chevron.right")
                 }
                 .disabled(!canGoForward)
             }
-
+            
             if !isToday {
                 Button("Today", action: onToday)
                     .font(.subheadline)

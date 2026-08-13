@@ -3,13 +3,13 @@ import Foundation
 public final class LocalItemCreator {
     private let itemStore: any ItemStore
     private let currentDate: () -> Date
-
+    
     public enum Error: Swift.Error {
         case retrievalFailed
         case duplicateName
         case saveFailed
     }
-
+    
     public init(
         itemStore: any ItemStore,
         currentDate: @escaping () -> Date = Date.init
@@ -20,7 +20,7 @@ public final class LocalItemCreator {
 }
 
 extension LocalItemCreator: ItemCreator {
-
+    
     public func create(
         name: String,
         icon: String,
@@ -31,14 +31,14 @@ extension LocalItemCreator: ItemCreator {
     ) {
         itemStore.retrieveAll { [weak self] result in
             guard let self else { return }
-
+            
             switch result {
             case let .success(existingItems):
                 guard ItemNameGenerator.isNameUnique(name, among: existingItems) else {
                     completion(.failure(Error.duplicateName))
                     return
                 }
-
+                
                 let item = self.makeItem(
                     name: name,
                     icon: icon,
@@ -48,17 +48,17 @@ extension LocalItemCreator: ItemCreator {
                     existingItems: existingItems
                 )
                 self.save(item, completion: completion)
-
+                
             case .failure:
                 completion(.failure(Error.retrievalFailed))
             }
         }
     }
-
+    
     private func save(_ item: Item, completion: @escaping (ItemCreator.Result) -> Void) {
         itemStore.save(item) { [weak self] result in
             guard self != nil else { return }
-
+            
             switch result {
             case .success:
                 completion(.success(item))
@@ -67,7 +67,7 @@ extension LocalItemCreator: ItemCreator {
             }
         }
     }
-
+    
     private func makeItem(
         name: String,
         icon: String,

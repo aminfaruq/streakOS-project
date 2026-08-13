@@ -3,7 +3,7 @@ import Foundation
 public struct ItemProgress: Identifiable, Equatable {
     public let item: Item
     public let record: DailyRecord?
-
+    
     public var id: UUID { item.id }
     
     public var progressFraction: Double {

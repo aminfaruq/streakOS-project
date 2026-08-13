@@ -2,59 +2,59 @@ import XCTest
 @testable import StreakOSFramework
 
 final class LocalItemUpdaterTests: XCTestCase {
-
+    
     private var today: Date { Date().startOfDay }
-
+    
     func test_update_retrievesItemsThenSaves() {
         let (sut, itemStore) = makeSUT()
         let item = uniqueItem(startDate: today)
-
+        
         expect(sut, item: item) {
             itemStore.completeRetrieval(with: [item])
             itemStore.completeSaveSuccessfully()
         }
-
+        
         XCTAssertTrue(itemStore.receivedMessages.contains(.retrieveAll))
     }
-
+    
     func test_update_deliversErrorOnRetrievalFailure() {
         let (sut, itemStore) = makeSUT()
         let item = uniqueItem(startDate: today)
-
+        
         expect(sut, item: item, toCompleteWith: .retrievalFailed) {
             itemStore.completeRetrieval(with: anyNSError())
         }
     }
-
+    
     func test_update_notFound_deliversError() {
         let (sut, itemStore) = makeSUT()
         let item = uniqueItem(startDate: today)
-
+        
         expect(sut, item: item, toCompleteWith: .notFound) {
             itemStore.completeRetrieval(with: [])
         }
     }
-
+    
     func test_update_duplicateName_deliversErrorAndDoesNotSave() {
         let (sut, itemStore) = makeSUT()
         let item = uniqueItem(name: "Walk", startDate: today)
         let other = uniqueItem(name: "Walk", startDate: today)
-
+        
         expect(sut, item: item, toCompleteWith: .duplicateName) {
             itemStore.completeRetrieval(with: [item, other])
         }
     }
-
+    
     func test_update_sameNameAsSelf_allowed() {
         let (sut, itemStore) = makeSUT()
         let item = uniqueItem(name: "Walk", startDate: today)
-
+        
         expect(sut, item: item) {
             itemStore.completeRetrieval(with: [item])
             itemStore.completeSaveSuccessfully()
         }
     }
-
+    
     func test_update_deliversUpdatedItemOnSuccess() {
         let (sut, itemStore) = makeSUT()
         let date = today
@@ -70,7 +70,7 @@ final class LocalItemUpdaterTests: XCTestCase {
             createdAt: existing.createdAt,
             updatedAt: existing.updatedAt
         )
-
+        
         let exp = expectation(description: "update")
         sut.update(changed) { result in
             if case let .success(item) = result {
@@ -82,24 +82,24 @@ final class LocalItemUpdaterTests: XCTestCase {
             }
             exp.fulfill()
         }
-
+        
         itemStore.completeRetrieval(with: [existing])
         itemStore.completeSaveSuccessfully()
         wait(for: [exp], timeout: 1.0)
     }
-
+    
     func test_update_deliversErrorOnSaveFailure() {
         let (sut, itemStore) = makeSUT()
         let item = uniqueItem(startDate: today)
-
+        
         expect(sut, item: item, toCompleteWith: .saveFailed) {
             itemStore.completeRetrieval(with: [item])
             itemStore.completeSave(with: anyNSError())
         }
     }
-
+    
     // MARK: Helpers
-
+    
     private func makeSUT(
         file: StaticString = #filePath,
         line: UInt = #line
@@ -110,7 +110,7 @@ final class LocalItemUpdaterTests: XCTestCase {
         trackForMemoryLeaks(itemStore, file: file, line: line)
         return (sut, itemStore)
     }
-
+    
     private func expect(
         _ sut: LocalItemUpdater,
         item: Item,
@@ -121,7 +121,7 @@ final class LocalItemUpdaterTests: XCTestCase {
     ) {
         expect(sut, item: item, expectedResult: ItemUpdater.Result.failure(expectedError), when: action, file: file, line: line)
     }
-
+    
     private func expect(
         _ sut: LocalItemUpdater,
         item: Item,
@@ -131,7 +131,7 @@ final class LocalItemUpdaterTests: XCTestCase {
     ) {
         expect(sut, item: item, expectedResult: nil, when: action, file: file, line: line)
     }
-
+    
     private func expect(
         _ sut: LocalItemUpdater,
         item: Item,
@@ -141,7 +141,7 @@ final class LocalItemUpdaterTests: XCTestCase {
         line: UInt = #line
     ) {
         let exp = expectation(description: "Wait for update completion")
-
+        
         sut.update(item) { received in
             if let expectedResult {
                 switch (received, expectedResult) {
@@ -155,7 +155,7 @@ final class LocalItemUpdaterTests: XCTestCase {
             }
             exp.fulfill()
         }
-
+        
         action()
         wait(for: [exp], timeout: 1.0)
     }

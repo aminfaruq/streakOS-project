@@ -2,7 +2,7 @@ import Foundation
 
 public protocol ItemCreator {
     typealias Result = Swift.Result<Item, Error>
-
+    
     func create(
         name: String,
         icon: String,

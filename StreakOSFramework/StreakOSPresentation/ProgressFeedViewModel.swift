@@ -7,14 +7,14 @@ public final class ProgressFeedViewModel: ObservableObject {
     @Published public private(set) var progressItems: [ItemProgress] = []
     @Published public private(set) var isLoading = false
     @Published public private(set) var errorMessage: String?
-
+    
     private let loader: any DailyProgressLoader
     private let tracker: (any ProgressTracker)?
     private let itemStore: (any ItemStore)?
     private let updater: (any ItemUpdater)?
     private let duplicator: (any ItemDuplicator)?
     private var loadTask: Task<Void, Never>?
-
+    
     public init(
         loader: any DailyProgressLoader,
         tracker: (any ProgressTracker)?,
@@ -28,21 +28,21 @@ public final class ProgressFeedViewModel: ObservableObject {
         self.updater = updater
         self.duplicator = duplicator
     }
-
+    
     public func load(for date: Date = Date()) {
         loadTask?.cancel()
-
+        
         isLoading = true
         errorMessage = nil
-
+        
         let loader = self.loader
         loadTask = Task { [weak self] in
             let result = await withCheckedContinuation { continuation in
                 loader.load(for: date) { continuation.resume(returning: $0) }
             }
-
+            
             guard !Task.isCancelled, let self else { return }
-
+            
             switch result {
             case let .success(items):
                 progressItems = items
@@ -53,7 +53,7 @@ public final class ProgressFeedViewModel: ObservableObject {
             isLoading = false
         }
     }
-
+    
     public func increment(_ progress: ItemProgress, on date: Date = Date()) {
         guard let tracker else { return }
         tracker.increment(progress.item, on: date) { [weak self] result in
@@ -62,7 +62,7 @@ public final class ProgressFeedViewModel: ObservableObject {
             }
         }
     }
-
+    
     public func decrement(_ progress: ItemProgress, on date: Date = Date()) {
         guard let tracker else { return }
         tracker.decrement(progress.item, on: date) { [weak self] result in
@@ -71,12 +71,12 @@ public final class ProgressFeedViewModel: ObservableObject {
             }
         }
     }
-
+    
     public func delete(_ progress: ItemProgress, completion: ((Result<Void, Error>) -> Void)? = nil) {
         guard let itemStore else { return }
         itemStore.delete(progress.item) { [weak self] result in
             guard let self else { return }
-
+            
             switch result {
             case .success:
                 progressItems.removeAll { $0.item.id == progress.item.id }
@@ -86,7 +86,7 @@ public final class ProgressFeedViewModel: ObservableObject {
             completion?(result)
         }
     }
-
+    
     public func duplicate(_ progress: ItemProgress, on date: Date = Date()) {
         guard let duplicator else { return }
         duplicator.duplicate(progress.item) { [weak self] result in
@@ -99,7 +99,7 @@ public final class ProgressFeedViewModel: ObservableObject {
             }
         }
     }
-
+    
     public func update(_ progress: ItemProgress, with item: Item, on date: Date = Date()) {
         guard let updater else { return }
         updater.update(item) { [weak self] result in
@@ -112,13 +112,13 @@ public final class ProgressFeedViewModel: ObservableObject {
             }
         }
     }
-
+    
     public func cancel() {
         loadTask?.cancel()
         loadTask = nil
         isLoading = false
     }
-
+    
     private func apply(
         _ result: ProgressTracker.Result,
         onSuccess update: @escaping (DailyRecord) -> Void
@@ -130,7 +130,7 @@ public final class ProgressFeedViewModel: ObservableObject {
             errorMessage = "Failed to update progress"
         }
     }
-
+    
     public func reorder(from sourceIndex: Int, to destinationIndex: Int, on date: Date = Date()) {
         guard progressItems.indices.contains(sourceIndex), progressItems.indices.contains(destinationIndex) else { return }
         
@@ -162,14 +162,14 @@ public final class ProgressFeedViewModel: ObservableObject {
     public func updateItemsLocally(_ items: [ItemProgress]) {
         self.progressItems = items
     }
-
+    
     private func replace(_ progress: ItemProgress, with record: DailyRecord) {
         guard let index = progressItems.firstIndex(where: { $0.item.id == progress.item.id }) else {
             return
         }
         progressItems[index] = ItemProgress(item: progress.item, record: record)
     }
-
+    
     deinit {
         loadTask?.cancel()
     }

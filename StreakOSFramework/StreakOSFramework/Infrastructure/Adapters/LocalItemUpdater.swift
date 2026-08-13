@@ -3,14 +3,14 @@ import Foundation
 public final class LocalItemUpdater {
     private let itemStore: any ItemStore
     private let currentDate: () -> Date
-
+    
     public enum Error: Swift.Error {
         case retrievalFailed
         case duplicateName
         case saveFailed
         case notFound
     }
-
+    
     public init(
         itemStore: any ItemStore,
         currentDate: @escaping () -> Date = Date.init
@@ -21,11 +21,11 @@ public final class LocalItemUpdater {
 }
 
 extension LocalItemUpdater: ItemUpdater {
-
+    
     public func update(_ item: Item, completion: @escaping (ItemUpdater.Result) -> Void) {
         itemStore.retrieveAll { [weak self] result in
             guard let self else { return }
-
+            
             switch result {
             case let .success(existingItems):
                 guard existingItems.contains(where: { $0.id == item.id }) else {
@@ -36,15 +36,15 @@ extension LocalItemUpdater: ItemUpdater {
                     completion(.failure(Error.duplicateName))
                     return
                 }
-
+                
                 self.save(item, completion: completion)
-
+                
             case .failure:
                 completion(.failure(Error.retrievalFailed))
             }
         }
     }
-
+    
     private func save(_ item: Item, completion: @escaping (ItemUpdater.Result) -> Void) {
         let updated = Item(
             id: item.id,
@@ -57,10 +57,10 @@ extension LocalItemUpdater: ItemUpdater {
             createdAt: item.createdAt,
             updatedAt: currentDate()
         )
-
+        
         itemStore.save(updated) { [weak self] result in
             guard self != nil else { return }
-
+            
             switch result {
             case .success:
                 completion(.success(updated))

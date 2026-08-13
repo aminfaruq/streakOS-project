@@ -12,7 +12,7 @@ enum DesignTokens {
         dark: Color(red: 0x1C / 255, green: 0x1C / 255, blue: 0x1E / 255)
     )
     static let accent = Color(red: 0x34 / 255, green: 0xC7 / 255, blue: 0x59 / 255)
-
+    
     static let cardRadius: CGFloat = 20
     static let buttonSize: CGFloat = 46
     static let iconContainerSize: CGFloat = 56
