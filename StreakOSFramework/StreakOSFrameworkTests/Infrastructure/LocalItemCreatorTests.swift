@@ -111,7 +111,7 @@ final class LocalItemCreatorTests: XCTestCase {
 
     func test_create_deliversErrorOnSaveFailure() {
         let (sut, itemStore) = makeSUT()
-        let date = today
+        _ = today
 
         expect(sut, toCompleteWith: .failure(LocalItemCreator.Error.saveFailed)) {
             itemStore.completeRetrieval(with: [])
