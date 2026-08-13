@@ -28,10 +28,12 @@ final class ProgressTrackerSpy: ProgressTracker {
     enum Message: Equatable {
         case increment(Item, Date)
         case decrement(Item, Date)
+        case toggleTimer(Item, Date)
     }
     
     private var incrementCompletions = [(ProgressTracker.Result) -> Void]()
     private var decrementCompletions = [(ProgressTracker.Result) -> Void]()
+    private var toggleTimerCompletions = [(ProgressTracker.Result) -> Void]()
     
     func increment(_ item: Item, on date: Date, completion: @escaping (ProgressTracker.Result) -> Void) {
         receivedMessages.append(.increment(item, date))
@@ -43,12 +45,21 @@ final class ProgressTrackerSpy: ProgressTracker {
         decrementCompletions.append(completion)
     }
     
+    func toggleTimer(_ item: Item, on date: Date, completion: @escaping (ProgressTracker.Result) -> Void) {
+        receivedMessages.append(.toggleTimer(item, date))
+        toggleTimerCompletions.append(completion)
+    }
+    
     func completeIncrement(with record: DailyRecord, at index: Int = 0) {
         incrementCompletions[index](.success(record))
     }
     
     func completeDecrement(with record: DailyRecord, at index: Int = 0) {
         decrementCompletions[index](.success(record))
+    }
+    
+    func completeToggleTimer(with record: DailyRecord, at index: Int = 0) {
+        toggleTimerCompletions[index](.success(record))
     }
 }
 
@@ -219,6 +230,38 @@ final class ProgressFeedViewModelTests: XCTestCase {
         sut.decrement(progress, on: anyDate)
         await Task.yield()
         tracker.completeDecrement(with: updatedRecord)
+        await Task.yield()
+        
+        XCTAssertEqual(sut.progressItems, [ItemProgress(item: progress.item, record: updatedRecord)])
+    }
+    
+    // MARK: Toggle Timer
+    
+    func test_toggleTimer_requestsTrackerToggleTimer() async {
+        let (sut, _, tracker) = makeSUTWithTracker()
+        let progress = makeProgressItems()[0]
+        let date = anyDate
+        
+        sut.toggleTimer(for: progress, on: date)
+        await Task.yield()
+        
+        XCTAssertEqual(tracker.receivedMessages, [.toggleTimer(progress.item, date)])
+    }
+    
+    func test_toggleTimer_replacesProgressWithUpdatedRecord() async {
+        let (sut, loader, tracker) = makeSUTWithTracker()
+        
+        sut.load(for: anyDate)
+        await Task.yield()
+        loader.complete(with: makeProgressItems())
+        await Task.yield()
+        
+        let progress = sut.progressItems[0]
+        let updatedRecord = DailyRecord.new(for: progress.item.id, on: anyDate).togglingTimer(targetCount: progress.item.targetCount)
+        
+        sut.toggleTimer(for: progress, on: anyDate)
+        await Task.yield()
+        tracker.completeToggleTimer(with: updatedRecord)
         await Task.yield()
         
         XCTAssertEqual(sut.progressItems, [ItemProgress(item: progress.item, record: updatedRecord)])
@@ -552,6 +595,7 @@ final class ProgressFeedViewModelTests: XCTestCase {
             id: UUID(),
             name: name,
             icon: "💪",
+            type: .count,
             targetCount: 10,
             startDate: anyDate,
             endDate: nil,

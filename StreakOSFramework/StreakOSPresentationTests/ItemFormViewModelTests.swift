@@ -8,6 +8,7 @@ final class ItemCreatorSpy: ItemCreator {
     struct Request: Equatable {
         let name: String
         let icon: String
+        let type: ItemType
         let targetCount: Int
         let startDate: Date
         let endDate: Date?
@@ -18,12 +19,13 @@ final class ItemCreatorSpy: ItemCreator {
     func create(
         name: String,
         icon: String,
+        type: ItemType,
         targetCount: Int,
         startDate: Date,
         endDate: Date?,
         completion: @escaping (ItemCreator.Result) -> Void
     ) {
-        receivedRequests.append(Request(name: name, icon: icon, targetCount: targetCount, startDate: startDate, endDate: endDate))
+        receivedRequests.append(Request(name: name, icon: icon, type: .count, targetCount: targetCount, startDate: startDate, endDate: endDate))
         completions.append(completion)
     }
     
@@ -107,7 +109,7 @@ final class ItemFormViewModelTests: XCTestCase {
         sut.save()
         
         XCTAssertEqual(creator.receivedRequests, [
-            .init(name: "Push Ups", icon: "💪", targetCount: 5, startDate: startDate, endDate: nil)
+            .init(name: "Push Ups", icon: "💪", type: .count, targetCount: 5, startDate: startDate, endDate: nil)
         ])
     }
     
@@ -182,6 +184,6 @@ final class ItemFormViewModelTests: XCTestCase {
     }
     
     private func uniqueItem() -> Item {
-        Item(id: UUID(), name: "any", icon: "📋", targetCount: 1, startDate: Date(), endDate: nil, displayOrder: 0, createdAt: Date(), updatedAt: Date())
+        Item(id: UUID(), name: "any", icon: "📋", type: .count, targetCount: 1, startDate: Date(), endDate: nil, displayOrder: 0, createdAt: Date(), updatedAt: Date())
     }
 }
