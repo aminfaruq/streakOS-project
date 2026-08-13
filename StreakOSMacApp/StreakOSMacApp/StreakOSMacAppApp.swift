@@ -20,9 +20,9 @@ struct StreakOSMacAppApp: App {
             fatalError("Failed to bootstrap StreakOS: \(error)")
         }
     }
-
+    
     var body: some Scene {
-        WindowGroup {
+        Window("StreakOS", id: "main") {
             ProgressListView(
                 viewModel: viewModel,
                 itemCreator: itemCreator,
@@ -32,5 +32,11 @@ struct StreakOSMacAppApp: App {
             .frame(minWidth: 400, minHeight: 700)
         }
         .windowStyle(.hiddenTitleBar)
+        
+        MenuBarExtra("StreakOS", systemImage: "checkmark.circle") {
+            MenuBarProgressView(viewModel: viewModel)
+        }
+        .menuBarExtraStyle(.window)
     }
+    
 }
