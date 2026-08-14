@@ -159,7 +159,7 @@ struct AddItemView: View {
                             Spacer()
                             
                             HStack(alignment: .firstTextBaseline, spacing: 4) {
-                                TextField("", value: $viewModel.targetCount, formatter: NumberFormatter())
+                                TextField("", text: targetCountBinding)
                                     .font(.system(size: 28, weight: .bold))
                                     .multilineTextAlignment(.center)
                                     .textFieldStyle(.plain)
@@ -200,6 +200,17 @@ struct AddItemView: View {
         }
         .frame(width: 460, height: 500)
         .background(DesignTokens.background)
+    }
+    
+    private var targetCountBinding: Binding<String> {
+        Binding(
+            get: { String(viewModel.targetCount) },
+            set: { newValue in
+                let digits = newValue.filter(\.isNumber)
+                let clamped = max(1, min(Int(digits) ?? 1, 999))
+                viewModel.targetCount = clamped
+            }
+        )
     }
     
     private var endDateToggle: Binding<Bool> {
