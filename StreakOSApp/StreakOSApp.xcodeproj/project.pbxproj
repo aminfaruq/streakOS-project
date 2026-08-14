@@ -6,6 +6,13 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		837A1572302DF9120065B6D1 /* StreakOSFramework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 837A1571302DF9120065B6D1 /* StreakOSFramework.framework */; };
+		837A1573302DF9120065B6D1 /* StreakOSFramework.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 837A1571302DF9120065B6D1 /* StreakOSFramework.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		837A1576302DF9160065B6D1 /* StreakOSPresentation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 837A1575302DF9160065B6D1 /* StreakOSPresentation.framework */; };
+		837A1577302DF9160065B6D1 /* StreakOSPresentation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 837A1575302DF9160065B6D1 /* StreakOSPresentation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		83B3EA343005F476000EEAB0 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -23,7 +30,24 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		837A1574302DF9120065B6D1 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				837A1577302DF9160065B6D1 /* StreakOSPresentation.framework in Embed Frameworks */,
+				837A1573302DF9120065B6D1 /* StreakOSFramework.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		837A1571302DF9120065B6D1 /* StreakOSFramework.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = StreakOSFramework.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		837A1575302DF9160065B6D1 /* StreakOSPresentation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = StreakOSPresentation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		83B3EA1D3005F475000EEAB0 /* StreakOSApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StreakOSApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		83B3EA333005F476000EEAB0 /* StreakOSAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StreakOSAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		83B3EA3D3005F476000EEAB0 /* StreakOSAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StreakOSAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -65,6 +89,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				837A1576302DF9160065B6D1 /* StreakOSPresentation.framework in Frameworks */,
+				837A1572302DF9120065B6D1 /* StreakOSFramework.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -85,12 +111,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		837A1570302DF9120065B6D1 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				837A1575302DF9160065B6D1 /* StreakOSPresentation.framework */,
+				837A1571302DF9120065B6D1 /* StreakOSFramework.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		83B3EA143005F475000EEAB0 = {
 			isa = PBXGroup;
 			children = (
 				83B3EA1F3005F475000EEAB0 /* StreakOSApp */,
 				83B3EA363005F476000EEAB0 /* StreakOSAppTests */,
 				83B3EA403005F476000EEAB0 /* StreakOSAppUITests */,
+				837A1570302DF9120065B6D1 /* Frameworks */,
 				83B3EA1E3005F475000EEAB0 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -115,6 +151,7 @@
 				83B3EA193005F475000EEAB0 /* Sources */,
 				83B3EA1A3005F475000EEAB0 /* Frameworks */,
 				83B3EA1B3005F475000EEAB0 /* Resources */,
+				837A1574302DF9120065B6D1 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
