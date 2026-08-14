@@ -37,3 +37,9 @@ fastlane/test_output
 # Configuration files with secrets
 *.xcconfig
 !Sample.xcconfig
+PRD.md
+.agents/skills/composition/SKILL.md
+.agents/skills/domain/SKILL.md
+.agents/skills/infrastructure/SKILL.md
+.agents/skills/mmvm-swiftUI/SKILL.md
+.agents/skills/tdd/SKILL.md

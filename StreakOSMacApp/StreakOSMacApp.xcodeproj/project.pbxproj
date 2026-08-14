@@ -1,0 +1,646 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		837A143C302D90BF0065B6D1 /* StreakOSFramework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 837A143B302D90BF0065B6D1 /* StreakOSFramework.framework */; };
+		837A143D302D90BF0065B6D1 /* StreakOSFramework.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 837A143B302D90BF0065B6D1 /* StreakOSFramework.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		837A1440302D90C30065B6D1 /* StreakOSPresentation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 837A143F302D90C30065B6D1 /* StreakOSPresentation.framework */; };
+		837A1441302D90C30065B6D1 /* StreakOSPresentation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 837A143F302D90C30065B6D1 /* StreakOSPresentation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		839024573028E1C20007C05E /* StreakOSFramework.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 839024563028E1C20007C05E /* StreakOSFramework.framework */; };
+		839024583028E1C20007C05E /* StreakOSFramework.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 839024563028E1C20007C05E /* StreakOSFramework.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		8390245B3028E1C60007C05E /* StreakOSPresentation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8390245A3028E1C60007C05E /* StreakOSPresentation.framework */; };
+		8390245C3028E1C60007C05E /* StreakOSPresentation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8390245A3028E1C60007C05E /* StreakOSPresentation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		8390220B3028E0C30007C05E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 839021F53028E0C20007C05E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 839021FC3028E0C20007C05E;
+			remoteInfo = StreakOSMacApp;
+		};
+		839022153028E0C30007C05E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 839021F53028E0C20007C05E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 839021FC3028E0C20007C05E;
+			remoteInfo = StreakOSMacApp;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		837A143E302D90BF0065B6D1 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				837A1441302D90C30065B6D1 /* StreakOSPresentation.framework in Embed Frameworks */,
+				837A143D302D90BF0065B6D1 /* StreakOSFramework.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		839024593028E1C20007C05E /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				8390245C3028E1C60007C05E /* StreakOSPresentation.framework in Embed Frameworks */,
+				839024583028E1C20007C05E /* StreakOSFramework.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		837A143B302D90BF0065B6D1 /* StreakOSFramework.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = StreakOSFramework.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		837A143F302D90C30065B6D1 /* StreakOSPresentation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = StreakOSPresentation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		839021FD3028E0C20007C05E /* StreakOSMacApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StreakOSMacApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8390220A3028E0C30007C05E /* StreakOSMacAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StreakOSMacAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		839022143028E0C30007C05E /* StreakOSMacAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StreakOSMacAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		839024563028E1C20007C05E /* StreakOSFramework.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = StreakOSFramework.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		8390245A3028E1C60007C05E /* StreakOSPresentation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = StreakOSPresentation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		839021FF3028E0C20007C05E /* StreakOSMacApp */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = StreakOSMacApp;
+			sourceTree = "<group>";
+		};
+		8390220D3028E0C30007C05E /* StreakOSMacAppTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = StreakOSMacAppTests;
+			sourceTree = "<group>";
+		};
+		839022173028E0C30007C05E /* StreakOSMacAppUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = StreakOSMacAppUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		839021FA3028E0C20007C05E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				837A1440302D90C30065B6D1 /* StreakOSPresentation.framework in Frameworks */,
+				837A143C302D90BF0065B6D1 /* StreakOSFramework.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		839022073028E0C30007C05E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		839022113028E0C30007C05E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8390245B3028E1C60007C05E /* StreakOSPresentation.framework in Frameworks */,
+				839024573028E1C20007C05E /* StreakOSFramework.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		839021F43028E0C20007C05E = {
+			isa = PBXGroup;
+			children = (
+				839021FF3028E0C20007C05E /* StreakOSMacApp */,
+				8390220D3028E0C30007C05E /* StreakOSMacAppTests */,
+				839022173028E0C30007C05E /* StreakOSMacAppUITests */,
+				839024553028E1C20007C05E /* Frameworks */,
+				839021FE3028E0C20007C05E /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		839021FE3028E0C20007C05E /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				839021FD3028E0C20007C05E /* StreakOSMacApp.app */,
+				8390220A3028E0C30007C05E /* StreakOSMacAppTests.xctest */,
+				839022143028E0C30007C05E /* StreakOSMacAppUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		839024553028E1C20007C05E /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				837A143F302D90C30065B6D1 /* StreakOSPresentation.framework */,
+				837A143B302D90BF0065B6D1 /* StreakOSFramework.framework */,
+				8390245A3028E1C60007C05E /* StreakOSPresentation.framework */,
+				839024563028E1C20007C05E /* StreakOSFramework.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		839021FC3028E0C20007C05E /* StreakOSMacApp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8390221E3028E0C30007C05E /* Build configuration list for PBXNativeTarget "StreakOSMacApp" */;
+			buildPhases = (
+				839021F93028E0C20007C05E /* Sources */,
+				839021FA3028E0C20007C05E /* Frameworks */,
+				839021FB3028E0C20007C05E /* Resources */,
+				837A143E302D90BF0065B6D1 /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				839021FF3028E0C20007C05E /* StreakOSMacApp */,
+			);
+			name = StreakOSMacApp;
+			packageProductDependencies = (
+			);
+			productName = StreakOSMacApp;
+			productReference = 839021FD3028E0C20007C05E /* StreakOSMacApp.app */;
+			productType = "com.apple.product-type.application";
+		};
+		839022093028E0C30007C05E /* StreakOSMacAppTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 839022213028E0C30007C05E /* Build configuration list for PBXNativeTarget "StreakOSMacAppTests" */;
+			buildPhases = (
+				839022063028E0C30007C05E /* Sources */,
+				839022073028E0C30007C05E /* Frameworks */,
+				839022083028E0C30007C05E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				8390220C3028E0C30007C05E /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				8390220D3028E0C30007C05E /* StreakOSMacAppTests */,
+			);
+			name = StreakOSMacAppTests;
+			packageProductDependencies = (
+			);
+			productName = StreakOSMacAppTests;
+			productReference = 8390220A3028E0C30007C05E /* StreakOSMacAppTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		839022133028E0C30007C05E /* StreakOSMacAppUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 839022243028E0C30007C05E /* Build configuration list for PBXNativeTarget "StreakOSMacAppUITests" */;
+			buildPhases = (
+				839022103028E0C30007C05E /* Sources */,
+				839022113028E0C30007C05E /* Frameworks */,
+				839022123028E0C30007C05E /* Resources */,
+				839024593028E1C20007C05E /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				839022163028E0C30007C05E /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				839022173028E0C30007C05E /* StreakOSMacAppUITests */,
+			);
+			name = StreakOSMacAppUITests;
+			packageProductDependencies = (
+			);
+			productName = StreakOSMacAppUITests;
+			productReference = 839022143028E0C30007C05E /* StreakOSMacAppUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		839021F53028E0C20007C05E /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2620;
+				LastUpgradeCheck = 2620;
+				TargetAttributes = {
+					839021FC3028E0C20007C05E = {
+						CreatedOnToolsVersion = 26.2;
+					};
+					839022093028E0C30007C05E = {
+						CreatedOnToolsVersion = 26.2;
+						TestTargetID = 839021FC3028E0C20007C05E;
+					};
+					839022133028E0C30007C05E = {
+						CreatedOnToolsVersion = 26.2;
+						TestTargetID = 839021FC3028E0C20007C05E;
+					};
+				};
+			};
+			buildConfigurationList = 839021F83028E0C20007C05E /* Build configuration list for PBXProject "StreakOSMacApp" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 839021F43028E0C20007C05E;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 839021FE3028E0C20007C05E /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				839021FC3028E0C20007C05E /* StreakOSMacApp */,
+				839022093028E0C30007C05E /* StreakOSMacAppTests */,
+				839022133028E0C30007C05E /* StreakOSMacAppUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		839021FB3028E0C20007C05E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		839022083028E0C30007C05E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		839022123028E0C30007C05E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		839021F93028E0C20007C05E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		839022063028E0C30007C05E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		839022103028E0C30007C05E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		8390220C3028E0C30007C05E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 839021FC3028E0C20007C05E /* StreakOSMacApp */;
+			targetProxy = 8390220B3028E0C30007C05E /* PBXContainerItemProxy */;
+		};
+		839022163028E0C30007C05E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 839021FC3028E0C20007C05E /* StreakOSMacApp */;
+			targetProxy = 839022153028E0C30007C05E /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		8390221C3028E0C30007C05E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = WZB5R9B92Y;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.2;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		8390221D3028E0C30007C05E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = WZB5R9B92Y;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.2;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		8390221F3028E0C30007C05E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = StreakOSMacApp/StreakOSMacApp.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = WZB5R9B92Y;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.6;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.aminfaruq.StreakOSMacApp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		839022203028E0C30007C05E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = StreakOSMacApp/StreakOSMacApp.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = WZB5R9B92Y;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.6;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.aminfaruq.StreakOSMacApp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		839022223028E0C30007C05E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = WZB5R9B92Y;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.6;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.aminfaruq.StreakOSMacAppTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/StreakOSMacApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/StreakOSMacApp";
+			};
+			name = Debug;
+		};
+		839022233028E0C30007C05E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = WZB5R9B92Y;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.6;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.aminfaruq.StreakOSMacAppTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/StreakOSMacApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/StreakOSMacApp";
+			};
+			name = Release;
+		};
+		839022253028E0C30007C05E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = WZB5R9B92Y;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.6;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.aminfaruq.StreakOSMacAppUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = StreakOSMacApp;
+			};
+			name = Debug;
+		};
+		839022263028E0C30007C05E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = WZB5R9B92Y;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.6;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.aminfaruq.StreakOSMacAppUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = StreakOSMacApp;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		839021F83028E0C20007C05E /* Build configuration list for PBXProject "StreakOSMacApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8390221C3028E0C30007C05E /* Debug */,
+				8390221D3028E0C30007C05E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8390221E3028E0C30007C05E /* Build configuration list for PBXNativeTarget "StreakOSMacApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8390221F3028E0C30007C05E /* Debug */,
+				839022203028E0C30007C05E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		839022213028E0C30007C05E /* Build configuration list for PBXNativeTarget "StreakOSMacAppTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				839022223028E0C30007C05E /* Debug */,
+				839022233028E0C30007C05E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		839022243028E0C30007C05E /* Build configuration list for PBXNativeTarget "StreakOSMacAppUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				839022253028E0C30007C05E /* Debug */,
+				839022263028E0C30007C05E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 839021F53028E0C20007C05E /* Project object */;
+}
