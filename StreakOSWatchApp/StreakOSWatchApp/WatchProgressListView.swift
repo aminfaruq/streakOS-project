@@ -1,6 +1,7 @@
 import SwiftUI
 import StreakOSFramework
 import StreakOSPresentation
+import CoreData
 
 struct WatchProgressListView: View {
     @ObservedObject var viewModel: ProgressFeedViewModel
@@ -26,6 +27,12 @@ struct WatchProgressListView: View {
             }
             .navigationTitle("StreakOS")
             .onAppear {
+                viewModel.load(for: Date())
+            }
+            .onReceive(
+                NotificationCenter.default.publisher(for: .NSPersistentStoreRemoteChange)
+                    .debounce(for: .seconds(0.5), scheduler: RunLoop.main)
+            ) { _ in
                 viewModel.load(for: Date())
             }
         }
