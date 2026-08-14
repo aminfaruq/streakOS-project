@@ -2,6 +2,7 @@ import SwiftUI
 import UniformTypeIdentifiers
 import StreakOSFramework
 import StreakOSPresentation
+import Combine
 
 /// PRD §9.1/§9.5 main progress screen.
 struct ProgressListView: View {
@@ -131,6 +132,12 @@ struct ProgressListView: View {
         }
         .onChange(of: selectedDate) { _, newDate in
             viewModel.load(for: newDate)
+        }
+        .onReceive(
+            NotificationCenter.default.publisher(for: .NSPersistentStoreRemoteChange)
+                .debounce(for: .seconds(0.5), scheduler: RunLoop.main)
+        ) { _ in
+            viewModel.load(for: selectedDate)
         }
         .sheet(isPresented: $isAddingItem) {
             AddItemView(
