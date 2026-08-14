@@ -3,7 +3,9 @@ import StreakOSFramework
 import StreakOSPresentation
 
 @main
-struct StreakOSMacAppApp: App {
+struct StreakOSMacApp: App {
+    @NSApplicationDelegateAdaptor(MacAppDelegate.self) var appDelegate
+    
     @StateObject private var viewModel: ProgressFeedViewModel
     private let itemCreator: any ItemCreator
     private let itemUpdater: any ItemUpdater
@@ -39,4 +41,10 @@ struct StreakOSMacAppApp: App {
         .menuBarExtraStyle(.window)
     }
     
+}
+
+class MacAppDelegate: NSObject, NSApplicationDelegate {
+    func applicationDidFinishLaunching(_ notification: Notification) {
+        NSApplication.shared.registerForRemoteNotifications()
+    }
 }
