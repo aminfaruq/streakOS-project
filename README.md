@@ -352,6 +352,20 @@ Feature: Duplicate Naming
 
 ---
 
+---
+
+## Screenshots & Demo
+
+<p align="center">
+  <img src="mac-app.png" alt="Mac App">
+</p>
+
+<p align="center">
+  <img src="menubar.png" alt="Menubar">
+</p>
+
+---
+
 ## License
 
 See [LICENSE](LICENSE) for details.
