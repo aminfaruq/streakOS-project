@@ -11,6 +11,8 @@ import StreakOSPresentation
 
 @main
 struct StreakOSWatchApp_Watch_AppApp: App {
+    @WKExtensionDelegateAdaptor(WatchExtensionDelegate.self) var extensionDelegate
+    
     @StateObject private var viewModel: ProgressFeedViewModel
     private let itemCreator: any ItemCreator
     private let itemUpdater: any ItemUpdater
@@ -32,5 +34,11 @@ struct StreakOSWatchApp_Watch_AppApp: App {
         WindowGroup {
             WatchProgressListView(viewModel: viewModel)
         }
+    }
+}
+
+class WatchExtensionDelegate: NSObject, WKExtensionDelegate {
+    func applicationDidFinishLaunching() {
+        WKExtension.shared().registerForRemoteNotifications()
     }
 }
