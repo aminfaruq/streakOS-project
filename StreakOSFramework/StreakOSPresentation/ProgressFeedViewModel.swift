@@ -57,8 +57,10 @@ public final class ProgressFeedViewModel: ObservableObject {
     public func increment(_ progress: ItemProgress, on date: Date = Date()) {
         guard let tracker else { return }
         tracker.increment(progress.item, on: date) { [weak self] result in
-            self?.apply(result) { updatedRecord in
-                self?.replace(progress, with: updatedRecord)
+            Task { @MainActor in
+                self?.apply(result) { updatedRecord in
+                    self?.replace(progress, with: updatedRecord)
+                }
             }
         }
     }
@@ -66,8 +68,10 @@ public final class ProgressFeedViewModel: ObservableObject {
     public func decrement(_ progress: ItemProgress, on date: Date = Date()) {
         guard let tracker else { return }
         tracker.decrement(progress.item, on: date) { [weak self] result in
-            self?.apply(result) { updatedRecord in
-                self?.replace(progress, with: updatedRecord)
+            Task { @MainActor in
+                self?.apply(result) { updatedRecord in
+                    self?.replace(progress, with: updatedRecord)
+                }
             }
         }
     }
@@ -75,8 +79,10 @@ public final class ProgressFeedViewModel: ObservableObject {
     public func toggleTimer(for progress: ItemProgress, on date: Date) {
         guard let tracker else { return }
         tracker.toggleTimer(progress.item, on: date) { [weak self] result in
-            self?.apply(result) { updatedRecord in
-                self?.replace(progress, with: updatedRecord)
+            Task { @MainActor in
+                self?.apply(result) { updatedRecord in
+                    self?.replace(progress, with: updatedRecord)
+                }
             }
         }
     }
@@ -84,8 +90,10 @@ public final class ProgressFeedViewModel: ObservableObject {
     public func restart(for progress: ItemProgress, on date: Date) {
         guard let tracker else { return }
         tracker.restart(progress.item, on: date) { [weak self] result in
-            self?.apply(result) { updatedRecord in
-                self?.replace(progress, with: updatedRecord)
+            Task { @MainActor in
+                self?.apply(result) { updatedRecord in
+                    self?.replace(progress, with: updatedRecord)
+                }
             }
         }
     }
@@ -93,27 +101,31 @@ public final class ProgressFeedViewModel: ObservableObject {
     public func delete(_ progress: ItemProgress, completion: ((Result<Void, Error>) -> Void)? = nil) {
         guard let itemStore else { return }
         itemStore.delete(progress.item) { [weak self] result in
-            guard let self else { return }
-            
-            switch result {
-            case .success:
-                progressItems.removeAll { $0.item.id == progress.item.id }
-            case .failure:
-                errorMessage = "Failed to delete item"
+            Task { @MainActor in
+                guard let self else { return }
+                
+                switch result {
+                case .success:
+                    self.progressItems.removeAll { $0.item.id == progress.item.id }
+                case .failure:
+                    self.errorMessage = "Failed to delete item"
+                }
+                completion?(result)
             }
-            completion?(result)
         }
     }
     
     public func duplicate(_ progress: ItemProgress, on date: Date = Date()) {
         guard let duplicator else { return }
         duplicator.duplicate(progress.item) { [weak self] result in
-            guard let self else { return }
-            switch result {
-            case .success:
-                load(for: date)
-            case .failure:
-                errorMessage = "Failed to duplicate item"
+            Task { @MainActor in
+                guard let self else { return }
+                switch result {
+                case .success:
+                    self.load(for: date)
+                case .failure:
+                    self.errorMessage = "Failed to duplicate item"
+                }
             }
         }
     }
@@ -121,12 +133,14 @@ public final class ProgressFeedViewModel: ObservableObject {
     public func update(_ progress: ItemProgress, with item: Item, on date: Date = Date()) {
         guard let updater else { return }
         updater.update(item) { [weak self] result in
-            guard let self else { return }
-            switch result {
-            case .success:
-                load(for: date)
-            case .failure:
-                errorMessage = "Failed to update item"
+            Task { @MainActor in
+                guard let self else { return }
+                switch result {
+                case .success:
+                    self.load(for: date)
+                case .failure:
+                    self.errorMessage = "Failed to update item"
+                }
             }
         }
     }
