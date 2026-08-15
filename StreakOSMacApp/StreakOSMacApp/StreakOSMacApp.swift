@@ -10,7 +10,7 @@ struct StreakOSMacApp: App {
     private let itemCreator: any ItemCreator
     private let itemUpdater: any ItemUpdater
     private let itemDuplicator: any ItemDuplicator
-
+    
     init() {
         do {
             let deps = try AppComposer.makeDependencies()
@@ -31,6 +31,7 @@ struct StreakOSMacApp: App {
                 itemUpdater: itemUpdater,
                 itemDuplicator: itemDuplicator
             )
+            .preferredColorScheme(.dark)
             .frame(width: 430)
             .frame(minHeight: 700)
         }

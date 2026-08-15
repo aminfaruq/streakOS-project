@@ -11,7 +11,7 @@ import StreakOSFramework
 import StreakOSPresentation
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
-
+    
     var window: UIWindow?
     
     private var viewModel: ProgressFeedViewModel!
@@ -32,7 +32,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         self.itemUpdater = itemUpdater
         self.itemDuplicator = itemDuplicator
     }
-
+    
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
@@ -62,11 +62,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             itemUpdater: itemUpdater,
             itemDuplicator: itemDuplicator
         )
+            .preferredColorScheme(.dark)
         
         let hostingController = UIHostingController(rootView: rootSwiftUIView)
         window.rootViewController = hostingController
     }
-
+    
     func sceneDidDisconnect(_ scene: UIScene) {}
     func sceneDidBecomeActive(_ scene: UIScene) {}
     func sceneWillResignActive(_ scene: UIScene) {}
