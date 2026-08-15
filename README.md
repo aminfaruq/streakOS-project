@@ -355,7 +355,7 @@ Feature: Duplicate Naming
 ## 📸 Screenshots & Demo
 
 <div align="center">
-  <img src="mac-app.png" alt="Mac App" width="400" />
+  <img src="mac- app.png" alt="Mac App" width="400" />
   <br />
   <sub><b>Mac App</b></sub>
 </div>
@@ -363,7 +363,7 @@ Feature: Duplicate Naming
 <br />
 
 <div align="center">
-  <img src="menubar.png" alt="Menubar" width="400" />
+  <img src="menuba r.png" alt="Menubar" width="400" />
   <br />
   <sub><b>Menubar</b></sub>
 </div>
