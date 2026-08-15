@@ -11,28 +11,288 @@ struct IOSAddItemView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(spacing: 24) {
-                    headerSection
-                    
-                    VStack(spacing: 16) {
-                        typePicker
-                        dateSection
-                        targetStepper
+                VStack(spacing: 20) {
+                    // MARK: - 1. Name & Icon
+                    sectionCard(
+                        icon: "person.crop.circle",
+                        title: "NAME & ICON",
+                        description: "Choose an icon and name your habit"
+                    ) {
+                        HStack(spacing: 16) {
+                            Button {
+                                showIconPicker = true
+                            } label: {
+                                ZStack {
+                                    Circle()
+                                        .fill(Color.gray.opacity(0.1))
+                                        .frame(width: 60, height: 60)
+                                    
+                                    Text(viewModel.icon.isEmpty ? "✨" : viewModel.icon)
+                                        .font(.system(size: 30))
+                                }
+                            }
+                            .buttonStyle(.plain)
+                            
+                            TextField("Habit Name", text: $viewModel.name)
+                                .font(.title3.weight(.semibold))
+                                .textFieldStyle(.plain)
+                                .foregroundStyle(.primary)
+                        }
+                        .padding(16)
+                        .background(
+                            IOSDesignTokens.card,
+                            in: RoundedRectangle(cornerRadius: 16)
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 16)
+                                .stroke(Color.gray.opacity(0.1), lineWidth: 1)
+                        )
                     }
-                    .padding()
-                    .background(Color(UIColor.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 16))
-                    .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 4)
                     
+                    // MARK: - 2. Habit Type
+                    sectionCard(
+                        icon: "arrow.triangle.2.circlepath",
+                        title: "HABIT TYPE",
+                        description: "Choose how you want to track your habit"
+                    ) {
+                        HStack(spacing: 12) {
+                            // Count option
+                            Button {
+                                viewModel.type = .count
+                            } label: {
+                                VStack(alignment: .leading, spacing: 10) {
+                                    HStack {
+                                        Image(systemName: "number.circle.fill")
+                                            .font(.system(size: 28))
+                                            .foregroundStyle(IOSDesignTokens.accent)
+                                        Spacer()
+                                        if viewModel.type == .count {
+                                            Image(systemName: "checkmark.circle.fill")
+                                                .foregroundStyle(IOSDesignTokens.accent)
+                                                .font(.title3)
+                                        }
+                                    }
+                                    Text("Count")
+                                        .font(.headline.weight(.bold))
+                                        .foregroundStyle(.primary)
+                                    Text("Track how many times you complete this habit per day.")
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                        .fixedSize(horizontal: false, vertical: true)
+                                }
+                                .padding(16)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 16)
+                                        .fill(IOSDesignTokens.card)
+                                )
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 16)
+                                        .stroke(
+                                            viewModel.type == .count ? IOSDesignTokens.accent : Color.gray.opacity(0.15),
+                                            lineWidth: viewModel.type == .count ? 2 : 1
+                                        )
+                                )
+                            }
+                            .buttonStyle(.plain)
+                            
+                            // Timer option
+                            Button {
+                                viewModel.type = .minutes
+                            } label: {
+                                VStack(alignment: .leading, spacing: 10) {
+                                    HStack {
+                                        Image(systemName: "timer.circle.fill")
+                                            .font(.system(size: 28))
+                                            .foregroundStyle(IOSDesignTokens.accent)
+                                        Spacer()
+                                        if viewModel.type == .minutes {
+                                            Image(systemName: "checkmark.circle.fill")
+                                                .foregroundStyle(IOSDesignTokens.accent)
+                                                .font(.title3)
+                                        }
+                                    }
+                                    Text("Timer")
+                                        .font(.headline.weight(.bold))
+                                        .foregroundStyle(.primary)
+                                    Text("Track how many minutes you spend on this habit per day.")
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                        .fixedSize(horizontal: false, vertical: true)
+                                }
+                                .padding(16)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 16)
+                                        .fill(IOSDesignTokens.card)
+                                )
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 16)
+                                        .stroke(
+                                            viewModel.type == .minutes ? IOSDesignTokens.accent : Color.gray.opacity(0.15),
+                                            lineWidth: viewModel.type == .minutes ? 2 : 1
+                                        )
+                                )
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+                    
+                    // MARK: - 3. Period
+                    sectionCard(
+                        icon: "calendar",
+                        title: "PERIOD",
+                        description: "Set when this habit starts and ends"
+                    ) {
+                        HStack(spacing: 16) {
+                            // Start Date
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text("STARTS")
+                                    .font(.caption.weight(.bold))
+                                    .foregroundStyle(.secondary)
+                                    .tracking(1.2)
+                                
+                                DatePicker("", selection: $viewModel.startDate, displayedComponents: .date)
+                                    .labelsHidden()
+                                    .datePickerStyle(.compact)
+                                    .padding(.horizontal, 12)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .frame(height: 44)
+                                    .background(
+                                        IOSDesignTokens.card,
+                                        in: RoundedRectangle(cornerRadius: 12)
+                                    )
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 12)
+                                            .stroke(Color.gray.opacity(0.1), lineWidth: 1)
+                                    )
+                            }
+                            
+                            // End Date
+                            VStack(alignment: .leading, spacing: 8) {
+                                HStack {
+                                    Text("ENDS")
+                                        .font(.caption.weight(.bold))
+                                        .foregroundStyle(.secondary)
+                                        .tracking(1.2)
+                                    
+                                    Spacer()
+                                    
+                                    Toggle("", isOn: endDateToggle)
+                                        .labelsHidden()
+                                        .toggleStyle(.switch)
+                                        .scaleEffect(0.8)
+                                }
+                                
+                                if viewModel.endDate != nil {
+                                    DatePicker("", selection: endDateBinding, displayedComponents: .date)
+                                        .labelsHidden()
+                                        .datePickerStyle(.compact)
+                                        .padding(.horizontal, 12)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                        .frame(height: 44)
+                                        .background(
+                                            IOSDesignTokens.card,
+                                            in: RoundedRectangle(cornerRadius: 12)
+                                        )
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 12)
+                                                .stroke(Color.gray.opacity(0.1), lineWidth: 1)
+                                        )
+                                } else {
+                                    Text("Not set")
+                                        .font(.body.weight(.medium))
+                                        .foregroundStyle(.tertiary)
+                                        .padding(.horizontal, 12)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                        .frame(height: 44)
+                                        .background(
+                                            IOSDesignTokens.card,
+                                            in: RoundedRectangle(cornerRadius: 12)
+                                        )
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 12)
+                                                .stroke(Color.gray.opacity(0.1), lineWidth: 1)
+                                        )
+                                }
+                            }
+                        }
+                    }
+                    
+                    // MARK: - 4. Daily Target
+                    sectionCard(
+                        icon: "target",
+                        title: "DAILY TARGET",
+                        description: viewModel.type == .count
+                        ? "How many times do you want to complete it per day?"
+                        : "How many minutes do you want to spend per day?"
+                    ) {
+                        HStack {
+                            Button {
+                                if viewModel.targetCount > 1 { viewModel.targetCount -= 1 }
+                            } label: {
+                                Image(systemName: "minus")
+                                    .font(.title3.weight(.bold))
+                                    .foregroundStyle(.primary)
+                                    .frame(width: 44, height: 44)
+                                    .background(Color.gray.opacity(0.1), in: RoundedRectangle(cornerRadius: 12))
+                            }
+                            .buttonStyle(.plain)
+                            
+                            Spacer()
+                            
+                            HStack(alignment: .center, spacing: 4) {
+                                TextField("", text: targetCountBinding)
+                                    .font(.system(size: 28, weight: .bold))
+                                    .multilineTextAlignment(.center)
+                                    .textFieldStyle(.plain)
+                                    .frame(width: 60)
+                                    .keyboardType(.numberPad)
+                                
+                                Text(viewModel.type == .minutes ? "Minutes" : "Times")
+                                    .font(.headline.weight(.bold))
+                                    .foregroundStyle(.secondary)
+                            }
+                            
+                            Spacer()
+                            
+                            Button {
+                                if viewModel.targetCount < 999 { viewModel.targetCount += 1 }
+                            } label: {
+                                Image(systemName: "plus")
+                                    .font(.title3.weight(.bold))
+                                    .foregroundStyle(IOSDesignTokens.accent)
+                                    .frame(width: 44, height: 44)
+                                    .background(Color.gray.opacity(0.1), in: RoundedRectangle(cornerRadius: 12))
+                            }
+                            .buttonStyle(.plain)
+                        }
+                        .padding(12)
+                        .background(
+                            IOSDesignTokens.card,
+                            in: RoundedRectangle(cornerRadius: 16)
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 16)
+                                .stroke(Color.gray.opacity(0.1), lineWidth: 1)
+                        )
+                    }
+                    
+                    // MARK: - Error
                     if let errorMessage = viewModel.errorMessage {
-                        Text(errorMessage)
-                            .font(.subheadline.weight(.medium))
-                            .foregroundStyle(.red)
-                            .padding(.top, 8)
+                        HStack(spacing: 6) {
+                            Image(systemName: "exclamationmark.triangle.fill")
+                                .font(.subheadline)
+                            Text(errorMessage)
+                                .font(.subheadline.weight(.medium))
+                        }
+                        .foregroundStyle(.red)
+                        .padding(.top, 4)
                     }
                 }
-                .padding()
+                .padding(20)
             }
-            .background(Color(UIColor.systemGroupedBackground))
+            .background(IOSDesignTokens.background)
             .navigationTitle(viewModel.isEditing ? "Edit Habit" : "New Habit")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -40,7 +300,7 @@ struct IOSAddItemView: View {
                     Button("Cancel", action: onCancel)
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Save") {
+                    Button(viewModel.isEditing ? "Done" : "Add") {
                         if viewModel.canSave { viewModel.save() }
                     }
                     .disabled(!viewModel.canSave || viewModel.isSaving)
@@ -53,102 +313,31 @@ struct IOSAddItemView: View {
         }
     }
     
-    // MARK: - Components
-    
-    private var headerSection: some View {
-        HStack(spacing: 16) {
-            Button(action: { showIconPicker = true }) {
-                Text(viewModel.icon.isEmpty ? "✨" : viewModel.icon)
-                    .font(.system(size: 32))
-                    .frame(width: 60, height: 60)
-                    .background(Color(UIColor.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 16))
-                    .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 4)
-            }
-            .buttonStyle(.plain)
-            
-            TextField("Habit Name", text: $viewModel.name)
-                .font(.title2.weight(.bold))
-                .padding()
-                .background(Color(UIColor.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 16))
-                .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 4)
-        }
-    }
-    
-    private var typePicker: some View {
-        Picker("Habit Type", selection: $viewModel.type) {
-            Text("Count").tag(ItemType.count)
-            Text("Timer (Minutes)").tag(ItemType.minutes)
-        }
-        .pickerStyle(.segmented)
-        .padding(.bottom, 8)
-    }
-    
-    private var dateSection: some View {
-        VStack(spacing: 12) {
-            DatePicker("Start Date", selection: $viewModel.startDate, displayedComponents: .date)
-                .font(.headline)
-            
-            Divider()
-            
-            Toggle("End Date", isOn: endDateToggle)
-                .font(.headline)
-            
-            if viewModel.endDate != nil {
-                DatePicker("", selection: endDateBinding, displayedComponents: .date)
-                    .datePickerStyle(.compact)
-                    .labelsHidden()
-                    .frame(maxWidth: .infinity, alignment: .trailing)
-            }
-        }
-    }
-    
-    private var targetStepper: some View {
+    // MARK: - Helper for section card
+    private func sectionCard<Content: View>(
+        icon: String,
+        title: String,
+        description: String,
+        @ViewBuilder content: () -> Content
+    ) -> some View {
         VStack(alignment: .leading, spacing: 12) {
-            Divider()
-                .padding(.bottom, 4)
-            
-            Text("DAILY TARGET")
-                .font(.caption.weight(.bold))
-                .foregroundStyle(.secondary)
-                .tracking(1.5)
-            
-            HStack {
-                Button {
-                    if viewModel.targetCount > 1 { viewModel.targetCount -= 1 }
-                } label: {
-                    Image(systemName: "minus")
-                        .font(.title3.weight(.bold))
-                        .frame(width: 44, height: 44)
-                        .background(Color(UIColor.tertiarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 12))
-                }
-                .buttonStyle(.plain)
+            HStack(spacing: 8) {
+                Image(systemName: icon)
+                    .font(.subheadline)
+                    .foregroundStyle(IOSDesignTokens.accent)
+                    .frame(width: 20)
                 
-                Spacer()
-                
-                HStack(alignment: .firstTextBaseline, spacing: 4) {
-                    TextField("", text: targetCountBinding)
-                        .font(.system(size: 28, weight: .bold))
-                        .multilineTextAlignment(.center)
-                        .keyboardType(.numberPad)
-                    
-                    Text(viewModel.type == .minutes ? "Minutes" : "Times")
-                        .font(.headline.weight(.bold))
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(title)
+                        .font(.caption.weight(.bold))
                         .foregroundStyle(.secondary)
+                        .tracking(1.2)
+                    Text(description)
+                        .font(.caption)
+                        .foregroundStyle(.tertiary)
                 }
-                
-                Spacer()
-                
-                Button {
-                    if viewModel.targetCount < 999 { viewModel.targetCount += 1 }
-                } label: {
-                    Image(systemName: "plus")
-                        .font(.title3.weight(.bold))
-                        .foregroundStyle(Color.blue)
-                        .frame(width: 44, height: 44)
-                        .background(Color.blue.opacity(0.15), in: RoundedRectangle(cornerRadius: 12))
-                }
-                .buttonStyle(.plain)
             }
+            content()
         }
     }
     
@@ -189,7 +378,7 @@ struct IOSIconPickerView: View {
     @Environment(\.dismiss) private var dismiss
     
     let icons = [
-        "✨", "💧", "📚", "🏃‍♂️", "🧘‍♀️", "🏋️", "🍎", "😴", 
+        "✨", "💧", "📚", "🏃‍♂️", "🧘‍♀️", "🏋️", "🍎", "😴",
         "🎸", "🎨", "✍️", "💻", "🪴", "💊", "🧹", "💰",
         "❤️", "🔥", "🚀", "💡", "🎯", "🏆", "🌟", "✅"
     ]
@@ -210,13 +399,28 @@ struct IOSIconPickerView: View {
                             Text(icon)
                                 .font(.system(size: 32))
                                 .frame(width: 56, height: 56)
-                                .background(selectedIcon == icon ? Color.gray.opacity(0.2) : Color.clear, in: Circle())
+                                .background(
+                                    selectedIcon == icon
+                                    ? Color.gray.opacity(0.2)
+                                    : Color.clear,
+                                    in: Circle()
+                                )
+                                .overlay(
+                                    Circle()
+                                        .stroke(
+                                            selectedIcon == icon
+                                            ? IOSDesignTokens.accent
+                                            : Color.clear,
+                                            lineWidth: 2
+                                        )
+                                )
                         }
                         .buttonStyle(.plain)
                     }
                 }
                 .padding()
             }
+            .background(IOSDesignTokens.background)
             .navigationTitle("Select Icon")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
