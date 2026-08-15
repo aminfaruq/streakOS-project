@@ -31,9 +31,11 @@ struct StreakOSMacApp: App {
                 itemUpdater: itemUpdater,
                 itemDuplicator: itemDuplicator
             )
-            .frame(minWidth: 400, minHeight: 700)
+            .frame(width: 430)
+            .frame(minHeight: 700)
         }
         .windowStyle(.hiddenTitleBar)
+        .windowResizability(.contentSize)
         
         MenuBarExtra("StreakOS", systemImage: "checkmark.circle") {
             MenuBarProgressView(viewModel: viewModel)
