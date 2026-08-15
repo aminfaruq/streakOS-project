@@ -8,9 +8,9 @@
       location = "group:StreakOSMacApp/StreakOSMacApp.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:StreakOSWatchApp/StreakOSWatchApp.xcodeproj">
+      location = "group:StreakOSApp/StreakOSApp.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:StreakOSApp/StreakOSApp.xcodeproj">
+      location = "group:StreakOSWatchApp/StreakOSWatchApp.xcodeproj">
    </FileRef>
 </Workspace>

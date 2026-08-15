@@ -8,33 +8,53 @@ struct MenuBarProgressView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            // Header
-            HStack {
-                Text("StreakOS")
-                    .font(.headline)
-                    .foregroundStyle(.primary)
+            // MARK: - Header
+            HStack(alignment: .center) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("StreakOS")
+                        .font(.headline)
+                        .foregroundStyle(.primary)
+                    Text("Today")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
                 Spacer()
                 
                 let completedCount = viewModel.progressItems.filter { $0.record?.isCompleted == true }.count
-                Text("\(completedCount)/\(viewModel.progressItems.count)")
+                let total = viewModel.progressItems.count
+                
+                Text("\(completedCount)/\(total)")
                     .font(.caption.weight(.bold))
-                    .foregroundStyle(.secondary)
-                    .padding(.horizontal, 8)
+                    .foregroundStyle(completedCount == total && total > 0 ? .white : .secondary)
+                    .padding(.horizontal, 10)
                     .padding(.vertical, 4)
-                    .background(Color.gray.opacity(0.1), in: Capsule())
+                    .background(
+                        Capsule()
+                            .fill(
+                                completedCount == total && total > 0
+                                    ? DesignTokens.accent
+                                    : Color.gray.opacity(0.1)
+                            )
+                    )
             }
-            .padding()
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
             
             Divider()
             
-            // Content
+            // MARK: - Content
             ScrollView {
-                LazyVStack(spacing: 8) {
+                LazyVStack(spacing: 10) {
                     if viewModel.progressItems.isEmpty {
-                        Text("No habits for today.")
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                            .padding(.top, 20)
+                        VStack(spacing: 8) {
+                            Image(systemName: "checkmark.circle")
+                                .font(.system(size: 28))
+                                .foregroundStyle(.tertiary)
+                            Text("No habits for today.")
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                        }
+                        .padding(.top, 30)
                     } else {
                         ForEach(viewModel.progressItems, id: \.item.id) { progress in
                             MenuBarItemRow(
@@ -52,21 +72,31 @@ struct MenuBarProgressView: View {
             
             Divider()
             
-            // Footer
+            // MARK: - Footer
             Button(action: {
                 openWindow(id: "main")
             }) {
                 HStack {
                     Image(systemName: "macwindow")
+                        .font(.system(size: 12, weight: .medium))
                     Text("Open StreakOS")
+                        .font(.subheadline.weight(.medium))
                 }
-                .font(.subheadline.weight(.medium))
                 .frame(maxWidth: .infinity)
-                .padding(.vertical, 12)
+                .padding(.vertical, 10)
+                .background(
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(DesignTokens.accent.opacity(0.1))
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(DesignTokens.accent.opacity(0.3), lineWidth: 1)
+                )
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
-            .background(DesignTokens.card)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
         }
         .frame(width: 320)
         .background(DesignTokens.background)
@@ -74,8 +104,6 @@ struct MenuBarProgressView: View {
             viewModel.load(for: Date())
         }
     }
-    
-
 }
 
 struct MenuBarItemRow: View {
@@ -87,25 +115,42 @@ struct MenuBarItemRow: View {
     @State private var isHovering = false
     
     var body: some View {
-        HStack(spacing: 12) {
-            Text(progress.item.icon)
-                .font(.system(size: 20))
-                .frame(width: 36, height: 36)
-                .background(Color.gray.opacity(0.1), in: RoundedRectangle(cornerRadius: 8))
-            
-            Text(progress.item.name)
-                .font(.system(size: 14, weight: .semibold))
-                .lineLimit(1)
-            
-            Spacer()
-            
-            if progress.item.type == .minutes {
-                TimelineView(.periodic(from: .now, by: 1.0)) { context in
-                    minutesAdjuster(liveNow: context.date)
+        VStack(spacing: 8) {
+            HStack(spacing: 12) {
+                Text(progress.item.icon)
+                    .font(.system(size: 20))
+                    .frame(width: 36, height: 36)
+                    .background(Color.gray.opacity(0.1), in: RoundedRectangle(cornerRadius: 8))
+                
+                Text(progress.item.name)
+                    .font(.system(size: 14, weight: .semibold))
+                    .lineLimit(1)
+                
+                Spacer()
+                
+                if progress.item.type == .minutes {
+                    TimelineView(.periodic(from: .now, by: 1.0)) { context in
+                        minutesAdjuster(liveNow: context.date)
+                    }
+                } else {
+                    countAdjuster()
                 }
-            } else {
-                countAdjuster()
             }
+            
+            // Mini progress bar
+            GeometryReader { geometry in
+                ZStack(alignment: .leading) {
+                    Capsule()
+                        .fill(Color.gray.opacity(0.15))
+                        .frame(height: 3)
+                    
+                    Capsule()
+                        .fill(progress.progressFraction >= 1.0 ? DesignTokens.accent : DesignTokens.accent.opacity(0.8))
+                        .frame(width: max(0, geometry.size.width * CGFloat(progress.progressFraction)), height: 3)
+                        .animation(.easeInOut(duration: 0.3), value: progress.progressFraction)
+                }
+            }
+            .frame(height: 3)
         }
         .padding(.vertical, 10)
         .padding(.horizontal, 12)
@@ -122,33 +167,36 @@ struct MenuBarItemRow: View {
         }
     }
     
+    // MARK: - Count Adjuster
     @ViewBuilder
     private func countAdjuster() -> some View {
         HStack(spacing: 8) {
             Button(action: onDecrement) {
                 Image(systemName: "minus")
-                    .font(.system(size: 10, weight: .bold))
-                    .frame(width: 20, height: 20)
-                    .background(Color.gray.opacity(0.1), in: RoundedRectangle(cornerRadius: 4))
+                    .font(.system(size: 11, weight: .bold))
+                    .frame(width: 24, height: 24)
+                    .background(Color.gray.opacity(0.1), in: RoundedRectangle(cornerRadius: 6))
             }
             .buttonStyle(.plain)
+            .foregroundStyle(.primary)
             
             Text(progress.displayText)
-                .font(.system(size: 12, weight: .bold, design: .monospaced))
+                .font(.system(size: 13, weight: .bold, design: .monospaced))
                 .foregroundStyle(progress.progressFraction >= 1.0 ? DesignTokens.accent : .primary)
-                .frame(minWidth: 40, alignment: .center)
+                .frame(minWidth: 44, alignment: .center)
                 
             Button(action: onIncrement) {
                 Image(systemName: "plus")
-                    .font(.system(size: 10, weight: .bold))
+                    .font(.system(size: 11, weight: .bold))
                     .foregroundStyle(DesignTokens.accent)
-                    .frame(width: 20, height: 20)
-                    .background(DesignTokens.accent.opacity(0.15), in: RoundedRectangle(cornerRadius: 4))
+                    .frame(width: 24, height: 24)
+                    .background(DesignTokens.accent.opacity(0.15), in: RoundedRectangle(cornerRadius: 6))
             }
             .buttonStyle(.plain)
         }
     }
     
+    // MARK: - Timer Adjuster
     @ViewBuilder
     private func minutesAdjuster(liveNow: Date) -> some View {
         let isRunning = (progress.record?.timerStartDate != nil)
@@ -157,11 +205,12 @@ struct MenuBarItemRow: View {
             if !isRunning {
                 Button(action: onDecrement) {
                     Image(systemName: "minus")
-                        .font(.system(size: 10, weight: .bold))
-                        .frame(width: 20, height: 20)
-                        .background(Color.gray.opacity(0.1), in: RoundedRectangle(cornerRadius: 4))
+                        .font(.system(size: 11, weight: .bold))
+                        .frame(width: 24, height: 24)
+                        .background(Color.gray.opacity(0.1), in: RoundedRectangle(cornerRadius: 6))
                 }
                 .buttonStyle(.plain)
+                .foregroundStyle(.primary)
             }
             
             Button(action: onToggleTimer) {
@@ -172,20 +221,20 @@ struct MenuBarItemRow: View {
                         .font(.system(size: 12, weight: .bold, design: .monospaced))
                 }
                 .foregroundStyle(isRunning ? DesignTokens.accent : .primary)
-                .frame(minWidth: 54, alignment: .center)
-                .padding(.horizontal, 6)
-                .padding(.vertical, 4)
-                .background(isRunning ? DesignTokens.accent.opacity(0.15) : Color.gray.opacity(0.1), in: RoundedRectangle(cornerRadius: 4))
+                .frame(minWidth: 58, alignment: .center)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 5)
+                .background(isRunning ? DesignTokens.accent.opacity(0.15) : Color.gray.opacity(0.1), in: RoundedRectangle(cornerRadius: 6))
             }
             .buttonStyle(.plain)
             
             if !isRunning {
                 Button(action: onIncrement) {
                     Image(systemName: "plus")
-                        .font(.system(size: 10, weight: .bold))
+                        .font(.system(size: 11, weight: .bold))
                         .foregroundStyle(DesignTokens.accent)
-                        .frame(width: 20, height: 20)
-                        .background(DesignTokens.accent.opacity(0.15), in: RoundedRectangle(cornerRadius: 4))
+                        .frame(width: 24, height: 24)
+                        .background(DesignTokens.accent.opacity(0.15), in: RoundedRectangle(cornerRadius: 6))
                 }
                 .buttonStyle(.plain)
             }

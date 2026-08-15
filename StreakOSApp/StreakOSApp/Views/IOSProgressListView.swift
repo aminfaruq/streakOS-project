@@ -25,11 +25,11 @@ struct IOSProgressListView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            // Header
-            HStack(alignment: .bottom) {
+            // MARK: - Header
+            HStack(alignment: .center) {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("StreakOS")
-                        .font(.system(size: 34, weight: .bold, design: .default))
+                        .font(.system(size: 30, weight: .bold, design: .default))
                         .tracking(-0.5)
                     
                     Text(titleText)
@@ -39,85 +39,130 @@ struct IOSProgressListView: View {
                 
                 Spacer()
                 
-                // Activity Ring
                 ZStack {
                     Circle()
                         .stroke(Color.gray.opacity(0.2), lineWidth: 4)
                     
                     Circle()
                         .trim(from: 0, to: progressFraction)
-                        .stroke(IOSDesignTokens.accent, style: StrokeStyle(lineWidth: 4, lineCap: .round))
+                        .stroke(
+                            IOSDesignTokens.accent,
+                            style: StrokeStyle(lineWidth: 4, lineCap: .round)
+                        )
                         .rotationEffect(.degrees(-90))
                         .animation(.spring(response: 0.8, dampingFraction: 0.6), value: progressFraction)
                     
                     Text("\(completedCount)/\(viewModel.progressItems.count)")
-                        .font(.system(size: 11, weight: .bold))
+                        .font(.system(size: 13, weight: .bold))
+                        .foregroundStyle(.secondary)
                 }
-                .frame(width: 44, height: 44)
+                .frame(width: 48, height: 48)
                 .opacity(isEditMode ? 0.3 : 1.0)
             }
-            .padding(.horizontal, 16)
-            .padding(.top, 24)
-            .padding(.bottom, 20)
+            .padding(.horizontal, 20)
+            .padding(.top, 20)
+            .padding(.bottom, 16)
             
-            // Actions Row (Edit, Date Nav, Add)
-            HStack {
+            // MARK: - Actions Row
+            HStack(spacing: 12) {
                 Button(action: { withAnimation { isEditMode.toggle() } }) {
-                    Text(isEditMode ? "Done" : "Edit")
-                        .font(.system(size: 16, weight: .semibold))
-                        .foregroundStyle(.blue)
+                    HStack(spacing: 6) {
+                        Image(systemName: isEditMode ? "checkmark.circle.fill" : "pencil")
+                            .font(.system(size: 15))
+                        Text(isEditMode ? "Done" : "Edit")
+                            .font(.system(size: 16, weight: .semibold))
+                    }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .background(
+                        Capsule()
+                            .fill(
+                                isEditMode
+                                ? IOSDesignTokens.accent.opacity(0.15)
+                                : Color.gray.opacity(0.08)
+                            )
+                    )
                 }
                 .buttonStyle(.plain)
+                .foregroundStyle(isEditMode ? IOSDesignTokens.accent : .primary)
                 
                 Spacer()
                 
-                // Mini Date Navigation
-                HStack(spacing: 12) {
+                HStack(spacing: 10) {
                     Button(action: { shiftDay(by: -1) }) {
                         Image(systemName: "chevron.left")
                             .font(.system(size: 14, weight: .bold))
-                            .foregroundStyle(navigationWindow.canNavigateBackward(from: selectedDate) ? .primary : .tertiary)
+                            .foregroundStyle(
+                                navigationWindow.canNavigateBackward(from: selectedDate)
+                                ? .primary
+                                : .tertiary
+                            )
+                            .frame(width: 24, height: 24)
                     }
                     .buttonStyle(.plain)
                     .disabled(!navigationWindow.canNavigateBackward(from: selectedDate))
                     
                     if !navigationWindow.isToday(selectedDate) {
-                        Button("Today") { selectedDate = Date() }
-                            .font(.system(size: 12, weight: .bold))
-                            .buttonStyle(.plain)
-                            .foregroundStyle(IOSDesignTokens.accent)
+                        Button("Today") {
+                            selectedDate = Date()
+                        }
+                        .font(.system(size: 13, weight: .bold))
+                        .buttonStyle(.plain)
+                        .foregroundStyle(IOSDesignTokens.accent)
                     } else {
                         Text("Today")
-                            .font(.system(size: 12, weight: .bold))
+                            .font(.system(size: 13, weight: .bold))
                             .foregroundStyle(.secondary)
                     }
                     
                     Button(action: { shiftDay(by: 1) }) {
                         Image(systemName: "chevron.right")
                             .font(.system(size: 14, weight: .bold))
-                            .foregroundStyle(navigationWindow.canNavigateForward(from: selectedDate) ? .primary : .tertiary)
+                            .foregroundStyle(
+                                navigationWindow.canNavigateForward(from: selectedDate)
+                                ? .primary
+                                : .tertiary
+                            )
+                            .frame(width: 24, height: 24)
                     }
                     .buttonStyle(.plain)
                     .disabled(!navigationWindow.canNavigateForward(from: selectedDate))
                 }
                 .padding(.horizontal, 12)
                 .padding(.vertical, 6)
-                .background(Color.gray.opacity(0.1), in: Capsule())
+                .background(
+                    Capsule()
+                        .fill(IOSDesignTokens.card)
+                        .shadow(color: Color.black.opacity(0.05), radius: 2, x: 0, y: 1)
+                )
+                .overlay(
+                    Capsule()
+                        .stroke(Color.gray.opacity(0.15), lineWidth: 1)
+                )
                 
+                Spacer()
                 Spacer()
                 
                 Button(action: { isAddingItem = true }) {
                     Image(systemName: "plus")
                         .font(.system(size: 16, weight: .bold))
-                        .foregroundStyle(.blue)
+                        .foregroundStyle(.white)
                         .frame(width: 32, height: 32)
-                        .background(Color.blue.opacity(0.1), in: Circle())
+                        .background(
+                            Circle()
+                                .fill(IOSDesignTokens.accent)
+                                .shadow(color: IOSDesignTokens.accent.opacity(0.3), radius: 3, x: 0, y: 1)
+                        )
                 }
                 .buttonStyle(.plain)
             }
-            .padding(.horizontal, 16)
-            .padding(.bottom, 20)
+            .padding(.horizontal, 20)
+            .padding(.bottom, 16)
             
+            Divider()
+                .padding(.horizontal, 20)
+            
+            // MARK: - Content
             if viewModel.isLoading && viewModel.progressItems.isEmpty {
                 Spacer()
                 ProgressView()
@@ -179,6 +224,7 @@ struct IOSProgressListView: View {
         }
     }
     
+    // MARK: - Computed properties (unchanged)
     private var completedCount: Int {
         viewModel.progressItems.filter { $0.record?.isCompleted == true }.count
     }
@@ -193,9 +239,10 @@ struct IOSProgressListView: View {
         Calendar.current.startOfDay(for: selectedDate) > Calendar.current.startOfDay(for: Date())
     }
     
+    // MARK: - Main Content
     private var mainContentView: some View {
         ScrollView {
-            LazyVStack(spacing: 12) {
+            LazyVStack(spacing: 14) {
                 if viewModel.progressItems.isEmpty {
                     emptyState
                 } else {
@@ -204,8 +251,9 @@ struct IOSProgressListView: View {
                     }
                 }
             }
-            .padding(4)
-            .padding(.horizontal)
+            .padding(.horizontal, 20)
+            .padding(.top, 12)
+            .padding(.bottom, 24)
             .frame(maxWidth: .infinity)
             .opacity(isFutureDate ? 0.5 : 1.0)
             .grayscale(isFutureDate ? 0.8 : 0)
@@ -248,6 +296,8 @@ struct IOSProgressListView: View {
                         pendingDelete = currentProgress
                     }
                 )
+                .presentationDetents([.medium, .large])
+                .presentationDragIndicator(.visible)
             }
         }
         .onDrag {
@@ -275,16 +325,19 @@ struct IOSProgressListView: View {
     
     private var emptyState: some View {
         VStack(spacing: 12) {
-            Text("📋")
-                .font(.system(size: 56))
+            Image(systemName: "list.clipboard")
+                .font(.system(size: 52))
+                .foregroundStyle(.tertiary)
             Text("No habits yet")
                 .font(.title3.weight(.semibold))
             Text("Add your first habit to get started")
+                .font(.subheadline)
                 .foregroundStyle(.secondary)
         }
         .padding(.vertical, 60)
+        .frame(maxWidth: .infinity)
     }
-        
+    
     private var titleText: String {
         let formatter = DateFormatter()
         formatter.dateFormat = "EEEE, MMM d"
@@ -298,6 +351,7 @@ struct IOSProgressListView: View {
     }
 }
 
+// MARK: - Drop Delegate (tidak diubah)
 struct IOSItemDropDelegate: DropDelegate {
     let item: ItemProgress
     @Binding var items: [ItemProgress]

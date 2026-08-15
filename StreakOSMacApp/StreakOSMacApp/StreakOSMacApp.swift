@@ -10,7 +10,7 @@ struct StreakOSMacApp: App {
     private let itemCreator: any ItemCreator
     private let itemUpdater: any ItemUpdater
     private let itemDuplicator: any ItemDuplicator
-
+    
     init() {
         do {
             let deps = try AppComposer.makeDependencies()
@@ -31,9 +31,12 @@ struct StreakOSMacApp: App {
                 itemUpdater: itemUpdater,
                 itemDuplicator: itemDuplicator
             )
-            .frame(minWidth: 400, minHeight: 700)
+            .preferredColorScheme(.dark)
+            .frame(width: 430)
+            .frame(minHeight: 700)
         }
         .windowStyle(.hiddenTitleBar)
+        .windowResizability(.contentSize)
         
         MenuBarExtra("StreakOS", systemImage: "checkmark.circle") {
             MenuBarProgressView(viewModel: viewModel)
