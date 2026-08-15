@@ -352,17 +352,21 @@ Feature: Duplicate Naming
 
 ---
 
----
+## 📸 Screenshots & Demo
 
-## Screenshots & Demo
+<div align="center">
+  <img src="mac-app.png" alt="Mac App" width="400" />
+  <br />
+  <sub><b>Mac App</b></sub>
+</div>
 
-<p align="center">
-  <img src="mac-app.png" alt="Mac App">
-</p>
+<br />
 
-<p align="center">
-  <img src="menubar.png" alt="Menubar">
-</p>
+<div align="center">
+  <img src="menubar.png" alt="Menubar" width="400" />
+  <br />
+  <sub><b>Menubar</b></sub>
+</div>
 
 ---
 
