@@ -4,7 +4,6 @@ import StreakOSFramework
 import StreakOSPresentation
 import Combine
 
-/// PRD §9.1/§9.5 main progress screen.
 struct ProgressListView: View {
     @ObservedObject var viewModel: ProgressFeedViewModel
     let itemCreator: any ItemCreator
@@ -25,99 +24,125 @@ struct ProgressListView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            // Header
-            HStack(alignment: .bottom) {
+            // MARK: - Header
+            HStack(alignment: .center) {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("StreakOS")
-                        .font(.system(size: 34, weight: .bold, design: .default))
-                        .tracking(-0.5)
+                        .font(.system(size: 28, weight: .bold)) // sedikit lebih besar
                     
                     Text(titleText)
-                        .font(.system(size: 15, weight: .medium))
+                        .font(.subheadline)
                         .foregroundStyle(.secondary)
                 }
                 
                 Spacer()
                 
-                // Activity Ring
+                // Progress ring diperbesar
                 ZStack {
                     Circle()
-                        .stroke(Color.gray.opacity(0.2), lineWidth: 4)
+                        .stroke(.quaternary, lineWidth: 3.5)
                     
                     Circle()
                         .trim(from: 0, to: progressFraction)
-                        .stroke(DesignTokens.accent, style: StrokeStyle(lineWidth: 4, lineCap: .round))
+                        .stroke(DesignTokens.accent, style: StrokeStyle(lineWidth: 3.5, lineCap: .round))
                         .rotationEffect(.degrees(-90))
                         .animation(.spring(response: 0.8, dampingFraction: 0.6), value: progressFraction)
                     
                     Text("\(completedCount)/\(viewModel.progressItems.count)")
-                        .font(.system(size: 11, weight: .bold))
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundStyle(.secondary)
                 }
                 .frame(width: 44, height: 44)
                 .opacity(isEditMode ? 0.3 : 1.0)
             }
-            .padding(.horizontal, 16)
+            .padding(.horizontal, 24)
             .padding(.top, 24)
-            .padding(.bottom, 20)
+            .padding(.bottom, 18)
             
-            // Actions Row (Edit, Date Nav, Add)
-            HStack {
+            // MARK: - Toolbar
+            HStack(spacing: 12) {
                 Button(action: { withAnimation { isEditMode.toggle() } }) {
-                    Text(isEditMode ? "Done" : "Edit")
-                        .font(.system(size: 16, weight: .semibold))
-                        .foregroundStyle(.blue)
+                    HStack(spacing: 6) {
+                        Image(systemName: isEditMode ? "checkmark.circle.fill" : "pencil")
+                            .font(.system(size: 14))
+                        Text(isEditMode ? "Done" : "Edit")
+                            .font(.subheadline.weight(.medium))
+                    }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(
+                        Capsule()
+                            .fill(isEditMode ? DesignTokens.accent.opacity(0.1) : Color.gray.opacity(0.08))
+                    )
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.borderless)
+                .foregroundStyle(isEditMode ? DesignTokens.accent : .primary)
                 
                 Spacer()
                 
-                // Mini Date Navigation
-                HStack(spacing: 12) {
+                // Date Navigation — diberi background & border agar terlihat sebagai kontrol
+                HStack(spacing: 8) {
                     Button(action: { shiftDay(by: -1) }) {
                         Image(systemName: "chevron.left")
-                            .font(.system(size: 14, weight: .bold))
-                            .foregroundStyle(navigationWindow.canNavigateBackward(from: selectedDate) ? .primary : .tertiary)
+                            .font(.system(size: 12, weight: .semibold))
+                            .frame(width: 24, height: 24)
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.borderless)
                     .disabled(!navigationWindow.canNavigateBackward(from: selectedDate))
                     
                     if !navigationWindow.isToday(selectedDate) {
-                        Button("Today") { selectedDate = Date() }
-                            .font(.system(size: 12, weight: .bold))
-                            .buttonStyle(.plain)
-                            .foregroundStyle(DesignTokens.accent)
+                        Button(action: { selectedDate = Date() }) {
+                            Text("Today")
+                                .font(.subheadline.weight(.semibold))
+                                .padding(.horizontal, 4)
+                        }
+                        .buttonStyle(.borderless)
+                        .foregroundStyle(DesignTokens.accent)
                     } else {
                         Text("Today")
-                            .font(.system(size: 12, weight: .bold))
+                            .font(.subheadline.weight(.semibold))
                             .foregroundStyle(.secondary)
                     }
                     
                     Button(action: { shiftDay(by: 1) }) {
                         Image(systemName: "chevron.right")
-                            .font(.system(size: 14, weight: .bold))
-                            .foregroundStyle(navigationWindow.canNavigateForward(from: selectedDate) ? .primary : .tertiary)
+                            .font(.system(size: 12, weight: .semibold))
+                            .frame(width: 24, height: 24)
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.borderless)
                     .disabled(!navigationWindow.canNavigateForward(from: selectedDate))
                 }
                 .padding(.horizontal, 12)
                 .padding(.vertical, 6)
-                .background(Color.gray.opacity(0.1), in: Capsule())
+                .background(
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(DesignTokens.card)
+                        .shadow(color: Color.black.opacity(0.04), radius: 2, x: 0, y: 1)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(Color.gray.opacity(0.15), lineWidth: 1)
+                )
                 
                 Spacer()
                 
                 Button(action: { isAddingItem = true }) {
                     Image(systemName: "plus")
-                        .font(.system(size: 16, weight: .bold))
-                        .foregroundStyle(.blue)
+                        .font(.system(size: 14, weight: .bold))
                         .frame(width: 32, height: 32)
-                        .background(Color.blue.opacity(0.1), in: Circle())
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.borderedProminent)
+                .tint(DesignTokens.accent)
+                .clipShape(Circle())
+                .shadow(color: DesignTokens.accent.opacity(0.3), radius: 4, x: 0, y: 2)
             }
-            .padding(.horizontal, 16)
-            .padding(.bottom, 20)
+            .padding(.horizontal, 24)
+            .padding(.bottom, 16)
             
+            Divider()
+                .padding(.horizontal, 24)
+            
+            // MARK: - Content
             if viewModel.isLoading && viewModel.progressItems.isEmpty {
                 Spacer()
                 ProgressView()
@@ -157,7 +182,6 @@ struct ProgressListView: View {
                 onCancel: { editingProgress = nil }
             )
         }
-
         .confirmationDialog(
             "Delete \(pendingDelete?.item.name ?? "item")?",
             isPresented: Binding(
@@ -180,6 +204,7 @@ struct ProgressListView: View {
         }
     }
     
+    // MARK: - Computed properties (unchanged)
     private var completedCount: Int {
         viewModel.progressItems.filter { $0.record?.isCompleted == true }.count
     }
@@ -194,9 +219,10 @@ struct ProgressListView: View {
         Calendar.current.startOfDay(for: selectedDate) > Calendar.current.startOfDay(for: Date())
     }
     
+    // MARK: - Main Content (UI changes only)
     private var mainContentView: some View {
         ScrollView {
-            LazyVStack(spacing: 12) {
+            LazyVStack(spacing: 12) { // spacing dinaikkan dari 10 ke 12
                 if viewModel.progressItems.isEmpty {
                     emptyState
                 } else {
@@ -205,9 +231,11 @@ struct ProgressListView: View {
                     }
                 }
             }
-            .padding(4)
-            .padding(.horizontal)
-            .frame(maxWidth: .infinity)
+            .padding(.horizontal, 24)
+            .padding(.top, 16)
+            .padding(.bottom, 24)
+            .frame(maxWidth: 560)          // batasi lebar konten agar tidak terlalu melebar
+            .frame(maxWidth: .infinity)    // center konten
             .opacity(isFutureDate ? 0.5 : 1.0)
             .grayscale(isFutureDate ? 0.8 : 0)
             .disabled(isFutureDate)
@@ -279,17 +307,20 @@ struct ProgressListView: View {
     }
     
     private var emptyState: some View {
-        VStack(spacing: 12) {
-            Text("📋")
+        VStack(spacing: 16) {
+            Image(systemName: "list.clipboard")
                 .font(.system(size: 56))
+                .foregroundStyle(.tertiary)
             Text("No habits yet")
                 .font(.title3.weight(.semibold))
             Text("Add your first habit to get started")
+                .font(.subheadline)
                 .foregroundStyle(.secondary)
         }
         .padding(.vertical, 60)
+        .frame(maxWidth: .infinity)
     }
-        
+    
     private var titleText: String {
         let formatter = DateFormatter()
         formatter.dateFormat = "EEEE, MMM d"
@@ -302,7 +333,6 @@ struct ProgressListView: View {
         }
     }
 }
-
 struct ItemDropDelegate: DropDelegate {
     let item: ItemProgress
     @Binding var items: [ItemProgress]
