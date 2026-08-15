@@ -191,9 +191,9 @@ StreakOSWatchApp/                    ← watchOS composition root
 ### Dependency Direction
 
 ```
-StreakOSMacApp ──┐
-StreakOSApp    ──┤→ StreakOSPresentation → StreakOSFramework
-StreakOSWatchApp┘
+StreakOSMacApp ───┐
+StreakOSApp    ───┤──→ StreakOSPresentation → StreakOSFramework
+StreakOSWatchApp──┘
 ```
 
 The domain layer (`Domain/Protocols/`) defines the contracts (`DailyProgressLoader`, `ProgressTracker`, `ItemStore`, …). Infrastructure adapters conform to them. ViewModels depend only on domain types and Combine — they never import SwiftUI or UIKit. Each app target is a thin composition root that wires concrete adapters into ViewModels.
