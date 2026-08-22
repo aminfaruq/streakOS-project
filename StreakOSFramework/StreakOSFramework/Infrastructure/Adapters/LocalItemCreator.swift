@@ -23,10 +23,12 @@ extension LocalItemCreator: ItemCreator {
     
     public func create(
         name: String,
-        icon: String, type: ItemType,
+        icon: String,
+        type: ItemType,
         targetCount: Int,
         startDate: Date,
         endDate: Date?,
+        repeatSchedule: RepeatSchedule?,
         completion: @escaping (ItemCreator.Result) -> Void
     ) {
         itemStore.retrieveAll { [weak self] result in
@@ -46,6 +48,7 @@ extension LocalItemCreator: ItemCreator {
                     targetCount: targetCount,
                     startDate: startDate,
                     endDate: endDate,
+                    repeatSchedule: repeatSchedule,
                     existingItems: existingItems
                 )
                 self.save(item, completion: completion)
@@ -76,6 +79,7 @@ extension LocalItemCreator: ItemCreator {
         targetCount: Int,
         startDate: Date,
         endDate: Date?,
+        repeatSchedule: RepeatSchedule?,
         existingItems: [Item]
     ) -> Item {
         let now = currentDate()
@@ -88,6 +92,7 @@ extension LocalItemCreator: ItemCreator {
             targetCount: targetCount,
             startDate: startDate,
             endDate: endDate,
+            repeatSchedule: repeatSchedule,
             displayOrder: topOrder,
             createdAt: now,
             updatedAt: now

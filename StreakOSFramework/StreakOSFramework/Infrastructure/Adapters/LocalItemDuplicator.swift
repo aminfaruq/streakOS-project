@@ -59,6 +59,7 @@ extension LocalItemDuplicator: ItemDuplicator {
             targetCount: item.targetCount,
             startDate: now,
             endDate: item.endDate,
+            repeatSchedule: item.repeatSchedule,
             displayOrder: topOrder,
             createdAt: now,
             updatedAt: now

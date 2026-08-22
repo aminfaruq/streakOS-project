@@ -110,4 +110,42 @@ final class SDItemMapperTests: XCTestCase {
         XCTAssertEqual(items[0].name, "A")
         XCTAssertEqual(items[1].name, "B")
     }
+    
+    func test_toDomain_mapsRepeatDaysToRepeatSchedule() {
+        let sdItem = SDItem(
+            id: UUID(),
+            name: "Gym",
+            icon: "🏋️",
+            itemTypeRawValue: ItemType.count.rawValue,
+            targetCount: 1,
+            startDate: Date(),
+            endDate: nil,
+            repeatDays: [2, 4, 6], // Mon, Wed, Fri
+            displayOrder: 0,
+            createdAt: Date(),
+            updatedAt: Date()
+        )
+        
+        let item = SDItemMapper.toDomain(sdItem)
+        XCTAssertEqual(item.repeatSchedule?.days, Set([.monday, .wednesday, .friday]))
+    }
+    
+    func test_toSDModel_mapsRepeatScheduleToRepeatDays() {
+        let item = Item(
+            id: UUID(),
+            name: "Gym",
+            icon: "🏋️",
+            type: .count,
+            targetCount: 1,
+            startDate: Date(),
+            endDate: nil,
+            repeatSchedule: RepeatSchedule.weekdays,
+            displayOrder: 0,
+            createdAt: Date(),
+            updatedAt: Date()
+        )
+        
+        let sdItem = SDItemMapper.toSDModel(item)
+        XCTAssertEqual(sdItem.repeatDays, [2, 3, 4, 5, 6])
+    }
 }

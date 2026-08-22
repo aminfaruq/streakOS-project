@@ -56,6 +56,33 @@ final class LocalDailyProgressLoaderTests: XCTestCase {
         }
     }
     
+    func test_load_filtersOutItemsWithNonMatchingRepeatSchedule() {
+        let (sut, itemStore, recordStore) = makeSUT()
+        
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(identifier: "UTC")!
+        // 2026-08-29 is Saturday
+        var saturdayComponents = DateComponents()
+        saturdayComponents.year = 2026
+        saturdayComponents.month = 8
+        saturdayComponents.day = 29
+        let saturday = calendar.date(from: saturdayComponents)!
+        
+        let weekdayOnlyItem = uniqueItem(
+            startDate: saturday.adding(days: -10),
+            repeatSchedule: RepeatSchedule.weekdays
+        )
+        let weekendItem = uniqueItem(
+            startDate: saturday.adding(days: -10),
+            repeatSchedule: RepeatSchedule.weekends
+        )
+        
+        expect(sut, for: saturday, toCompleteWith: .success([ItemProgress(item: weekendItem, record: nil)])) {
+            itemStore.completeRetrieval(with: [weekdayOnlyItem, weekendItem])
+            recordStore.completeRetrievalAll(with: [])
+        }
+    }
+    
     func test_load_deliversProgressWithMatchingRecord() {
         let (sut, itemStore, recordStore) = makeSUT()
         let date = Date()

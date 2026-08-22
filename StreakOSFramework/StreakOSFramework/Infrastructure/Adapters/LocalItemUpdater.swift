@@ -54,6 +54,7 @@ extension LocalItemUpdater: ItemUpdater {
             targetCount: item.targetCount,
             startDate: item.startDate,
             endDate: item.endDate,
+            repeatSchedule: item.repeatSchedule,
             displayOrder: item.displayOrder,
             createdAt: item.createdAt,
             updatedAt: currentDate()

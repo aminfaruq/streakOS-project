@@ -87,4 +87,42 @@ final class ItemTests: XCTestCase {
         
         XCTAssertTrue(sut.isVisible(on: today.adding(days: 100)))
     }
+    
+    func test_isVisible_withRepeatSchedule_matchingDay_returnsTrue() {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(identifier: "UTC")!
+        
+        // 2026-08-24 is Monday
+        var mondayComponents = DateComponents()
+        mondayComponents.year = 2026
+        mondayComponents.month = 8
+        mondayComponents.day = 24
+        let monday = calendar.date(from: mondayComponents)!
+        
+        let sut = uniqueItem(
+            startDate: monday.adding(days: -10),
+            repeatSchedule: RepeatSchedule.weekdays
+        )
+        
+        XCTAssertTrue(sut.isVisible(on: monday))
+    }
+    
+    func test_isVisible_withRepeatSchedule_nonMatchingDay_returnsFalse() {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(identifier: "UTC")!
+        
+        // 2026-08-29 is Saturday
+        var saturdayComponents = DateComponents()
+        saturdayComponents.year = 2026
+        saturdayComponents.month = 8
+        saturdayComponents.day = 29
+        let saturday = calendar.date(from: saturdayComponents)!
+        
+        let sut = uniqueItem(
+            startDate: saturday.adding(days: -10),
+            repeatSchedule: RepeatSchedule.weekdays
+        )
+        
+        XCTAssertFalse(sut.isVisible(on: saturday))
+    }
 }

@@ -109,6 +109,27 @@ final class LocalItemCreatorTests: XCTestCase {
         wait(for: [exp], timeout: 1.0)
     }
     
+    func test_create_usesProvidedRepeatSchedule() {
+        let (sut, itemStore) = makeSUT()
+        let date = today
+        let schedule = RepeatSchedule.weekdays
+        
+        let exp = expectation(description: "create")
+        
+        sut.create(name: "Push Ups", icon: "💪", type: .count, targetCount: 5, startDate: date, endDate: nil, repeatSchedule: schedule) { result in
+            if case let .success(item) = result {
+                XCTAssertEqual(item.repeatSchedule, schedule)
+            } else {
+                XCTFail("Expected success")
+            }
+            exp.fulfill()
+        }
+        
+        itemStore.completeRetrieval(with: [])
+        itemStore.completeSaveSuccessfully()
+        wait(for: [exp], timeout: 1.0)
+    }
+    
     func test_create_deliversErrorOnSaveFailure() {
         let (sut, itemStore) = makeSUT()
         _ = today

@@ -12,6 +12,7 @@ final class ItemCreatorSpy: ItemCreator {
         let targetCount: Int
         let startDate: Date
         let endDate: Date?
+        let repeatSchedule: RepeatSchedule?
     }
     
     private var completions = [(ItemCreator.Result) -> Void]()
@@ -23,9 +24,10 @@ final class ItemCreatorSpy: ItemCreator {
         targetCount: Int,
         startDate: Date,
         endDate: Date?,
+        repeatSchedule: RepeatSchedule?,
         completion: @escaping (ItemCreator.Result) -> Void
     ) {
-        receivedRequests.append(Request(name: name, icon: icon, type: .count, targetCount: targetCount, startDate: startDate, endDate: endDate))
+        receivedRequests.append(Request(name: name, icon: icon, type: .count, targetCount: targetCount, startDate: startDate, endDate: endDate, repeatSchedule: repeatSchedule))
         completions.append(completion)
     }
     
@@ -47,6 +49,8 @@ final class ItemFormViewModelTests: XCTestCase {
         XCTAssertEqual(sut.name, "")
         XCTAssertEqual(sut.icon, "📋")
         XCTAssertEqual(sut.targetCount, 1)
+        XCTAssertFalse(sut.isRepeating)
+        XCTAssertTrue(sut.selectedDays.isEmpty)
         XCTAssertNil(sut.errorMessage)
         XCTAssertFalse(sut.isSaving)
     }
@@ -99,6 +103,51 @@ final class ItemFormViewModelTests: XCTestCase {
         XCTAssertFalse(sut.canSave)
     }
     
+    func test_canSave_isRepeatingWithEmptyDays_isFalse() {
+        let (sut, _) = makeSUT()
+        sut.name = "Push Ups"
+        sut.icon = "💪"
+        sut.targetCount = 10
+        sut.isRepeating = true
+        sut.selectedDays = []
+        
+        XCTAssertFalse(sut.canSave)
+    }
+    
+    func test_canSave_isRepeatingWithSelectedDays_isTrue() {
+        let (sut, _) = makeSUT()
+        sut.name = "Push Ups"
+        sut.icon = "💪"
+        sut.targetCount = 10
+        sut.isRepeating = true
+        sut.selectedDays = [.monday]
+        
+        XCTAssertTrue(sut.canSave)
+    }
+    
+    func test_presetHelpers_configureSelectedDays() {
+        let (sut, _) = makeSUT()
+        
+        sut.setEveryday()
+        XCTAssertEqual(sut.selectedDays.count, 7)
+        
+        sut.setWeekdays()
+        XCTAssertEqual(sut.selectedDays, Set([.monday, .tuesday, .wednesday, .thursday, .friday]))
+        
+        sut.setWeekends()
+        XCTAssertEqual(sut.selectedDays, Set([.saturday, .sunday]))
+    }
+    
+    func test_toggleDay_addsAndRemovesDay() {
+        let (sut, _) = makeSUT()
+        
+        sut.toggleDay(.monday)
+        XCTAssertTrue(sut.selectedDays.contains(.monday))
+        
+        sut.toggleDay(.monday)
+        XCTAssertFalse(sut.selectedDays.contains(.monday))
+    }
+    
     func test_save_validFields_requestsCreation() {
         let (sut, creator) = makeSUT()
         sut.name = "Push Ups"
@@ -109,7 +158,23 @@ final class ItemFormViewModelTests: XCTestCase {
         sut.save()
         
         XCTAssertEqual(creator.receivedRequests, [
-            .init(name: "Push Ups", icon: "💪", type: .count, targetCount: 5, startDate: startDate, endDate: nil)
+            .init(name: "Push Ups", icon: "💪", type: .count, targetCount: 5, startDate: startDate, endDate: nil, repeatSchedule: nil)
+        ])
+    }
+    
+    func test_save_withRepeatSchedule_requestsCreationWithSchedule() {
+        let (sut, creator) = makeSUT()
+        sut.name = "Gym"
+        sut.icon = "🏋️"
+        sut.targetCount = 1
+        sut.isRepeating = true
+        sut.setWeekdays()
+        let startDate = sut.startDate
+        
+        sut.save()
+        
+        XCTAssertEqual(creator.receivedRequests, [
+            .init(name: "Gym", icon: "🏋️", type: .count, targetCount: 1, startDate: startDate, endDate: nil, repeatSchedule: RepeatSchedule.weekdays)
         ])
     }
     
@@ -169,6 +234,37 @@ final class ItemFormViewModelTests: XCTestCase {
         XCTAssertNil(sut.errorMessage)
     }
     
+    func test_init_withExistingItemWithoutSchedule_isRepeatingIsFalse() {
+        let item = uniqueItem()
+        let (sut, _) = makeEditSUT(item: item)
+        
+        XCTAssertTrue(sut.isEditing)
+        XCTAssertFalse(sut.isRepeating)
+        XCTAssertTrue(sut.selectedDays.isEmpty)
+    }
+    
+    func test_init_withExistingItemWithSchedule_loadsSchedule() {
+        let schedule = RepeatSchedule.weekdays
+        let item = Item(id: UUID(), name: "Yoga", icon: "🧘‍♀️", type: .count, targetCount: 1, startDate: Date(), endDate: nil, repeatSchedule: schedule, displayOrder: 0, createdAt: Date(), updatedAt: Date())
+        let (sut, _) = makeEditSUT(item: item)
+        
+        XCTAssertTrue(sut.isEditing)
+        XCTAssertTrue(sut.isRepeating)
+        XCTAssertEqual(sut.selectedDays, schedule.days)
+    }
+    
+    func test_save_updatedItem_withRepeatSchedule_requestsUpdateWithSchedule() {
+        let existing = uniqueItem()
+        let (sut, updater) = makeEditSUT(item: existing)
+        sut.isRepeating = true
+        sut.setWeekends()
+        
+        sut.save()
+        
+        XCTAssertEqual(updater.receivedMessages.count, 1)
+        XCTAssertEqual(updater.receivedMessages.first?.item.repeatSchedule, RepeatSchedule.weekends)
+    }
+    
     // MARK: Helpers
     
     private func makeSUT(
@@ -181,6 +277,19 @@ final class ItemFormViewModelTests: XCTestCase {
         trackForMemoryLeaks(sut, file: file, line: line)
         trackForMemoryLeaks(creator, file: file, line: line)
         return (sut, creator)
+    }
+    
+    private func makeEditSUT(
+        item: Item,
+        onUpdated: @escaping (Item) -> Void = { _ in },
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> (sut: ItemFormViewModel, updater: ItemUpdaterSpy) {
+        let updater = ItemUpdaterSpy()
+        let sut = ItemFormViewModel(updater: updater, item: item, onUpdated: onUpdated)
+        trackForMemoryLeaks(sut, file: file, line: line)
+        trackForMemoryLeaks(updater, file: file, line: line)
+        return (sut, updater)
     }
     
     private func uniqueItem() -> Item {

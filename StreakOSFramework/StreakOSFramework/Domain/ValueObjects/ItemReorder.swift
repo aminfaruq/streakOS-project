@@ -24,6 +24,7 @@ public enum ItemReorder {
                 targetCount: item.targetCount,
                 startDate: item.startDate,
                 endDate: item.endDate,
+                repeatSchedule: item.repeatSchedule,
                 displayOrder: index,
                 createdAt: item.createdAt,
                 updatedAt: item.updatedAt

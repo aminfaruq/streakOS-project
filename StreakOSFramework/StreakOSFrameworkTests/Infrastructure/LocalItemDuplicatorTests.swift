@@ -107,6 +107,26 @@ final class LocalItemDuplicatorTests: XCTestCase {
         wait(for: [exp], timeout: 1.0)
     }
     
+    func test_duplicate_copiesRepeatSchedule() {
+        let (sut, itemStore) = makeSUT()
+        let schedule = RepeatSchedule.weekdays
+        let item = uniqueItem(startDate: today, repeatSchedule: schedule)
+        
+        let exp = expectation(description: "duplicate")
+        sut.duplicate(item) { result in
+            if case let .success(duplicate) = result {
+                XCTAssertEqual(duplicate.repeatSchedule, schedule)
+            } else {
+                XCTFail("Expected success")
+            }
+            exp.fulfill()
+        }
+        
+        itemStore.completeRetrieval(with: [item])
+        itemStore.completeSaveSuccessfully()
+        wait(for: [exp], timeout: 1.0)
+    }
+    
     func test_duplicate_deliversErrorOnSaveFailure() {
         let (sut, itemStore) = makeSUT()
         let item = uniqueItem(startDate: today)

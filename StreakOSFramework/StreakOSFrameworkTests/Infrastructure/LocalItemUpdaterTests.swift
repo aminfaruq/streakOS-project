@@ -89,6 +89,40 @@ final class LocalItemUpdaterTests: XCTestCase {
         wait(for: [exp], timeout: 1.0)
     }
     
+    func test_update_preservesRepeatSchedule() {
+        let (sut, itemStore) = makeSUT()
+        let date = today
+        let schedule = RepeatSchedule.weekdays
+        let existing = uniqueItem(name: "Old", startDate: date)
+        let changed = Item(
+            id: existing.id,
+            name: "New Name",
+            icon: existing.icon,
+            type: ItemType.count,
+            targetCount: 7,
+            startDate: existing.startDate,
+            endDate: nil,
+            repeatSchedule: schedule,
+            displayOrder: existing.displayOrder,
+            createdAt: existing.createdAt,
+            updatedAt: existing.updatedAt
+        )
+        
+        let exp = expectation(description: "update")
+        sut.update(changed) { result in
+            if case let .success(item) = result {
+                XCTAssertEqual(item.repeatSchedule, schedule)
+            } else {
+                XCTFail("Expected success")
+            }
+            exp.fulfill()
+        }
+        
+        itemStore.completeRetrieval(with: [existing])
+        itemStore.completeSaveSuccessfully()
+        wait(for: [exp], timeout: 1.0)
+    }
+    
     func test_update_deliversErrorOnSaveFailure() {
         let (sut, itemStore) = makeSUT()
         let item = uniqueItem(startDate: today)

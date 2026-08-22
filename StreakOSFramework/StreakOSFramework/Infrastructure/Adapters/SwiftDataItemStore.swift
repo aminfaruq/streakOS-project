@@ -50,6 +50,7 @@ extension SwiftDataItemStore: ItemStore {
                 existing.targetCount = item.targetCount
                 existing.startDate = item.startDate
                 existing.endDate = item.endDate
+                existing.repeatDays = item.repeatSchedule.map { Array($0.days.map(\.rawValue).sorted()) }
                 existing.displayOrder = item.displayOrder
                 existing.updatedAt = item.updatedAt
             } else {

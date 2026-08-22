@@ -3,7 +3,11 @@ import Foundation
 enum SDItemMapper {
     
     static func toDomain(_ sdItem: SDItem) -> Item {
-        Item(
+        let repeatSchedule: RepeatSchedule? = sdItem.repeatDays.map { days in
+            RepeatSchedule(days: Set(days.compactMap(Weekday.init)))
+        }
+        
+        return Item(
             id: sdItem.id,
             name: sdItem.name,
             icon: sdItem.icon,
@@ -11,6 +15,7 @@ enum SDItemMapper {
             targetCount: sdItem.targetCount,
             startDate: sdItem.startDate,
             endDate: sdItem.endDate,
+            repeatSchedule: repeatSchedule,
             displayOrder: sdItem.displayOrder,
             createdAt: sdItem.createdAt,
             updatedAt: sdItem.updatedAt
@@ -18,7 +23,11 @@ enum SDItemMapper {
     }
     
     static func toSDModel(_ item: Item) -> SDItem {
-        SDItem(
+        let repeatDays: [Int]? = item.repeatSchedule.map { schedule in
+            schedule.days.map(\.rawValue).sorted()
+        }
+        
+        return SDItem(
             id: item.id,
             name: item.name,
             icon: item.icon,
@@ -26,6 +35,7 @@ enum SDItemMapper {
             targetCount: item.targetCount,
             startDate: item.startDate,
             endDate: item.endDate,
+            repeatDays: repeatDays,
             displayOrder: item.displayOrder,
             createdAt: item.createdAt,
             updatedAt: item.updatedAt
