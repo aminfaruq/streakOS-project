@@ -7,6 +7,7 @@ A minimalist, offline-first habit & task tracker for the Apple ecosystem — nat
 ![Architecture](https://img.shields.io/badge/Architecture-Clean%20Architecture%20%7C%20MVVM-blue?style=flat-square)
 ![Framework](https://img.shields.io/badge/Framework-SwiftUI%20%7C%20Combine%20%7C%20SwiftData-blueviolet?style=flat-square)
 ![Sync](https://img.shields.io/badge/Sync-iCloud%20%7C%20CloudKit-green?style=flat-square)
+[![CI](https://github.com/aminfaruq/streakOS-project/actions/workflows/ci.yml/badge.svg)](https://github.com/aminfaruq/streakOS-project/actions/workflows/ci.yml)
 
 StreakOS replaces the checkbox-and-list approach with a single interaction pattern: every habit is a counter you **increment**. No checkbox, no tabs, no config. Create an item with a daily target, tap **+** until it's done, and let the daily reset start fresh the next day — synced automatically across all your Apple devices via SwiftData + CloudKit.
 
@@ -19,6 +20,8 @@ StreakOS replaces the checkbox-and-list approach with a single interaction patte
 - **iCloud sync with zero config** — `StreakOSModelContainer.makeCloudKitEnabled()` boots SwiftData against CloudKit with no user toggle. Every platform registers for remote notifications (`registerForRemoteNotifications`) and reloads on `NSPersistentStoreRemoteChange`, so changes propagate live across Mac, iPhone, and Apple Watch.
 - **Intelligent timer semantics** — minute-based habits accrue elapsed wall-clock time into `currentCount` on pause and display live `MM:SS` via `TimelineView`. Restart, manual adjust, and completion are all captured in one pure `DailyRecord` value.
 - **Enforced date-editing window** — `DateNavigationWindow` allows editing today and the last 7 days, read-only access to tomorrow, and locks out everything else — a single unit-tested source of truth shared by all platforms.
+- **Repeat schedules** — items can be set to repeat every day, weekdays, weekends, or custom day selections. `RepeatSchedule` is a `Codable` value object, and `Item.isVisible(on:)` filters items by day so a "Weekdays" habit simply disappears on weekends.
+- **CI on every push & PR** — a GitHub Actions workflow (`ci.yml`) runs all 203 unit tests across `StreakOSFramework`, `StreakOSPresentation`, `StreakOSMacApp`, and `StreakOSApp` on `macos-15` with Xcode 26.2.
 
 ---
 
@@ -36,8 +39,8 @@ StreakOS replaces the checkbox-and-list approach with a single interaction patte
 
 ### Prerequisites
 
-- macOS 14.0 or later
-- Xcode 16.0 or later
+- macOS 26 or later
+- Xcode 26.0 or later
 - An Apple Developer team for CloudKit sync (simulator works locally without it)
 
 ### Installation
@@ -126,6 +129,15 @@ Tap any item card to open the bottom sheet with:
 
 Navigating to a past day lets you fix mistakes; future days are grayed out and disabled.
 
+### Repeat Schedule
+
+Items can repeat on selected days of the week instead of appearing daily:
+
+- **Presets** — *Every day*, *Weekdays*, and *Weekends* can be applied in one tap, or individual days (Mon–Sun) can be toggled for a custom schedule.
+- **Daily visibility** — `Item.isVisible(on:)` filters items by their `RepeatSchedule`: a "Weekdays" habit is hidden on Saturday and Sunday automatically, combining with the start/end date window.
+- **Smart labels** — schedules render as human-readable text ("Every day", "Weekdays", "Weekends", "Every Mon", "Mon, Wed, Fri") via `RepeatSchedule.displayText`.
+- **Persisted everywhere** — the schedule survives editing, duplication, reordering, and is synced through SwiftData (`repeatDays`) + CloudKit, with a `repeat` badge shown on item cards.
+
 ### Edit & Reorder Mode
 
 Toggle **Edit** to enter edit mode: cards scale down, a drag handle appears, and items can be reordered with drag-and-drop. `ItemReorder.reorder()` recomputes `displayOrder`, and the new order is persisted sequentially through `ItemUpdater`.
@@ -160,7 +172,7 @@ StreakOSFramework.xcodeproj/         ← framework project with 3 targets
 │   │   ├── Protocols/               ← DailyProgressLoader, ProgressTracker, ItemStore,
 │   │   │                              ItemCreator, ItemUpdater, ItemDuplicator, DailyRecordStore
 │   │   └── ValueObjects/            ← ItemType, ItemProgress, DateNavigationWindow,
-│   │                                  ItemNameGenerator, ItemReorder
+│   │                                  Weekday, RepeatSchedule, ItemNameGenerator, ItemReorder
 │   └── Infrastructure/
 │       ├── Adapters/                ← LocalDailyProgressLoader, LocalProgressTracker,
 │       │                              LocalItemCreator/Updater/Duplicator,
@@ -174,14 +186,23 @@ StreakOSFramework.xcodeproj/         ← framework project with 3 targets
 StreakOSMacApp/                      ← macOS composition root
 ├── AppCore/AppComposer.swift
 ├── DesignSystem/DesignTokens.swift
-└── Views/                           ← ProgressListView, AddItemView, ItemCardView,
-                                       ItemActionsView, DateHeaderView, MenuBarProgressView
+└── Views/
+    ├── ProgressList/                ← ProgressListView + subcomponents
+    ├── AddItem/                     ← AddItemView + subcomponents (incl. repeat section)
+    ├── ItemCard/                    ← ItemCardView dispatcher + Count/Timer cards
+    ├── ItemActions/                 ← ItemActionsView + subcomponents
+    ├── DateHeaderView.swift
+    └── MenuBarProgressView.swift
 
 StreakOSApp/                         ← iOS composition root
 ├── AppCore/AppComposer.swift        ← dependency injection entry point
 ├── DesignSystem/IOSDesignTokens.swift
-└── Views/                           ← IOSProgressListView, IOSItemCardView,
-                                       IOSItemActionsSheet, IOSAddItemView, IOSDateHeaderView
+└── Views/
+    ├── ProgressList/                ← IOSProgressListView + subcomponents
+    ├── AddItem/                     ← IOSAddItemView + subcomponents (incl. repeat section)
+    ├── ItemCard/                    ← IOSItemCardView dispatcher + IOS Count/Timer cards
+    ├── ItemActions/                 ← IOSItemActionsSheet + subcomponents
+    └── IOSDateHeaderView.swift
 
 StreakOSWatchApp/                    ← watchOS composition root
 ├── AppCore/AppComposer.swift
@@ -221,7 +242,9 @@ All three call `AppComposer.makeDependencies()`, which creates a CloudKit-enable
 - `DailyRecord` is an immutable value type. Increment, decrement, timer toggle, and restart are all pure functions that return a new record — trivially unit-testable with no infrastructure.
 - `DailyRecord.incrementing(by:)` is idempotent: once `isCompleted`, further increments are no-ops, and `decrementing` from a completed state rewinds from `targetCount`.
 - `ItemNameGenerator` guarantees unique names on duplicate ("Habit", "Habit 2", "Habit 3", …) and `ItemFormViewModel` blocks saving a duplicate name.
-- `ItemFormViewModel.canSave` enforces: non-empty name ≤ 100 chars, single-character icon, target within `1...999`, and `endDate >= startDate`.
+- `ItemFormViewModel.canSave` enforces: non-empty name ≤ 100 chars, single-character icon, target within `1...999`, `endDate >= startDate`, and a non-empty day set whenever repeating is enabled.
+- `RepeatSchedule` bundles a `Set<Weekday>` with everyday/weekday/weekend presets and human-readable `displayText`; `Weekday` is a `Codable` 1–7 enum with `orderedDays`, `shortName`, and `singleLetter` helpers.
+- `Item.isVisible(on:)` composes the start/end window with the repeat schedule, so repeated habits are hidden on non-matching days without touching persisted records.
 
 ---
 
@@ -229,17 +252,18 @@ All three call `AppComposer.makeDependencies()`, which creates a CloudKit-enable
 
 ### Test Targets & Coverage
 
-181 test functions across 20 unit test files, split between domain/infrastructure and presentation.
+203 test functions across 20 unit test files, split between domain/infrastructure and presentation.
 
 **`StreakOSFrameworkTests`** — Domain & Infrastructure (18 test files):
 
 | Area | File | What it covers |
 |---|---|---|
-| Domain | `ItemTests` | Model construction, `isVisible(on:)` date-window logic |
+| Domain | `ItemTests` | Model construction, `isVisible(on:)` date-window + repeat-schedule logic |
 | Domain | `DailyRecordTests` | Increment/decrement/timer-toggle/restart pure functions, completion clamping, idempotency |
 | Domain | `ItemProgressTests` | Progress fraction and display text for count and timer types |
 | Domain | `ItemTypeTests` | Count vs minutes type mapping |
 | Domain | `DateNavigationWindowTests` | Editable/read-only/inaccessible windows, backward/forward navigation |
+| Domain | `RepeatScheduleTests` | `Weekday` mapping/order, everyday/weekday/weekend presets, date matching, display text, Codable round-trip |
 | Domain | `ItemNameGeneratorTests` | Uniqueness and "Name 2" duplicate naming |
 | Domain | `ItemReorderTests` | Order recomputation and index safety |
 | Infrastructure | `LocalDailyProgressLoaderTests` | Loading items + today's records into `ItemProgress` |
@@ -247,7 +271,8 @@ All three call `AppComposer.makeDependencies()`, which creates a CloudKit-enable
 | Infrastructure | `LocalItemCreatorTests` | Item creation with name uniqueness and `displayOrder` |
 | Infrastructure | `LocalItemUpdaterTests` | Update persistence |
 | Infrastructure | `LocalItemDuplicatorTests` | Duplicate creation and unique naming |
-| Infrastructure | `SwiftDataItemStoreIntegrationTests` | SwiftData-backed item CRUD |
+| Infrastructure | `LocalDailyProgressLoaderTests` | Loading items + today's records into `ItemProgress`, incl. repeat-schedule day filtering |
+| Infrastructure | `SwiftDataItemStoreIntegrationTests` | SwiftData-backed item CRUD, incl. `repeatDays` persistence |
 | Infrastructure | `SwiftDataDailyRecordStoreIntegrationTests` | SwiftData-backed record read/write |
 | Infrastructure | `SDItemMapperTests`, `SDDailyRecordMapperTests` | SwiftData → domain mapping |
 | Infrastructure | `StreakOSModelContainerTests` | CloudKit and in-memory container construction |
@@ -257,9 +282,18 @@ All three call `AppComposer.makeDependencies()`, which creates a CloudKit-enable
 | ViewModel | Key scenarios tested |
 |---|---|
 | `ProgressFeedViewModelTests` | Load/success/failure states, increment/decrement/timer/restart apply results, delete/duplicate/update flows, reorder persistence, cancel-on-deinit |
-| `ItemFormViewModelTests` | Create/edit validation (`canSave`), save success/failure, duplicate-name rejection, date-range validation, error messaging |
+| `ItemFormViewModelTests` | Create/edit validation (`canSave`), save success/failure, duplicate-name rejection, date-range validation, repeat presets/day toggling and schedule validity, error messaging |
 
 Every ViewModel test suite uses a shared `trackForMemoryLeaks()` helper registered in `addTeardownBlock` to catch retain cycles automatically. Test plans (`StreakOSFramework.xctestplan`, `StreakOSPresentation.xctestplan`) enable random test ordering and the performance antipattern checker.
+
+### Continuous Integration
+
+A GitHub Actions workflow (`.github/workflows/ci.yml`) runs on every push and pull request to `master` / `develop`:
+
+- **Runner:** `macos-15` with Xcode 26.2 and the iOS 26.2 simulator runtime.
+- **Unit tests:** `StreakOSFramework` and `StreakOSPresentation` run on `platform=macOS` (their test targets don't support the simulator).
+- **App tests:** `StreakOSMacApp` runs on `platform=macOS`; `StreakOSApp` runs on an iPhone 17 Pro iOS simulator.
+- **Result:** all 203 tests, colored output via `xcbeautify`, and derived-data caching for faster rebuilds.
 
 ### BDD-Style Specifications
 
@@ -325,6 +359,23 @@ Feature: Duplicate Naming
     When the user duplicates it
     Then the new item is named "Read 2"
     And a second duplicate is named "Read 3"
+```
+
+```gherkin
+Feature: Repeat Schedules
+
+  Scenario: A weekdays item is hidden on weekends
+    Given an item with a weekdays repeat schedule
+    When the date is a Saturday
+    Then isVisible(on:) returns false
+    When the date is a Monday
+    Then isVisible(on:) returns true
+
+  Scenario: Display text is human readable
+    Given a schedule for every day of the week
+    Then displayText is "Every day"
+    Given a schedule for Mon, Wed, Fri
+    Then displayText is "Mon, Wed, Fri"
 ```
 
 ---
