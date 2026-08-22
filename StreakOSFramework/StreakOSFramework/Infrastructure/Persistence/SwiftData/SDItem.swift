@@ -10,6 +10,7 @@ public final class SDItem {
     public var targetCount: Int = 1
     public var startDate: Date = Date()
     public var endDate: Date?
+    public var repeatDays: [Int]?
     public var displayOrder: Int = 0
     public var createdAt: Date = Date()
     public var updatedAt: Date = Date()
@@ -25,6 +26,7 @@ public final class SDItem {
         targetCount: Int,
         startDate: Date,
         endDate: Date?,
+        repeatDays: [Int]? = nil,
         displayOrder: Int,
         createdAt: Date,
         updatedAt: Date
@@ -36,6 +38,7 @@ public final class SDItem {
         self.targetCount = targetCount
         self.startDate = startDate
         self.endDate = endDate
+        self.repeatDays = repeatDays
         self.displayOrder = displayOrder
         self.createdAt = createdAt
         self.updatedAt = updatedAt
