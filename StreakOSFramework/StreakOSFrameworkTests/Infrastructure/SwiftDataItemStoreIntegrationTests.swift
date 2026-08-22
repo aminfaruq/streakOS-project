@@ -158,4 +158,32 @@ final class SwiftDataItemStoreIntegrationTests: XCTestCase {
         }
         wait(for: [retrieveExp], timeout: 1.0)
     }
+    
+    func test_saveAndRetrieve_persistsRepeatSchedule() {
+        let sut = makeSUT()
+        let item = uniqueItem(
+            name: "Morning Run",
+            repeatSchedule: RepeatSchedule.weekdays
+        )
+        
+        let saveExp = expectation(description: "save")
+        sut.save(item) { result in
+            if case .failure = result { XCTFail("Save failed") }
+            saveExp.fulfill()
+        }
+        wait(for: [saveExp], timeout: 1.0)
+        
+        let retrieveExp = expectation(description: "retrieveAll")
+        sut.retrieveAll { result in
+            switch result {
+            case let .success(items):
+                XCTAssertEqual(items.count, 1)
+                XCTAssertEqual(items[0].repeatSchedule?.days, Set([.monday, .tuesday, .wednesday, .thursday, .friday]))
+            case .failure:
+                XCTFail("Expected success")
+            }
+            retrieveExp.fulfill()
+        }
+        wait(for: [retrieveExp], timeout: 1.0)
+    }
 }
