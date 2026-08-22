@@ -9,7 +9,8 @@ func uniqueItem(
     name: String = "any name",
     targetCount: Int = 1,
     startDate: Date = Date(),
-    endDate: Date? = nil
+    endDate: Date? = nil,
+    repeatSchedule: RepeatSchedule? = nil
 ) -> Item {
     Item(
         id: UUID(),
@@ -19,6 +20,7 @@ func uniqueItem(
         targetCount: targetCount,
         startDate: startDate,
         endDate: endDate,
+        repeatSchedule: repeatSchedule,
         displayOrder: 0,
         createdAt: Date(),
         updatedAt: Date()
