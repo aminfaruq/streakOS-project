@@ -12,6 +12,7 @@ final class ItemCreatorSpy: ItemCreator {
         let targetCount: Int
         let startDate: Date
         let endDate: Date?
+        let repeatSchedule: RepeatSchedule?
     }
     
     private var completions = [(ItemCreator.Result) -> Void]()
@@ -23,9 +24,10 @@ final class ItemCreatorSpy: ItemCreator {
         targetCount: Int,
         startDate: Date,
         endDate: Date?,
+        repeatSchedule: RepeatSchedule?,
         completion: @escaping (ItemCreator.Result) -> Void
     ) {
-        receivedRequests.append(Request(name: name, icon: icon, type: .count, targetCount: targetCount, startDate: startDate, endDate: endDate))
+        receivedRequests.append(Request(name: name, icon: icon, type: .count, targetCount: targetCount, startDate: startDate, endDate: endDate, repeatSchedule: repeatSchedule))
         completions.append(completion)
     }
     
@@ -109,7 +111,7 @@ final class ItemFormViewModelTests: XCTestCase {
         sut.save()
         
         XCTAssertEqual(creator.receivedRequests, [
-            .init(name: "Push Ups", icon: "💪", type: .count, targetCount: 5, startDate: startDate, endDate: nil)
+            .init(name: "Push Ups", icon: "💪", type: .count, targetCount: 5, startDate: startDate, endDate: nil, repeatSchedule: nil)
         ])
     }
     
