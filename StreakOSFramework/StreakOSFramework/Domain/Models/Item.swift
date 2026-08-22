@@ -8,6 +8,7 @@ public struct Item: Hashable {
     public let targetCount: Int
     public let startDate: Date
     public let endDate: Date?
+    public let repeatSchedule: RepeatSchedule?
     public let displayOrder: Int
     public let createdAt: Date
     public let updatedAt: Date
@@ -20,6 +21,7 @@ public struct Item: Hashable {
         targetCount: Int,
         startDate: Date,
         endDate: Date?,
+        repeatSchedule: RepeatSchedule? = nil,
         displayOrder: Int,
         createdAt: Date,
         updatedAt: Date
@@ -31,6 +33,7 @@ public struct Item: Hashable {
         self.targetCount = targetCount
         self.startDate = startDate
         self.endDate = endDate
+        self.repeatSchedule = repeatSchedule
         self.displayOrder = displayOrder
         self.createdAt = createdAt
         self.updatedAt = updatedAt
@@ -44,6 +47,9 @@ public extension Item {
         let targetDate = calendar.startOfDay(for: date)
         if targetDate < itemStart { return false }
         if let endDate, targetDate > calendar.startOfDay(for: endDate) { return false }
+        if let repeatSchedule, !repeatSchedule.contains(date, calendar: calendar) {
+            return false
+        }
         return true
     }
 }
