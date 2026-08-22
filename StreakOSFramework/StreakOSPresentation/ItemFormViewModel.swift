@@ -10,13 +10,15 @@ public final class ItemFormViewModel: ObservableObject {
     @Published public var targetCount = 1
     @Published public var startDate = Date()
     @Published public var endDate: Date?
+    @Published public var isRepeating = false
+    @Published public var selectedDays: Set<Weekday> = []
     @Published public private(set) var errorMessage: String?
     @Published public private(set) var isSaving = false
     
     public var isEditing: Bool { existingItem != nil }
     
     public var canSave: Bool {
-        isNameValid && isIconValid && isTargetValid && dateRangeValid
+        isNameValid && isIconValid && isTargetValid && dateRangeValid && isRepeatScheduleValid
     }
     
     private let creator: (any ItemCreator)?
@@ -49,6 +51,33 @@ public final class ItemFormViewModel: ObservableObject {
         self.targetCount = item.targetCount
         self.startDate = item.startDate
         self.endDate = item.endDate
+        if let schedule = item.repeatSchedule {
+            self.isRepeating = true
+            self.selectedDays = schedule.days
+        } else {
+            self.isRepeating = false
+            self.selectedDays = []
+        }
+    }
+    
+    public func setEveryday() {
+        selectedDays = Set(Weekday.allCases)
+    }
+    
+    public func setWeekdays() {
+        selectedDays = Set([.monday, .tuesday, .wednesday, .thursday, .friday])
+    }
+    
+    public func setWeekends() {
+        selectedDays = Set([.saturday, .sunday])
+    }
+    
+    public func toggleDay(_ day: Weekday) {
+        if selectedDays.contains(day) {
+            selectedDays.remove(day)
+        } else {
+            selectedDays.insert(day)
+        }
     }
     
     public func save() {
@@ -68,13 +97,15 @@ public final class ItemFormViewModel: ObservableObject {
     
     private func saveNew() {
         guard let creator else { return }
+        let schedule = isRepeating ? RepeatSchedule(days: selectedDays) : nil
         creator.create(
             name: name,
             icon: icon,
             type: type,
             targetCount: targetCount,
             startDate: startDate,
-            endDate: endDate
+            endDate: endDate,
+            repeatSchedule: schedule
         ) { [weak self] result in
             self?.handle(result)
         }
@@ -82,6 +113,7 @@ public final class ItemFormViewModel: ObservableObject {
     
     private func saveUpdated() {
         guard let updater, let existingItem else { return }
+        let schedule = isRepeating ? RepeatSchedule(days: selectedDays) : nil
         updater.update(
             Item(
                 id: existingItem.id,
@@ -91,6 +123,7 @@ public final class ItemFormViewModel: ObservableObject {
                 targetCount: targetCount,
                 startDate: startDate,
                 endDate: endDate,
+                repeatSchedule: schedule,
                 displayOrder: existingItem.displayOrder,
                 createdAt: existingItem.createdAt,
                 updatedAt: existingItem.updatedAt
@@ -126,6 +159,10 @@ public final class ItemFormViewModel: ObservableObject {
     private var dateRangeValid: Bool {
         guard let endDate else { return true }
         return endDate >= startDate
+    }
+    
+    private var isRepeatScheduleValid: Bool {
+        !isRepeating || !selectedDays.isEmpty
     }
     
     private var nameDuplicateMessage: String {
