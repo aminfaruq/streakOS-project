@@ -107,6 +107,19 @@ struct IOSCountItemCardView: View {
                             .padding(.vertical, 4)
                             .background(Color.gray.opacity(0.1), in: RoundedRectangle(cornerRadius: 6))
                     }
+                    
+                    if let schedule = progress.item.repeatSchedule {
+                        HStack(spacing: 4) {
+                            Image(systemName: "repeat")
+                                .font(.system(size: 10, weight: .bold))
+                            Text(schedule.displayText)
+                                .font(.system(size: 12, weight: .semibold))
+                        }
+                        .foregroundStyle(.secondary)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Color.gray.opacity(0.1), in: RoundedRectangle(cornerRadius: 6))
+                    }
                 }
             }
         }
@@ -233,6 +246,19 @@ struct IOSTimerItemCardView: View {
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
                         .background(isTimerRunning ? IOSDesignTokens.accent.opacity(0.1) : Color.gray.opacity(0.1), in: RoundedRectangle(cornerRadius: 6))
+                    
+                    if let schedule = progress.item.repeatSchedule {
+                        HStack(spacing: 4) {
+                            Image(systemName: "repeat")
+                                .font(.system(size: 10, weight: .bold))
+                            Text(schedule.displayText)
+                                .font(.system(size: 12, weight: .semibold))
+                        }
+                        .foregroundStyle(.secondary)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Color.gray.opacity(0.1), in: RoundedRectangle(cornerRadius: 6))
+                    }
                 }
             }
         }
