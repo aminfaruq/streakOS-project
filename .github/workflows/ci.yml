@@ -1,0 +1,84 @@
+name: CI
+
+on:
+  push:
+    branches: [ master, develop ]
+  pull_request:
+    branches: [ master, develop ]
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: macos-15
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Select Xcode version
+      run: sudo xcode-select -s /Applications/Xcode_26.2.app/Contents/Developer
+
+    - name: Show Xcode version
+      run: xcodebuild -version
+
+    - name: List available runtimes
+      run: xcrun simctl list runtimes
+
+    - name: List available simulators
+      run: xcrun simctl list devices available
+
+    - name: Cache derived data
+      uses: actions/cache@v4
+      with:
+        path: ~/Library/Developer/Xcode/DerivedData
+        key: ${{ runner.os }}-derived-data-${{ hashFiles('**/*.xcodeproj/project.pbxproj') }}
+        restore-keys: |
+          ${{ runner.os }}-derived-data-
+
+    - name: Run StreakOSFramework Tests
+      run: |
+        xcodebuild test \
+          -workspace StreakOSApp.xcworkspace \
+          -scheme StreakOSFramework \
+          -destination 'platform=macOS' \
+          -enableCodeCoverage YES \
+          CODE_SIGN_IDENTITY="" \
+          CODE_SIGNING_REQUIRED=NO \
+          CODE_SIGNING_ALLOWED=NO \
+          | xcbeautify && exit ${PIPESTATUS[0]}
+
+    - name: Run StreakOSPresentation Tests
+      run: |
+        xcodebuild test \
+          -workspace StreakOSApp.xcworkspace \
+          -scheme StreakOSPresentation \
+          -destination 'platform=macOS' \
+          -enableCodeCoverage YES \
+          CODE_SIGN_IDENTITY="" \
+          CODE_SIGNING_REQUIRED=NO \
+          CODE_SIGNING_ALLOWED=NO \
+          | xcbeautify && exit ${PIPESTATUS[0]}
+
+    - name: Run StreakOSMacApp Tests
+      run: |
+        xcodebuild test \
+          -workspace StreakOSApp.xcworkspace \
+          -scheme StreakOSMacApp \
+          -destination 'platform=macOS' \
+          -enableCodeCoverage YES \
+          CODE_SIGN_IDENTITY="" \
+          CODE_SIGNING_REQUIRED=NO \
+          CODE_SIGNING_ALLOWED=NO \
+          | xcbeautify && exit ${PIPESTATUS[0]}
+
+    - name: Run StreakOSApp Tests
+      run: |
+        xcodebuild test \
+          -workspace StreakOSApp.xcworkspace \
+          -scheme StreakOSApp \
+          -destination 'platform=iOS Simulator,name=iPhone 17 Pro' \
+          -enableCodeCoverage YES \
+          CODE_SIGN_IDENTITY="" \
+          CODE_SIGNING_REQUIRED=NO \
+          CODE_SIGNING_ALLOWED=NO \
+          | xcbeautify && exit ${PIPESTATUS[0]}
